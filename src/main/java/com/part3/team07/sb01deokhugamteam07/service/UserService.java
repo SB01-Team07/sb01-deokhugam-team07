@@ -118,7 +118,7 @@ public class UserService {
   * @methodName : logicalDelete
   * @date : 2025. 4. 18. 16:43
   * @author : wongil
-  * @Description: 유저 삭제
+  * @Description: 유저 논리적 삭제
   **/
   public void logicalDelete(UUID userId) {
     validateUserId(userId);
@@ -126,6 +126,19 @@ public class UserService {
 
     User user = findUser(userId);
     user.logiDelete();
+  }
+
+  /**
+  * @methodName : physicalDelete
+  * @date : 2025. 4. 18. 17:45
+  * @author : wongil
+  * @Description: 유저 물리적 삭제
+  **/
+  public void physicalDelete(UUID userId) {
+    validateUserId(userId);
+    isExistsUser(userId);
+
+    userRepository.deleteById(userId);
   }
 
   private void isDeleted(UUID userId, User findUser) {
