@@ -257,4 +257,24 @@ class UserServiceTest {
     assertThatThrownBy(() -> userService.find(userId))
         .isInstanceOf(UserNotFoundException.class);
   }
+
+  @Test
+  @DisplayName("사용자 논리 삭제 - 실패(잘못된 id)")
+  void faliPhysicalDeleteCauseInvalidId() throws Exception {
+    UUID userId = null;
+
+    assertThatThrownBy(() -> userService.physicalDelete(userId))
+        .isInstanceOf(IllegalArgumentException.class);
+
+    verify(userRepository, never()).findById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("사용자 논리 삭제 - 실패(사용자 정보 없음)")
+  void failPhysicalDeleteCauseNotFoundUser() throws Exception {
+    UUID userId = UUID.randomUUID();
+
+    assertThatThrownBy(() -> userService.physicalDelete(userId))
+        .isInstanceOf(UserNotFoundException.class);
+  }
 }
