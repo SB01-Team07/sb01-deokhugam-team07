@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailExc
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +24,7 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   public UserDto register(UserRegisterRequest request) {
-    if (userRepository.existsByEmail(request.email())) {
-      throw new DuplicateUserEmailException(request);
-    }
-
+    validateEmail(request);
     String encodedPassword = passwordEncoder.encode(request.password());
 
     User user = User.builder()
@@ -61,7 +59,27 @@ public class UserService {
         .build();
   }
 
-  public UserDto update(UserUpdateRequest request) {
-    return null;
+  public UserDto update(UUID userId, UserUpdateRequest request) {
+    if (!userRepository.existsById(userId)) {
+      throw new UserNotFoundException(userId);
+    }
+
+    User findUser = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    findUser.changeNickname(request.nickname());
+
+    return UserDto.builder()
+        .id(findUser.getId())
+        .email(findUser.getEmail())
+        .createdAt(findUser.getCreatedAt())
+        .nickname(findUser.getNickname())
+        .build();
+  }
+
+  private void validateEmail(UserRegisterRequest request) {
+    if (userRepository.existsByEmail(request.email())) {
+      throw new DuplicateUserEmailException(request);
+    }
   }
 }
