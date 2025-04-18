@@ -174,4 +174,31 @@ class UserServiceTest {
     verify(userRepository).findById(any(UUID.class));
   }
 
+  @Test
+  @DisplayName("사용자 정보 조회 - 실패(잘못된 id 값)")
+  void failFindUserCauseId() throws Exception {
+    UUID userId = null;
+
+    assertThatThrownBy(() -> userService.find(userId))
+        .isInstanceOf(IllegalArgumentException.class);
+
+    verify(userRepository, never()).findById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("사용자 정보 조회 - 실패(찾는 유저가 없음)")
+  void failFindUserCauseNotFoundUser() {
+    UUID userId = UUID.randomUUID();
+    User user = new User("user", "password123", "user@mail.com");
+
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+
+    UserDto findUser = userService.find(userId);
+
+    assertThat("user").isEqualTo(findUser.nickname());
+    assertThat("user@mail.com").isEqualTo(findUser.email());
+
+    verify(userRepository).findById(any(UUID.class));
+  }
 }
