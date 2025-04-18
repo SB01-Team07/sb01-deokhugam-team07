@@ -12,6 +12,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -89,5 +90,17 @@ class UserServiceTest {
     assertThat("test").isEqualTo(loginedUser.nickname());
 
     verify(userRepository).findByEmail(any(String.class));
+  }
+
+  @Test
+  @DisplayName("유저 로그인 - 실패(없는 유저)")
+  void notFoundUserLogin() {
+    UserLoginRequest request = new UserLoginRequest("test@mail.com", "password123");
+
+    when(userRepository.findByEmail(any(String.class)))
+        .thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> userService.login(request))
+        .isInstanceOf(UserNotFoundException.class);
   }
 }
