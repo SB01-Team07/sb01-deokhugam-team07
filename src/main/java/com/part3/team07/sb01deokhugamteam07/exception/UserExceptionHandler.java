@@ -5,7 +5,9 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +25,14 @@ public class UserExceptionHandler {
     log.error("Duplicate Email: {}", e.getRequest().email());
 
     return e.getRequest();
+  }
+
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(UserNotFoundException.class)
+  public UUID userNotFound(UserNotFoundException e) {
+    log.error("User Not Found: {}", e.getUserId());
+
+    return e.getUserId();
   }
 
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
