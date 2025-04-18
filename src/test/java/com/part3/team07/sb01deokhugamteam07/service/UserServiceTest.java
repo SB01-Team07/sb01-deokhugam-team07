@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
@@ -70,5 +71,22 @@ class UserServiceTest {
         .isInstanceOf(DuplicateUserEmailException.class);
 
     verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  @DisplayName("유저 로그인 - 성공")
+  void login() {
+    UserLoginRequest request = new UserLoginRequest("test@mail.com", "password123");
+    User user = new User("test", "password123", "test@mail.com");
+
+    when(userRepository.findByEmail(any(String.class)))
+        .thenReturn(user);
+
+    UserDto loginedUser = userService.login(request);
+
+    assertThat("test@mail.com").isEqualTo(loginedUser.email());
+    assertThat("test").isEqualTo(loginedUser.nickname());
+
+    verify(userRepository).findByEmail(any(String.class));
   }
 }
