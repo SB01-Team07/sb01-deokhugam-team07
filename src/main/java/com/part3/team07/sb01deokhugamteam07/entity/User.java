@@ -28,4 +28,8 @@ public class User extends BaseSoftDeletableEntity {
   @Column(nullable = false)
   private String email;
 
+  public void changeNickname(String nickname) {
+    this.nickname = nickname;
+  }
+
 }
