@@ -239,4 +239,22 @@ class UserServiceTest {
     assertThatThrownBy(() -> userService.logicalDelete(userId))
         .isInstanceOf(UserNotFoundException.class);
   }
+
+  @Test
+  @DisplayName("사용자 물리 삭제")
+  void physicalDelete() throws Exception {
+    UUID userId = UUID.randomUUID();
+    User user = new User("user", "password123", "user@mail.com");
+    user.logiDelete();
+
+    when(userRepository.existsById(any(UUID.class)))
+        .thenReturn(true);
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+
+    userService.physicalDelete(userId);
+
+    assertThatThrownBy(() -> userService.find(userId))
+        .isInstanceOf(UserNotFoundException.class);
+  }
 }
