@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
@@ -39,5 +40,9 @@ public class UserService {
         .email(savedUser.getEmail())
         .createdAt(savedUser.getCreatedAt())
         .build();
+  }
+
+  public UserDto login(UserLoginRequest request) {
+    return null;
   }
 }
