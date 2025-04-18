@@ -5,6 +5,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +45,19 @@ public class UserService {
   }
 
   public UserDto login(UserLoginRequest request) {
-    return null;
+    User user = userRepository.findByEmail(request.email()).orElse(null);
+    if (user == null) {
+      throw new UserNotFoundException(request);
+    }
+    if (!request.password().equals(user.getPassword())) {
+      throw new IllegalUserPasswordException(request);
+    }
+
+    return UserDto.builder()
+        .id(user.getId())
+        .nickname(user.getNickname())
+        .email(user.getEmail())
+        .createdAt(user.getCreatedAt())
+        .build();
   }
 }
