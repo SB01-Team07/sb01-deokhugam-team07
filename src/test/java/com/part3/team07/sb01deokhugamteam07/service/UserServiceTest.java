@@ -80,10 +80,13 @@ class UserServiceTest {
   @DisplayName("유저 로그인 - 성공")
   void login() {
     UserLoginRequest request = new UserLoginRequest("test@mail.com", "password123");
-    User user = new User("test", "password123", "test@mail.com");
+
+    User user = new User("test", "encodedpassword123", "test@mail.com");
 
     when(userRepository.findByEmail(any(String.class)))
         .thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(any(String.class), any(String.class)))
+        .thenReturn(true);
 
     UserDto loginedUser = userService.login(request);
 
