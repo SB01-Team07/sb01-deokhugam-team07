@@ -13,6 +13,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,7 +81,7 @@ class UserServiceTest {
     User user = new User("test", "password123", "test@mail.com");
 
     when(userRepository.findByEmail(any(String.class)))
-        .thenReturn(user);
+        .thenReturn(Optional.of(user));
 
     UserDto loginedUser = userService.login(request);
 
