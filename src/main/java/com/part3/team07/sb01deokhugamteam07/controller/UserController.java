@@ -26,7 +26,7 @@ public class UserController {
     return userService.register(request);
   }
 
-  @PostMapping
+  @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
   public UserDto login(@RequestBody @Validated UserLoginRequest request) {
     return userService.login(request);
