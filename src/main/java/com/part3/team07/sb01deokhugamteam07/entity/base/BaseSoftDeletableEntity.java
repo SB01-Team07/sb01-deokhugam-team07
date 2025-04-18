@@ -14,4 +14,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseSoftDeletableEntity extends BaseEntity {
 
   private boolean isDeleted;
+
+  protected void delete() {
+    this.isDeleted = true;
+  }
+
+  protected void restore() {
+    this.isDeleted = false;
+  }
 }
