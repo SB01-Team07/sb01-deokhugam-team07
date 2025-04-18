@@ -157,4 +157,21 @@ class UserServiceTest {
     verify(userRepository, never()).findById(any(UUID.class));
   }
 
+  @Test
+  @DisplayName("사용자 정보 조회")
+  void findUser() throws Exception {
+    UUID userId = UUID.randomUUID();
+    User user = new User("user1", "password123", "user1@mail.com");
+
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+
+    UserDto findUser = userService.find(userId);
+
+    assertThat("user1").isEqualTo(findUser.nickname());
+    assertThat("user1@mail.com").isEqualTo(findUser.email());
+
+    verify(userRepository).findById(any(UUID.class));
+  }
+
 }

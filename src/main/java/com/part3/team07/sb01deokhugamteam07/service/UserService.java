@@ -84,4 +84,8 @@ public class UserService {
       throw new DuplicateUserEmailException(request);
     }
   }
+
+  public UserDto find(UUID userId) {
+    return null;
+  }
 }
