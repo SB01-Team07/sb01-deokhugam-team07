@@ -10,12 +10,14 @@ import static org.mockito.Mockito.when;
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,4 +122,24 @@ class UserServiceTest {
     assertThatThrownBy(() -> userService.login(request))
         .isInstanceOf(IllegalUserPasswordException.class);
   }
+
+  @Test
+  @DisplayName("유저 수정")
+  void modifyUser() {
+    UUID userId = UUID.randomUUID();
+
+    UserUpdateRequest request = new UserUpdateRequest("newNickName");
+
+    User oldUser = new User("old", "password1234", "old@mail.com");
+
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(oldUser));
+
+    UserDto updatedUser = userService.update(request);
+
+    assertThat("newNickName").isEqualTo(updatedUser.nickname());
+
+    verify(userRepository).findById(any(UUID.class));
+  }
+
 }
