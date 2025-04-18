@@ -45,7 +45,7 @@ CREATE TABLE reviews
     CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES
         users (id) ON DELETE CASCADE,
     CONSTRAINT fk_review_book FOREIGN KEY (book_id) REFERENCES
-        books (id) ON DELETE CASCADE,
+        books (id) ON DELETE CASCADE
 );
 
 CREATE TABLE comments
@@ -60,7 +60,7 @@ CREATE TABLE comments
     CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES
         users (id) ON DELETE CASCADE,
     CONSTRAINT fk_comment_review FOREIGN KEY (review_id) REFERENCES
-        reviews (id) ON DELETE CASCADE,
+        reviews (id) ON DELETE CASCADE
 );
 
 CREATE TABLE notifications
@@ -83,7 +83,7 @@ CREATE TABLE likes
     CONSTRAINT unique_review_like UNIQUE (user_id, review_id)
 );
 
-CREATE TABLE dashborads
+CREATE TABLE dashboards
 (
     id         UUID PRIMARY KEY,
     created_at TIMESTAMP     NOT NULL,
