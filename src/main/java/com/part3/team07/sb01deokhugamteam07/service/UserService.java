@@ -48,7 +48,7 @@ public class UserService {
     User user = userRepository.findByEmail(request.email())
         .orElseThrow(() -> new UserNotFoundException(request));
 
-    if (!request.password().equals(user.getPassword())) {
+    if (!passwordEncoder.matches(request.password(), user.getPassword())) {
       throw new IllegalUserPasswordException(request);
     }
 
