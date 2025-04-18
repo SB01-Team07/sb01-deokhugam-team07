@@ -74,6 +74,12 @@ dependencies {
     implementation("software.amazon.awssdk:s3-transfer-manager:2.31.14")
     implementation("software.amazon.awssdk.crt:aws-crt:0.34.1")
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
 }
 
 tasks.named('test') {
