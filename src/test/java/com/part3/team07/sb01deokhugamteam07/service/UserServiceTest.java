@@ -132,10 +132,12 @@ class UserServiceTest {
 
     User oldUser = new User("old", "password1234", "old@mail.com");
 
+    when(userRepository.existsById(any(UUID.class)))
+        .thenReturn(true);
     when(userRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(oldUser));
 
-    UserDto updatedUser = userService.update(request);
+    UserDto updatedUser = userService.update(userId, request);
 
     assertThat("newNickName").isEqualTo(updatedUser.nickname());
 
