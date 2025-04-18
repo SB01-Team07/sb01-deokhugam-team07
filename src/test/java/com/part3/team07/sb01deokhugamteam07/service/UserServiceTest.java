@@ -144,4 +144,17 @@ class UserServiceTest {
     verify(userRepository).findById(any(UUID.class));
   }
 
+  @Test
+  @DisplayName("유저 수정 - 실패(업데이트할 유저가 없음)")
+  void failUserUpdate() throws Exception {
+    UUID userId = UUID.randomUUID();
+
+    UserUpdateRequest request = new UserUpdateRequest("newNickname");
+
+    assertThatThrownBy(() -> userService.update(userId, request))
+        .isInstanceOf(UserNotFoundException.class);
+
+    verify(userRepository, never()).findById(any(UUID.class));
+  }
+
 }
