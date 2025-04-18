@@ -25,6 +25,12 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
+  /**
+  * @methodName : register
+  * @date : 2025. 4. 17. 11:43
+  * @author : wongil
+  * @Description: 회원가입
+  **/
   public UserDto register(UserRegisterRequest request) {
     validateEmail(request);
     String encodedPassword = passwordEncoder.encode(request.password());
@@ -45,6 +51,12 @@ public class UserService {
         .build();
   }
 
+  /**
+  * @methodName : login
+  * @date : 2025. 4. 18. 13:43
+  * @author : wongil
+  * @Description: 유저 로그인
+  **/
   public UserDto login(UserLoginRequest request) {
     User user = userRepository.findByEmail(request.email())
         .orElseThrow(() -> new UserNotFoundException(request));
@@ -61,13 +73,16 @@ public class UserService {
         .build();
   }
 
+  /**
+  * @methodName : update
+  * @date : 2025. 4. 18. 14:43
+  * @author : wongil
+  * @Description: 유저 수정
+  **/
   public UserDto update(UUID userId, UserUpdateRequest request) {
-    if (!userRepository.existsById(userId)) {
-      throw new UserNotFoundException(userId);
-    }
+    isExistsUser(userId);
 
-    User findUser = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+    User findUser = findUser(userId);
 
     findUser.changeNickname(request.nickname());
 
@@ -79,19 +94,17 @@ public class UserService {
         .build();
   }
 
-  private void validateEmail(UserRegisterRequest request) {
-    if (userRepository.existsByEmail(request.email())) {
-      throw new DuplicateUserEmailException(request);
-    }
-  }
-
+  /**
+  * @methodName : find
+  * @date : 2025. 4. 18. 16:43
+  * @author : wongil
+  * @Description: 유저 조회
+  **/
   public UserDto find(UUID userId) {
-    if (userId == null) {
-      throw new IllegalArgumentException();
-    }
+    validateUserId(userId);
 
-    User findUser = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+    User findUser = findUser(userId);
+    isDeleted(userId, findUser);
 
     return UserDto.builder()
         .id(findUser.getId())
@@ -99,5 +112,48 @@ public class UserService {
         .createdAt(findUser.getCreatedAt())
         .nickname(findUser.getNickname())
         .build();
+  }
+
+  /**
+  * @methodName : logicalDelete
+  * @date : 2025. 4. 18. 16:43
+  * @author : wongil
+  * @Description: 유저 삭제
+  **/
+  public void logicalDelete(UUID userId) {
+    validateUserId(userId);
+    isExistsUser(userId);
+
+    User user = findUser(userId);
+    user.logiDelete();
+  }
+
+  private void isDeleted(UUID userId, User findUser) {
+    if (findUser.isDeleted()) {
+      throw new UserNotFoundException(userId);
+    }
+  }
+
+  private void validateUserId(UUID userId) {
+    if (userId == null) {
+      throw new IllegalArgumentException();
+    }
+  }
+
+  private User findUser(UUID userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+  }
+
+  private void validateEmail(UserRegisterRequest request) {
+    if (userRepository.existsByEmail(request.email())) {
+      throw new DuplicateUserEmailException(request);
+    }
+  }
+
+  private void isExistsUser(UUID userId) {
+    if (!userRepository.existsById(userId)) {
+      throw new UserNotFoundException(userId);
+    }
   }
 }
