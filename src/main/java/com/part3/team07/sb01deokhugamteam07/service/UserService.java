@@ -45,10 +45,9 @@ public class UserService {
   }
 
   public UserDto login(UserLoginRequest request) {
-    User user = userRepository.findByEmail(request.email()).orElse(null);
-    if (user == null) {
-      throw new UserNotFoundException(request);
-    }
+    User user = userRepository.findByEmail(request.email())
+        .orElseThrow(() -> new UserNotFoundException(request));
+
     if (!request.password().equals(user.getPassword())) {
       throw new IllegalUserPasswordException(request);
     }
