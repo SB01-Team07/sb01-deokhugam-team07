@@ -22,12 +22,13 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
 
   private final JPAQueryFactory queryFactory;
 
+  // 생성자: JPAQueryFactory 주입
   public DashboardRepositoryCustomImpl(JPAQueryFactory queryFactory) {
     this.queryFactory = queryFactory;
   }
 
   /**
-   * Power User Dashboard 조회합니다.
+   * 파워 유저 대시보드를 조회합니다. 커서 기반의 페이지네이션을 지원하며, 주어진 기간에 대한 유저의 랭킹과 그에 해당하는 데이터를 반환합니다.
    *
    * @param period    조회할 기간 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
    * @param direction 정렬 뱡향 (e.g. asc(default), desc)
@@ -40,10 +41,12 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
       String after, int limit) {
 
     QDashboard dashBoard = QDashboard.dashboard;
+    
+    // 정렬 방향 설정
     boolean isAsc = "asc".equalsIgnoreCase(direction);
     Order orderDirection = isAsc ? Order.ASC : Order.DESC;
 
-    // 기본 조건
+    // 기본 조건 : 기간, 키타입, 값타입 설정
     BooleanBuilder builder = new BooleanBuilder()
         .and(dashBoard.period.eq(period))
         .and(dashBoard.keyType.eq(KeyType.USER))
@@ -76,7 +79,7 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
       builder.and(dashBoard.rank.gt(0));
     }
 
-    // 정렬 조건
+    // 랭킹 기준으로 정렬
     OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(orderDirection, dashBoard.rank);
 
     // 결과 조회
