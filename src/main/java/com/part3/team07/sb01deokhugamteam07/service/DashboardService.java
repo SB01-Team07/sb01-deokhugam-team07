@@ -7,6 +7,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -36,14 +37,8 @@ public class DashboardService {
    * @param direction 정렬 뱡향 (e.g. asc(default), desc)
    * @param after     createAt 기반 보조 커서
    * @param limit     가져올 개수
-   * @return 커서 기반 페이지 응답 DTO (
-   *         content(PowerUser),
-   *         nextCursor,
-   *         nextAfter,
-   *         size,
-   *         totalElement,
-   *         hasNext
-   *         )
+   * @return 커서 기반 페이지 응답 DTO ( content(PowerUser), nextCursor, nextAfter, size, totalElement,
+   * hasNext )
    **/
   public CursorPageResponsePowerUserDto getPowerUsers(
       Period period,
@@ -72,6 +67,7 @@ public class DashboardService {
     List<UUID> userIds = dashboards.stream()
         .map(Dashboard::getKey)
         .toList();
+    // TODO User 쪽 "없을 때"관련 커스텀 예외가 있다면 추후에 적용
     List<User> users = userRepository.findAllById(userIds);
 
     // 4. 사용자 ID -> User 객체 매핑 (빠른 접근을 위해 Map 으로 변환)
@@ -85,10 +81,10 @@ public class DashboardService {
     List<PowerUserDto> content = new ArrayList<>();
     for (Dashboard d : dashboards) {
       User user = userMap.get(d.getKey());
-      Map<String, Double> metrics = userMetrics.get(d.getKey());
-      double reviewScoreSum = metrics.get("REVIEW_SCORE_SUM");
-      int likeCount = metrics.get("LIKE_COUNT").intValue();
-      int commentCount = metrics.get("COMMENT_COUNT").intValue();
+      Map<String, Double> metrics = userMetrics.getOrDefault(d.getKey(), Map.of());
+      double reviewScoreSum = metrics.get(ValueType.REVIEW_SCORE_SUM.name());
+      int likeCount = metrics.get(ValueType.LIKE_COUNT.name()).intValue();
+      int commentCount = metrics.get(ValueType.COMMENT_COUNT.name()).intValue();
 
       if (user != null) {
         content.add(
@@ -108,11 +104,9 @@ public class DashboardService {
     }
 
     // 7. 다음 페이지 커서 및 after 값 설정
-    String nextCursor = hasNext && !dashboards.isEmpty() ? String.valueOf(
-        dashboards.get(dashboards.size() - 1).getRank()) : null;
-    LocalDateTime nextAfter =
-        hasNext && !dashboards.isEmpty() ? dashboards.get(dashboards.size() - 1).getCreatedAt()
-            : null;
+    String nextCursor =
+        hasNext ? String.valueOf(dashboards.get(dashboards.size() - 1).getRank()) : null;
+    LocalDateTime nextAfter = hasNext ? dashboards.get(dashboards.size() - 1).getCreatedAt() : null;
 
     // 8. 전체 User 수 (기간 + USER 키타입 조건)
     long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.USER, period);
