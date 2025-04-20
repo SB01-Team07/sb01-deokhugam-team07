@@ -15,19 +15,19 @@ CREATE TABLE users
 
 CREATE TABLE books
 (
-    id                  UUID PRIMARY KEY,
-    created_at          TIMESTAMP     NOT NULL,
-    updated_at          TIMESTAMP,
-    is_deleted          BOOLEAN       NOT NULL DEFAULT FALSE,
-    title               VARCHAR(255)  NOT NULL,
-    author              VARCHAR(255)  NOT NULL,
-    description         TEXT          NOT NULL,
-    publisher           VARCHAR(255)  NOT NULL,
-    publish_date        DATE          NOT NULL,
-    isbn                VARCHAR(255) UNIQUE,
-    thumbnail_file_name TEXT,
-    review_count        INTEGER       NOT NULL DEFAULT 0,
-    rating              DECIMAL(2, 1) NOT NULL DEFAULT 0.0
+    id           UUID PRIMARY KEY,
+    created_at   TIMESTAMP     NOT NULL,
+    updated_at   TIMESTAMP,
+    is_deleted   BOOLEAN       NOT NULL DEFAULT FALSE,
+    title        VARCHAR(255)  NOT NULL,
+    author       VARCHAR(255)  NOT NULL,
+    description  TEXT          NOT NULL,
+    publisher    VARCHAR(255)  NOT NULL,
+    publish_date DATE          NOT NULL,
+    isbn         VARCHAR(255) UNIQUE,
+    thumbnailUrl TEXT,
+    review_count INTEGER       NOT NULL DEFAULT 0,
+    rating       DECIMAL(2, 1) NOT NULL
 );
 
 CREATE TABLE reviews
@@ -98,3 +98,6 @@ CREATE TABLE dashboards
 CREATE INDEX idx_books_is_deleted_title ON books (is_deleted, title);
 CREATE INDEX idx_reviews_is_deleted_created_at ON reviews (is_deleted, created_at);
 CREATE INDEX idx_reviews_is_deleted_rating ON reviews (is_deleted, rating);
+
+-- dashboards rank 컬럼 추가
+ALTER TABLE dashboards ADD COLUMN rank INT;
