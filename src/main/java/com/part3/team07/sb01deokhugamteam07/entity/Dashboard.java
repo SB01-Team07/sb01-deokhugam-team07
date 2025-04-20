@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "dashboards")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Dashboarad extends BaseEntity {
+public class Dashboard extends BaseEntity {
 
   @Column(nullable = false)
   private UUID key;
@@ -38,5 +38,8 @@ public class Dashboarad extends BaseEntity {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private ValueType valueType;
+
+  @Column(nullable = false)
+  private int rank;
 
 }

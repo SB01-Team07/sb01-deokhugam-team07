@@ -88,13 +88,16 @@ CREATE TABLE dashboards
     id         UUID PRIMARY KEY,
     created_at TIMESTAMP     NOT NULL,
     updated_at TIMESTAMP,
-    key        UUID          NOT NULL,
+    "key"        UUID          NOT NULL, -- 예약어로 인한 따옴표 추가
     key_type   key_type      NOT NULL,
     period     period       NOT NULL,
-    value      DECIMAL(5, 2) NOT NULL,
+    "value"      DECIMAL(5, 2) NOT NULL, -- 예약어로 인한 따옴표 추가
     value_type value_type    NOT NULL
 );
 
 CREATE INDEX idx_books_is_deleted_title ON books (is_deleted, title);
 CREATE INDEX idx_reviews_is_deleted_created_at ON reviews (is_deleted, created_at);
 CREATE INDEX idx_reviews_is_deleted_rating ON reviews (is_deleted, rating);
+
+-- dashboards rank 컬럼 추가
+ALTER TABLE dashboards ADD COLUMN rank INT;
