@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.eq;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
@@ -73,7 +74,6 @@ class CommentServiceTest {
 
     testUser = new User("testUser", "1234", "test@test.com");
     ReflectionTestUtils.setField(testUser, "id", userId);
-
 
     testReview = new Review(testUser, testBook, "test", 0, 2, 1);
     ReflectionTestUtils.setField(testReview, "id", reviewId);
@@ -151,6 +151,30 @@ class CommentServiceTest {
         .isInstanceOf(NoSuchElementException.class); // 예외 추가 시 변경 예정
 
   }
+
+  @Test
+  @DisplayName("댓글 수정 성공")
+  void updateComment(){
+    //given
+    String newContent = "updated content";
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
+
+    UUID requestUserId = testUser.getId();
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
+
+    //when
+    CommentDto result = commentService.update(commentId, requestUserId, updateRequest);
+
+    //then
+    assertThat(result).isNotNull();
+    assertThat(result.content()).isEqualTo(newContent);
+    verify(commentRepository).save(any(Comment.class));
+  }
+
+
 
 
 }
