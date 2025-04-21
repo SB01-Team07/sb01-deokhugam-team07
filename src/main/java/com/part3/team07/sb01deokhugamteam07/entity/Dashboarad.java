@@ -22,9 +22,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Dashboarad extends BaseEntity {
 
-  @Column(nullable = false)
+  //@Column(nullable = false)
+  @Column(name = "\"key\"", nullable = false)  //수정
   private UUID key;
 
+  @Enumerated(EnumType.STRING) //추가함 (옵션 빠져있음)
   @Column(nullable = false)
   private KeyType keyType;
 
@@ -32,7 +34,8 @@ public class Dashboarad extends BaseEntity {
   @Column(nullable = false)
   private Period period;
 
-  @Column(nullable = false)
+  //@Column(nullable = false)
+  @Column(name = "\"value\"", nullable = false) //추가함
   private double value;
 
   @Enumerated(EnumType.STRING)
