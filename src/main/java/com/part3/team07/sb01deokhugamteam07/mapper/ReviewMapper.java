@@ -9,19 +9,19 @@ public class ReviewMapper {
 
     public static ReviewDto toDto(User user, Book book, Review review) {
         return new ReviewDto(
-                review.getId().toString(),
-                book.getId().toString(),
+                review.getId(),
+                book.getId(),
                 book.getTitle(),
                 book.getThumbnailUrl(),
-                user.getId().toString(),
+                user.getId(),
                 user.getNickname(),
                 review.getContent(),
                 review.getRating(),
                 review.getLikeCount(),
                 review.getCommentCount(),
                 false, // likeByMe는 기본 false
-                review.getCreatedAt().toString(),
-                review.getUpdatedAt().toString()
+                review.getCreatedAt(),
+                review.getUpdatedAt()
         );
     }
 }
