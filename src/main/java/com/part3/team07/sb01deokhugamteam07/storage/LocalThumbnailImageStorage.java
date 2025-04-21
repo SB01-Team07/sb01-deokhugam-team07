@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.storage;
 
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -20,9 +21,25 @@ public class LocalThumbnailImageStorage implements ThumbnailImageStorage {
     this.root = root;
   }
 
+  @PostConstruct
+  public void init() {
+    if (!Files.exists(root)) {
+      try {
+        Files.createDirectories(root);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
   @Override
   public void put(String fileName, byte[] bytes) {
-    try (OutputStream outputStream = Files.newOutputStream(root.resolve(fileName))) {
+    Path filePath = resolvePath(fileName);
+    if (Files.exists(filePath)) {
+      throw new IllegalArgumentException("File with key " + fileName + " already exists.");
+    }
+
+    try (OutputStream outputStream = Files.newOutputStream(filePath)) {
       outputStream.write(bytes);
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -31,6 +48,11 @@ public class LocalThumbnailImageStorage implements ThumbnailImageStorage {
 
   @Override
   public String get(String fileName) {
+    Path filePath = resolvePath(fileName);
+    if (Files.notExists(filePath)) {
+      throw new IllegalArgumentException("File with key " + fileName + " dose not exist.");
+    }
+
     return "/storage/" + fileName;
   }
 
