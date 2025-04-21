@@ -37,24 +37,14 @@ public class Book extends BaseSoftDeletableEntity {
   @Column(unique = true, updatable = false)
   private String isbn;
 
-  private String thumbnailUrl;
+  private String thumbnailFileName;
 
   @Column(nullable = false)
-  private int reviewCount;
+  @Builder.Default
+  private int reviewCount = 0;
 
   @Column(nullable = false)
-  private double rating;
+  @Builder.Default
+  private double rating = 0;
 
-  public Book(String title, String author, String description, String publisher,
-      LocalDate publishDate, String isbn, String thumbnailUrl) {
-    this.title = title;
-    this.author = author;
-    this.description = description;
-    this.publisher = publisher;
-    this.publishDate = publishDate;
-    this.isbn = isbn;
-    this.thumbnailUrl = thumbnailUrl;
-    this.reviewCount = 0;
-    this.rating = 0;
-  }
 }

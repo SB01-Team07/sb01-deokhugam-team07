@@ -27,15 +27,15 @@ public class BookService {
       throw new DuplicateIsbnException();
     }
 
-    Book book = new Book(
-        "title",
-        "author",
-        "description",
-        "publisher",
-        LocalDate.now(),
-        "isbn",
-        "thumbnail"
-    );
+    Book book = Book.builder()
+        .title(request.title())
+        .author(request.author())
+        .description(request.description())
+        .publisher(request.publisher())
+        .publishDate(request.publishedDate())
+        .isbn(request.isbn())
+        .thumbnailFileName("")
+        .build();
     Book savedBook = bookRepository.save(book);
 
     return bookMapper.toDto(savedBook);

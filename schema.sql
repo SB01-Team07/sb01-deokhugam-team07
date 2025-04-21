@@ -15,19 +15,19 @@ CREATE TABLE users
 
 CREATE TABLE books
 (
-    id           UUID PRIMARY KEY,
-    created_at   TIMESTAMP     NOT NULL,
-    updated_at   TIMESTAMP,
-    is_deleted   BOOLEAN       NOT NULL DEFAULT FALSE,
-    title        VARCHAR(255)  NOT NULL,
-    author       VARCHAR(255)  NOT NULL,
-    description  TEXT          NOT NULL,
-    publisher    VARCHAR(255)  NOT NULL,
-    publish_date DATE          NOT NULL,
-    isbn         VARCHAR(255) UNIQUE,
-    thumbnailUrl TEXT,
-    review_count INTEGER       NOT NULL DEFAULT 0,
-    rating       DECIMAL(2, 1) NOT NULL DEFAULT 0.0
+    id                  UUID PRIMARY KEY,
+    created_at          TIMESTAMP     NOT NULL,
+    updated_at          TIMESTAMP,
+    is_deleted          BOOLEAN       NOT NULL DEFAULT FALSE,
+    title               VARCHAR(255)  NOT NULL,
+    author              VARCHAR(255)  NOT NULL,
+    description         TEXT          NOT NULL,
+    publisher           VARCHAR(255)  NOT NULL,
+    publish_date        DATE          NOT NULL,
+    isbn                VARCHAR(255) UNIQUE,
+    thumbnail_file_name TEXT,
+    review_count        INTEGER       NOT NULL DEFAULT 0,
+    rating              DECIMAL(2, 1) NOT NULL DEFAULT 0.0
 );
 
 CREATE TABLE reviews
@@ -90,7 +90,7 @@ CREATE TABLE dashboards
     updated_at TIMESTAMP,
     key        UUID          NOT NULL,
     key_type   key_type      NOT NULL,
-    period     period       NOT NULL,
+    period period NOT NULL,
     value      DECIMAL(5, 2) NOT NULL,
     value_type value_type    NOT NULL
 );
