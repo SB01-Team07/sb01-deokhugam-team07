@@ -17,6 +17,8 @@ import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -191,7 +193,7 @@ class CommentServiceTest {
 
     //when & then
     assertThatThrownBy(()-> commentService.update(commentId, otherUserId, updateRequest))
-        .isInstanceOf(IllegalArgumentException.class); // todo: 예외 추가 시 변경 예정
+        .isInstanceOf(CommentUnauthorizedException.class);
 
   }
 
@@ -208,7 +210,7 @@ class CommentServiceTest {
 
     //when & then
     assertThatThrownBy(()-> commentService.update(commentId, userId, updateRequest))
-        .isInstanceOf(NoSuchElementException.class); // todo: 예외 추가 시 변경 예정
+        .isInstanceOf(CommentNotFoundException.class);
 
   }
 
