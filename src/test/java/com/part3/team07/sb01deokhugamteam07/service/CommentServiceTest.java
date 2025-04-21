@@ -3,7 +3,6 @@ package com.part3.team07.sb01deokhugamteam07.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
@@ -119,6 +118,7 @@ class CommentServiceTest {
   @DisplayName("댓글 생성 실패 - 유저 존재X")
   void createCommentFailByUserNotFound(){
     //given
+    given(reviewRepository.findById(reviewId)).willReturn(Optional.of(testReview));
     given(userRepository.findById(eq(userId))).willReturn(Optional.empty());
 
     CommentCreateRequest createRequest = new CommentCreateRequest(
@@ -129,7 +129,7 @@ class CommentServiceTest {
 
     //when & then
     assertThatThrownBy(()-> commentService.create(createRequest))
-        .isInstanceOf(NoSuchElementException.class); // 예외 추가 시 변경 예정
+        .isInstanceOf(NoSuchElementException.class); // todo: 예외 추가 시 변경 예정
 
   }
 
@@ -137,7 +137,6 @@ class CommentServiceTest {
   @DisplayName("댓글 생성 실패 - 리뷰 존재X")
   void createCommentFailByReviewNotFound(){
     //given
-    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.empty());
 
     CommentCreateRequest createRequest = new CommentCreateRequest(
@@ -148,7 +147,7 @@ class CommentServiceTest {
 
     //when & then
     assertThatThrownBy(()-> commentService.create(createRequest))
-        .isInstanceOf(NoSuchElementException.class); // 예외 추가 시 변경 예정
+        .isInstanceOf(NoSuchElementException.class); // todo: 예외 추가 시 변경 예정
 
   }
 
@@ -174,7 +173,41 @@ class CommentServiceTest {
     verify(commentRepository).save(any(Comment.class));
   }
 
+  @Test
+  @DisplayName("댓글 수정 실패 - 권한없음")
+  void updateCommentFailByUnauthorizedUser(){
+    //given
+    UUID otherUserId = UUID.randomUUID();
+    String newContent = "updated content";
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(otherUserId)))
+        .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
 
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
 
+    //when & then
+    assertThatThrownBy(()-> commentService.update(commentId, otherUserId, updateRequest))
+        .isInstanceOf(IllegalArgumentException.class); // todo: 예외 추가 시 변경 예정
+
+  }
+
+  @Test
+  @DisplayName("댓글 수정 실패 - 댓글 존재X")
+  void updateCommentFailCommentNotFound(){
+    //given
+    String newContent = "updated content";
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
+
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
+
+    //when & then
+    assertThatThrownBy(()-> commentService.update(commentId, userId, updateRequest))
+        .isInstanceOf(NoSuchElementException.class); // todo: 예외 추가 시 변경 예정
+
+  }
 
 }

@@ -55,13 +55,13 @@ public class CommentService {
   public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest){
     log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId, updateRequest);
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new NoSuchElementException("댓글을 찾을 수 없습니다.")); // 예외 추가 시 변경 예정
+        .orElseThrow(() -> new NoSuchElementException("댓글을 찾을 수 없습니다.")); // todo: 예외 추가 시 변경 예정
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다.")); // 예외 추가 시 변경 예정
+        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다.")); // todo: 예외 추가 시 변경 예정
 
     if (!comment.getUser().getId().equals(user.getId())){
-      throw new IllegalArgumentException("댓글 수정 권한 없음.");
+      throw new IllegalArgumentException("댓글 수정 권한 없음."); // todo: 예외 추가 시 변경 예정
     }
 
     comment.update(updateRequest.content());
