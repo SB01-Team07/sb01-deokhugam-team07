@@ -8,6 +8,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,14 +23,12 @@ public class CommentService {
   private final ReviewRepository reviewRepository;
 
   public CommentDto create(CommentCreateRequest createRequest) {
-    log.info("createRequest.userId() = {}", createRequest.userId());
-    log.info("createRequest.reviewId() = {}", createRequest.reviewId());
-
+    log.debug("create comment {}", createRequest);
     User user = userRepository.findById(createRequest.userId())
-        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));// 예외 추가 시 변경 예정
 
     Review review = reviewRepository.findById(createRequest.reviewId())
-        .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다.")); // 예외 추가 시 변경 예정
 
     Comment comment = Comment.builder()
         .user(user)
@@ -39,6 +38,7 @@ public class CommentService {
 
     commentRepository.save(comment);
 
+    log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
     return CommentDto.builder()
         .id(comment.getId())
         .reviewId(review.getId())
