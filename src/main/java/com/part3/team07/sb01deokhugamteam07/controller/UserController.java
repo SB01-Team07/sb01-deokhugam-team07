@@ -9,6 +9,10 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final AuthenticationManager authenticationManager;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -43,11 +48,15 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<UserDto> loginUser(@RequestBody @Validated UserLoginRequest request) {
 
-    UserDto loginedUser = userService.login(request);
+    Authentication auth = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(request.email(), request.password())
+    );
 
-    return ResponseEntity.ok()
-        .header("Deokhugam-Request-User-ID", loginedUser.id().toString())
-        .body(loginedUser);
+    // SecurityContext에 저장
+    SecurityContextHolder.getContext().setAuthentication(auth);
+
+    UserDto loginUser = userService.login(request);
+    return ResponseEntity.ok(loginUser);
   }
 
   @PostMapping("/{userId}")
