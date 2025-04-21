@@ -9,6 +9,7 @@ public class UserNotFoundException extends RuntimeException {
 
   private UserLoginRequest userLoginRequest;
   private UUID userId;
+  private String email;
 
   public UserNotFoundException(UserLoginRequest userLoginRequest) {
     this.userLoginRequest = userLoginRequest;
@@ -18,4 +19,7 @@ public class UserNotFoundException extends RuntimeException {
     this.userId = userId;
   }
 
+  public UserNotFoundException(String email) {
+    this.email = email;
+  }
 }
