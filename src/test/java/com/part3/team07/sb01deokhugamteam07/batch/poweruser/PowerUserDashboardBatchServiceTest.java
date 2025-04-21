@@ -1,13 +1,17 @@
 package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
 
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
+import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +26,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class PowerUserDashboardBatchServiceTest {
+
 
   @InjectMocks
   private PowerUserDashboardBatchService powerUserDashboardBatchService;

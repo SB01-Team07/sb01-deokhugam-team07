@@ -4,11 +4,21 @@ import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
+@Component
 public class DateRangeUtil {
   private final Clock clock;
+
+  // 운영용 생성자
+  public DateRangeUtil() {
+    this.clock = Clock.systemDefaultZone();
+  }
+
+  // 테스트용 생성자
+  public DateRangeUtil(Clock clock) {
+    this.clock = clock;
+  }
 
   public LocalDate[] getDateRange(Period period) {
     LocalDate now = LocalDate.now(clock);
