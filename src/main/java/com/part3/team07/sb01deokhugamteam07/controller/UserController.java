@@ -59,4 +59,10 @@ public class UserController {
   public void logicalDelete(@PathVariable("userId") UUID userId) {
     userService.logicalDelete(userId);
   }
+
+  @DeleteMapping("/{userId}/hard")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void physicalDelete(@PathVariable("userId") UUID userId) {
+    userService.physicalDelete(userId);
+  }
 }
