@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -107,7 +108,11 @@ class CommentServiceTest {
 
     //then
     assertThat(result).isNotNull();
-    verify(commentRepository).save(any(Comment.class));
+    verify(commentRepository).save(argThat(savedComment ->
+        savedComment.getContent().equals("test") &&
+            savedComment.getUser().equals(testUser) &&
+            savedComment.getReview().equals(testReview)
+    ));
   }
 
   @Test
