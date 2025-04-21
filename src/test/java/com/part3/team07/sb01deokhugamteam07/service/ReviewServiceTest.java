@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -124,6 +125,20 @@ class ReviewServiceTest {
         //then
         assertThat(result).isEqualTo(reviewDto);
         verify(reviewRepository).save(any(Review.class));
+    }
+
+    @DisplayName("이미 리뷰가 존재하는 경우 생성에 실패한다")
+    @Test
+    void createReview_Fail_DuplicateReview() {
+        //given
+        ReviewCreateRequest request = new ReviewCreateRequest(bookId, userId, "리뷰 내용", 5);
+
+        given(reviewRepository.existsByUserIdAndBookId(userId, bookId)).willReturn(true);
+
+        //when then
+        assertThatThrownBy(() -> reviewService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 해당 도서에 대한 리뷰가 존재합니다.");
     }
 
 }
