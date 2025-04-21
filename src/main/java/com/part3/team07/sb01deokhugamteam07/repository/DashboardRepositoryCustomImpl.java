@@ -13,20 +13,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 @Slf4j
+@RequiredArgsConstructor
 @Repository
 public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
-
-  // 생성자: JPAQueryFactory 주입
-  public DashboardRepositoryCustomImpl(JPAQueryFactory queryFactory) {
-    this.queryFactory = queryFactory;
-  }
-
   /**
    * 파워 유저 대시보드를 조회합니다. 커서 기반의 페이지네이션을 지원하며, 주어진 기간에 대한 유저의 랭킹과 그에 해당하는 데이터를 반환합니다.
    *
@@ -57,9 +53,9 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
       try {
         int rankCursor = Integer.parseInt(cursor);
         if (isAsc) {
-          builder.and(dashBoard.rank.gt(rankCursor));
+          builder.and(dashBoard.rank.goe(rankCursor));
         } else {
-          builder.and(dashBoard.rank.lt(rankCursor));
+          builder.and(dashBoard.rank.loe(rankCursor));
         }
       } catch (NumberFormatException e) {
         log.warn("findPowerUsersByPeriod()에 전달된 잘못된 cursor 값: {} : ", cursor);
@@ -68,9 +64,9 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
       try {
         LocalDateTime afterTime = LocalDateTime.parse(after);
         if (isAsc) {
-          builder.and(dashBoard.createdAt.gt(afterTime));
+          builder.and(dashBoard.createdAt.goe(afterTime));
         } else {
-          builder.and(dashBoard.createdAt.lt(afterTime));
+          builder.and(dashBoard.createdAt.loe(afterTime));
         }
       } catch (DateTimeException e) {
         log.warn("findPowerUsersByPeriod()에 전달된 잘못된 after 값: {} : ", after);
