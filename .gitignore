@@ -7,6 +7,8 @@ HELP.md
 **/application.yml
 **/application-*.yml
 .logs
+src/main/resources/static/storage/
+src/test/resources/static/storage/
 
 ### STS ###
 .apt_generated
