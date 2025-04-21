@@ -39,7 +39,7 @@ public class Dashboard extends BaseEntity {
   @Column(nullable = false)
   private ValueType valueType;
 
-  @Column(nullable = false)
-  private int rank;
+  @Column
+  private Integer rank;
 
 }
