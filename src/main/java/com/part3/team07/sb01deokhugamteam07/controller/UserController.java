@@ -4,15 +4,11 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserUpdateRequest;
-import com.part3.team07.sb01deokhugamteam07.security.JwtTokenProvider;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-  private final JwtTokenProvider jwtTokenProvider;
-  private final AuthenticationManager am;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -49,16 +43,10 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<UserDto> loginUser(@RequestBody @Validated UserLoginRequest request) {
 
-    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-        request.email(), request.password());
-    Authentication auth = am.authenticate(authToken);
-
     UserDto loginedUser = userService.login(request);
-    String token = jwtTokenProvider.generateToken(auth);
 
     return ResponseEntity.ok()
         .header("Deokhugam-Request-User-ID", loginedUser.id().toString())
-        .header("Authorization", token)
         .body(loginedUser);
   }
 
