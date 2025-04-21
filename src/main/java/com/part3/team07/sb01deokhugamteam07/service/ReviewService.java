@@ -20,9 +20,13 @@ public class ReviewService {
     public ReviewDto create(ReviewCreateRequest request){
 
 
+        userRepository.findById(request.userId())
+                .orElseThrow(()->new IllegalArgumentException("유저가 존재하지 않습니다."));
 
-        userRepository.existsById(request.userId());
-        request.userId()
+        bookRepository.findById(request.bookId())
+                .orElseThrow(()-> new IllegalArgumentException("책이 존재하지 않습니다."));
+
+
 
         return new ReviewDto(null,null,null,null,null,null,
                 null,0,0,0,true,null,null);

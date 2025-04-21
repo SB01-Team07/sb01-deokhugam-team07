@@ -1,10 +1,10 @@
 package com.part3.team07.sb01deokhugamteam07.dto.review.request;
 
-import com.part3.team07.sb01deokhugamteam07.dto.notification.UUID;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 
 public record ReviewCreateRequest (
     @NotNull(message = "책 아이디는 필수입니다.")
