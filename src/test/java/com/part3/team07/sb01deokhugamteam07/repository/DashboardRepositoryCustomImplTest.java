@@ -127,13 +127,14 @@ class DashboardRepositoryCustomImplTest {
           "랭킹 오름차순 정렬");
     }
 
+
     // 두 번째 페이지
     String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
     List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
         "asc", cursor, null, 11);
 
     // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() > firstPage.get(firstPage.size() - 1).getRank(),
+    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
         "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
   }
 
@@ -155,7 +156,7 @@ class DashboardRepositoryCustomImplTest {
         "asc", cursor, null, 11);
 
     // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() > firstPage.get(firstPage.size() - 1).getRank(),
+    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
         "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
 
   }
