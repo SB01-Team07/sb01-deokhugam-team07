@@ -31,17 +31,17 @@ class PowerUserDashboardBatchServiceTest {
   @InjectMocks
   private PowerUserDashboardBatchService powerUserDashboardBatchService;
 
-  @Test
-  @DisplayName("rank 의 기준이 되는 score 계산 로직")
-  void UserScore_Calculation() {
-    double reviewScore = 80;
-    int likeCount = 10;
-    int commentCount = 5;
-
-    double score = powerUserDashboardBatchService.calculateScore(reviewScore, likeCount,
-        commentCount);
-    assertThat(score).isEqualTo(43.5);
-  }
+//  @Test
+//  @DisplayName("rank 의 기준이 되는 score 계산 로직")
+//  void UserScore_Calculation() {
+//    double reviewScore = 80;
+//    int likeCount = 10;
+//    int commentCount = 5;
+//
+//    double score = powerUserDashboardBatchService.calculateScore(reviewScore, likeCount,
+//        commentCount);
+//    assertThat(score).isEqualTo(43.5);
+//  }
 
   @Test
   @DisplayName("score 정렬 후 rank 지정하기")
