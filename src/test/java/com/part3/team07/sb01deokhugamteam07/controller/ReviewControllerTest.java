@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
@@ -13,9 +14,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,24 +37,52 @@ class ReviewControllerTest {
 
     @DisplayName("리뷰를 생성할 수 있다.")
     @Test
-    void test() throws Exception {
+    void createReview_Success() throws Exception {
         //given
-        ReviewCreateRequest createRequest = new ReviewCreateRequest(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                "fake-content",
-                5
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+
+        ReviewCreateRequest createRequest = new ReviewCreateRequest(bookId, userId, "책입니다", 5
         );
 
+        ReviewDto reviewDto = new ReviewDto(
+                reviewId,
+                bookId,
+                "Book",
+                "url",
+                userId,
+                "User",
+                "책입니다",
+                5,
+                0,
+                0,
+                false,
+                now,
+                now
+        );
 
-        //whe then
+        given(reviewService.create(any(ReviewCreateRequest.class)))
+                .willReturn(reviewDto);
+
+        //when then
         mockMvc.perform(post("/api/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.bookId").exists())
-                .andExpect(jsonPath("$.userId").exists());
+                .andExpect(jsonPath("$.id").value(reviewId.toString()))
+                .andExpect(jsonPath("$.bookId").value(bookId.toString()))
+                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                .andExpect(jsonPath("$.bookTitle").value("Book"))
+                .andExpect(jsonPath("$.bookThumbnailUrl").value("url"))
+                .andExpect(jsonPath("$.userNickName").value("User"))
+                .andExpect(jsonPath("$.content").value("책입니다"))
+                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.likeCount").value(0))
+                .andExpect(jsonPath("$.commentCount").value(0))
+                .andExpect(jsonPath("$.likeByMe").value(false))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists());
     }
-
 }
