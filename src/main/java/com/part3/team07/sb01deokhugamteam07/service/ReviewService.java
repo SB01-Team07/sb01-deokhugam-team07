@@ -18,6 +18,12 @@ public class ReviewService {
     private UserRepository userRepository;
 
     public ReviewDto create(ReviewCreateRequest request){
+
+
+
+        userRepository.existsById(request.userId());
+        request.userId()
+
         return new ReviewDto(null,null,null,null,null,null,
                 null,0,0,0,true,null,null);
 
