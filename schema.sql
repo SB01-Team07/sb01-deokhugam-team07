@@ -93,7 +93,7 @@ CREATE TABLE dashboards
     period     period        NOT NULL,
     "value"    DECIMAL(5, 2) NOT NULL,
     value_type value_type    NOT NULL,
-    rank       INT
+    rank       INTEGER
 );
 
 CREATE INDEX idx_books_is_deleted_title ON books (is_deleted, title);
