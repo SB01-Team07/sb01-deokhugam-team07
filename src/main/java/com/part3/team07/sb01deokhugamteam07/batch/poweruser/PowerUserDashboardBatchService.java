@@ -98,7 +98,7 @@ public class PowerUserDashboardBatchService {
    * @param commentCount 유저가 작성한 댓글 수
    * @return 계산된 활동 점수
    **/
-  public double calculateScore(double reviewScore, int likeCount, int commentCount) {
+  private double calculateScore(double reviewScore, int likeCount, int commentCount) {
     return (reviewScore * 0.5) + (likeCount * 0.2) + (commentCount * 0.3);
   }
 
