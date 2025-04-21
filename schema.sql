@@ -88,10 +88,10 @@ CREATE TABLE dashboards
     id         UUID PRIMARY KEY,
     created_at TIMESTAMP     NOT NULL,
     updated_at TIMESTAMP,
-    key        UUID          NOT NULL,
+    "key"        UUID          NOT NULL, -- 예약어로 인한 따옴표 추가
     key_type   key_type      NOT NULL,
-    period period NOT NULL,
-    value      DECIMAL(5, 2) NOT NULL,
+    period     period       NOT NULL,
+    "value"      DECIMAL(5, 2) NOT NULL, -- 예약어로 인한 따옴표 추가
     value_type value_type    NOT NULL
 );
 
