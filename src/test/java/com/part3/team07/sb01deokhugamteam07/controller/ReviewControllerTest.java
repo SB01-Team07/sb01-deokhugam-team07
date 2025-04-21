@@ -85,4 +85,17 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.updatedAt").exists());
     }
+
+    @Test
+    @DisplayName("유효하지 않은 입력이 들어오면 리뷰를 생성할 수 없다.")
+    void createReview_Failure_InvalidRequest() throws Exception {
+        // Given
+        ReviewCreateRequest invalidRequest = new ReviewCreateRequest(null, null, "", 6);
+
+        // When & Then
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest());
+    }
 }
