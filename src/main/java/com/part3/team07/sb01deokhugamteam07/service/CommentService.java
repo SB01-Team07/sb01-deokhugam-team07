@@ -6,6 +6,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateReq
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -55,13 +57,13 @@ public class CommentService {
   public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest){
     log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId, updateRequest);
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new NoSuchElementException("댓글을 찾을 수 없습니다.")); // todo: 예외 추가 시 변경 예정
+        .orElseThrow(() -> CommentNotFoundException.withId(commentId));
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다.")); // todo: 예외 추가 시 변경 예정
 
     if (!comment.getUser().getId().equals(user.getId())){
-      throw new IllegalArgumentException("댓글 수정 권한 없음."); // todo: 예외 추가 시 변경 예정
+      throw CommentUnauthorizedException.withId(userId);
     }
 
     comment.update(updateRequest.content());
