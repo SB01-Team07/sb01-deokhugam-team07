@@ -156,4 +156,20 @@ class ReviewServiceTest {
                 .hasMessage("사용가 존재하지 않습니다.");
     }
 
+    @DisplayName("존재하지 않는 책으로 리뷰 생성 시 실패한다")
+    @Test
+    void createReview_Fail_BookNotFound() {
+        //given
+        ReviewCreateRequest request = new ReviewCreateRequest(bookId, userId, "리뷰 내용", 5);
+
+        given(reviewRepository.existsByUserIdAndBookId(userId, bookId)).willReturn(false);
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(bookRepository.findById(bookId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("책이 존재하지 않습니다.");
+    }
+
 }
