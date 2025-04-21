@@ -27,7 +27,7 @@ CREATE TABLE books
     isbn         VARCHAR(255) UNIQUE,
     thumbnailUrl TEXT,
     review_count INTEGER       NOT NULL DEFAULT 0,
-    rating       DECIMAL(2, 1) NOT NULL
+    rating       DECIMAL(2, 1) NOT NULL DEFAULT 0.0
 );
 
 CREATE TABLE reviews
@@ -93,12 +93,9 @@ CREATE TABLE dashboards
     period     period        NOT NULL,
     "value"    DECIMAL(5, 2) NOT NULL,
     value_type value_type    NOT NULL,
-    rank       INT
+    rank       INTEGER
 );
 
 CREATE INDEX idx_books_is_deleted_title ON books (is_deleted, title);
 CREATE INDEX idx_reviews_is_deleted_created_at ON reviews (is_deleted, created_at);
 CREATE INDEX idx_reviews_is_deleted_rating ON reviews (is_deleted, rating);
-
--- dashboards rank 컬럼 추가
-ALTER TABLE dashboards ADD COLUMN rank INT;
