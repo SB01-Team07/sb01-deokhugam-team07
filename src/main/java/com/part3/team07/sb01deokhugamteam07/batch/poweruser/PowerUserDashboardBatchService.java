@@ -5,7 +5,9 @@ import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @AllArgsConstructor
 public class PowerUserDashboardBatchService {
 
@@ -28,6 +30,14 @@ public class PowerUserDashboardBatchService {
     // 5. SCORE 기준으로 전체 유저 순위 매기기 -> 메모리에서 정렬 후 rank 지정
   }
 
+  /**
+   * 주어진 리뷰 점수, 좋아요 수, 댓글 수를 바탕으로 유저의 활동 점수를 계산하는 메서드.
+   *
+   * @param reviewScore 유저의 리뷰 점수
+   * @param likeCount 유저가 받은 좋아요 수
+   * @param commentCount 유저가 작성한 댓글 수
+   * @return 계산된 활동 점수
+   * **/
   public double calculateScore(double reviewScore, int likeCount, int commentCount) {
     return (reviewScore * 0.5) + (likeCount * 0.2) + (commentCount * 0.3);
   }
