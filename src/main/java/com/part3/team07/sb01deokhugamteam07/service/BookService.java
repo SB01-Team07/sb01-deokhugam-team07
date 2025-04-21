@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.time.LocalDate;
@@ -22,6 +23,9 @@ public class BookService {
   private final BookMapper bookMapper;
 
   public BookDto create(BookCreateRequest request) {
+    if (bookRepository.existsByIsbn(request.isbn())) {
+      throw new DuplicateIsbnException();
+    }
 
     Book book = new Book(
         "title",
