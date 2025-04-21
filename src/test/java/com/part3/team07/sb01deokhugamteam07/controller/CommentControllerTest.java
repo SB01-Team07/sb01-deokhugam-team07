@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -47,11 +48,12 @@ class CommentControllerTest {
     UUID testUserId = UUID.randomUUID();
     UUID testCommentId = UUID.randomUUID();
     LocalDateTime fixedNow = LocalDateTime.now();
+    String content = "test";
 
     CommentCreateRequest createRequest = new CommentCreateRequest(
         testReviewId,
         testUserId,
-        "test"
+        content
     );
 
     CommentDto createdComment = new CommentDto(
@@ -59,7 +61,7 @@ class CommentControllerTest {
         testReviewId,
         testUserId,
         "test",
-        "test",
+        content,
         fixedNow,
         fixedNow
     );
@@ -74,7 +76,7 @@ class CommentControllerTest {
             .with(csrf()))  // 스프링 시큐리티 토큰
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(testCommentId.toString()))
-        .andExpect(jsonPath("$.content").value("test"))
+        .andExpect(jsonPath("$.content").value(content))
         .andExpect(jsonPath("$.userId").value(testUserId.toString()))
         .andExpect(jsonPath("$.reviewId").value(testReviewId.toString()));
   }
@@ -98,5 +100,59 @@ class CommentControllerTest {
         .andExpect(status().isBadRequest());
   }
 
+  @Test
+  @DisplayName("댓글 수정 성공")
+  void updateComment() throws Exception{
+    //given
+    String newContent = "updated content";
+    UUID testCommentId = UUID.randomUUID();
+    UUID testReviewId = UUID.randomUUID();
+    UUID testUserId = UUID.randomUUID();
+    LocalDateTime fixedNow = LocalDateTime.now();
 
+    CommentDto updatedComment = new CommentDto(
+        testCommentId,
+        testReviewId,
+        testUserId,
+        "userNickname",
+        newContent,
+        fixedNow,
+        fixedNow
+    );
+
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
+
+    given(commentService.update(any(UUID.class), any(UUID.class), any(CommentUpdateRequest.class)))
+        .willReturn(updatedComment);
+
+    //when & then
+    mockMvc.perform(patch("/api/comments/{commentId}", testCommentId)
+        .header("Deokhugam-Request-User-ID", testUserId.toString())
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(testCommentId.toString()))
+        .andExpect(jsonPath("$.content").value(newContent))
+        .andExpect(jsonPath("$.userId").value(testUserId.toString()));
+  }
+
+  @Test
+  @DisplayName("댓글 수정 실패 - 잘못된 요청")
+  void updateCommentFailByInvalidRequest() throws Exception{
+    //given
+    UUID testCommentId = UUID.randomUUID();
+    UUID testUserId = UUID.randomUUID();
+    CommentUpdateRequest invalidRequest = new CommentUpdateRequest(
+        ""
+    );
+
+    //when & then
+    mockMvc.perform(patch("/api/comments/{commentId}", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidRequest)))
+        .andExpect(status().isBadRequest());
+  }
 }
