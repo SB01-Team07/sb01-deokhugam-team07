@@ -141,4 +141,19 @@ class ReviewServiceTest {
                 .hasMessage("이미 해당 도서에 대한 리뷰가 존재합니다.");
     }
 
+    @DisplayName("존재하지 않는 유저로 리뷰 생성 시 실패한다")
+    @Test
+    void createReview_Fail_UserNotFound() {
+        //given
+        ReviewCreateRequest request = new ReviewCreateRequest(bookId, userId, "리뷰 내용", 5);
+
+        given(reviewRepository.existsByUserIdAndBookId(userId, bookId)).willReturn(false);
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("사용가 존재하지 않습니다.");
+    }
+
 }
