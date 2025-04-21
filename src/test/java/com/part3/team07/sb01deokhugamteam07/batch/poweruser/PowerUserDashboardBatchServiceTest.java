@@ -44,12 +44,15 @@ class PowerUserDashboardBatchServiceTest {
     UUID userId1 = UUID.randomUUID();
     UUID userId2 = UUID.randomUUID();
     UUID userId3 = UUID.randomUUID();
+    UUID userId4 = UUID.randomUUID();
 
     Map<UUID, Double> userScoreMap = new HashMap<>();
 
     userScoreMap.put(userId1, 70.0);
     userScoreMap.put(userId2, 90.0);
     userScoreMap.put(userId3, 80.0);
+    userScoreMap.put(userId4, 80.0);
+
 
     Period period = Period.WEEKLY;
     KeyType keyType = KeyType.USER;
@@ -59,17 +62,25 @@ class PowerUserDashboardBatchServiceTest {
     List<Dashboard> assignUserRank = powerUserDashboardBatchService.assignUserRank(userScoreMap,
         period, keyType, dashboards);
 
-    assertThat(assignUserRank).hasSize(3);
+    assertThat(assignUserRank).hasSize(4);
 
     ReflectionTestUtils.setField(assignUserRank.get(0), "id", userId2);
     ReflectionTestUtils.setField(assignUserRank.get(1), "id", userId3);
-    ReflectionTestUtils.setField(assignUserRank.get(2), "id", userId1);
+    ReflectionTestUtils.setField(assignUserRank.get(2), "id", userId4);
+    ReflectionTestUtils.setField(assignUserRank.get(3), "id", userId1);
 
     // 확인 용 Map
     Map<UUID, Integer> expectedRanks = Map.of(
         userId2, 1,
         userId3, 2,
-        userId1, 3
+        userId4, 2,
+        userId1, 4
+    );
+
+    assertThat(
+        assignUserRank.stream().filter(d -> d.getId().equals(userId3)).findFirst().get().getRank()
+    ).isEqualTo(
+        assignUserRank.stream().filter(d-> d.getId().equals(userId4)).findFirst().get().getRank()
     );
 
     for (Dashboard d : assignUserRank) {

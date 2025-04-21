@@ -80,13 +80,14 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
     }
 
     // 랭킹 기준으로 정렬
-    OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(orderDirection, dashBoard.rank);
+    OrderSpecifier<?> orderByRank = new OrderSpecifier<>(orderDirection, dashBoard.rank);
+    OrderSpecifier<?> orderByCreatedAt = new OrderSpecifier<>(orderDirection, dashBoard.createdAt);
 
     // 결과 조회
     return queryFactory
         .selectFrom(dashBoard)
         .where(builder)
-        .orderBy(orderSpecifier)
+        .orderBy(orderByRank, orderByCreatedAt)
         .limit(limit)
         .fetch();
   }
