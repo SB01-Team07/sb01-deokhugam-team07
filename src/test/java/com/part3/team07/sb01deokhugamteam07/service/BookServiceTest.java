@@ -31,6 +31,9 @@ class BookServiceTest {
   @Mock
   private BookMapper bookMapper;
 
+  @Mock
+  private ThumbnailImageService thumbnailImageService;
+
   @InjectMocks
   private BookService bookService;
 
@@ -85,6 +88,7 @@ class BookServiceTest {
         ""
     );
 
+    given(thumbnailImageService.save(any())).willReturn("");
     given(bookRepository.save(any(Book.class))).will(invocation -> {
       Book book = invocation.getArgument(0);
       ReflectionTestUtils.setField(book, "id", id);
@@ -93,10 +97,11 @@ class BookServiceTest {
     given(bookMapper.toDto(any(Book.class))).willReturn(bookDto);
 
     // when
-    BookDto result = bookService.create(request);
+    BookDto result = bookService.create(request, null);
 
     // then
     assertThat(result).isEqualTo(bookDto);
+    verify(thumbnailImageService).save(any());
     verify(bookRepository).save(any(Book.class));
   }
 

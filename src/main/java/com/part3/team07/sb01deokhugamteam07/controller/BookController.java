@@ -22,7 +22,7 @@ public class BookController {
 
   public ResponseEntity<BookDto> create(@RequestPart("bookData") BookCreateRequest request,
       @RequestPart(value = "thumbnailImage", required = false) MultipartFile thumbnailImage) {
-    BookDto bookDto = bookService.create(request);
+    BookDto bookDto = bookService.create(request, thumbnailImage);
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
