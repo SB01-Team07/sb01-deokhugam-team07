@@ -6,6 +6,7 @@ HELP.md
 !**/src/test/**/build/
 **/application.yml
 **/application-*.yml
+.logs
 
 ### STS ###
 .apt_generated
