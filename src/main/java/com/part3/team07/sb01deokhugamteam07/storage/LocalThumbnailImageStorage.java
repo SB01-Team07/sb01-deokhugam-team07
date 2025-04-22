@@ -1,5 +1,9 @@
 package com.part3.team07.sb01deokhugamteam07.storage;
 
+import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageAlreadyExistsException;
+import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
+import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageInitException;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +31,7 @@ public class LocalThumbnailImageStorage implements ThumbnailImageStorage {
       try {
         Files.createDirectories(root);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new ThumbnailImageStorageInitException();
       }
     }
   }
@@ -36,13 +40,13 @@ public class LocalThumbnailImageStorage implements ThumbnailImageStorage {
   public void put(String fileName, byte[] bytes) {
     Path filePath = resolvePath(fileName);
     if (Files.exists(filePath)) {
-      throw new IllegalArgumentException("File with key " + fileName + " already exists.");
+      throw new ThumbnailImageAlreadyExistsException();
     }
 
     try (OutputStream outputStream = Files.newOutputStream(filePath)) {
       outputStream.write(bytes);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new ThumbnailImageStorageException();
     }
   }
 
@@ -50,7 +54,7 @@ public class LocalThumbnailImageStorage implements ThumbnailImageStorage {
   public String get(String fileName) {
     Path filePath = resolvePath(fileName);
     if (Files.notExists(filePath)) {
-      throw new IllegalArgumentException("File with key " + fileName + " dose not exist.");
+      throw new ThumbnailImageNotFoundException();
     }
 
     return "/storage/" + fileName;

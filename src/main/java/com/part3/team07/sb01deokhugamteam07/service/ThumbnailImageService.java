@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
+import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
 import com.part3.team07.sb01deokhugamteam07.storage.ThumbnailImageStorage;
 import java.io.IOException;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class ThumbnailImageService {
     try {
       thumbnailImageStorage.put(fileName, thumbnailImage.getBytes());
     } catch (IOException e) {
-      throw new RuntimeException();
+      throw new ThumbnailImageStorageException();
     }
 
     return fileName;
