@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,18 +49,15 @@ public class BookService {
   }
 
   public BookDto update(UUID id, BookUpdateRequest request) {
-    bookRepository.findById(id);
-    Book book = Book.builder()
-        .title(request.title())
-        .author(request.author())
-        .description(request.description())
-        .publisher(request.publisher())
-        .publishDate(request.publishedDate())
-        .isbn("")
-        .thumbnailFileName("")
-        .build();
-    Book savedBook = bookRepository.save(book);
+    Book book = bookRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException());
 
-    return bookMapper.toDto(savedBook);
+    Optional.ofNullable(request.title()).ifPresent(book::updateTitle);
+    Optional.ofNullable(request.author()).ifPresent(book::updateAuthor);
+    Optional.ofNullable(request.description()).ifPresent(book::updateDescription);
+    Optional.ofNullable(request.publisher()).ifPresent(book::updatePublisher);
+    Optional.ofNullable(request.publishedDate()).ifPresent(book::updatePublishDate);
+
+    return bookMapper.toDto(book);
   }
 }
