@@ -10,10 +10,10 @@ import com.part3.team07.sb01deokhugamteam07.mapper.ReviewMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -47,5 +47,12 @@ public class ReviewService {
 
         log.info("리뷰 생성 완료: id={}, userId={}, bookId{}", review.getId(), user.getId(), book.getId());
         return ReviewMapper.toDto(user, book, review);
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewDto find(){
+
+
+
     }
 }

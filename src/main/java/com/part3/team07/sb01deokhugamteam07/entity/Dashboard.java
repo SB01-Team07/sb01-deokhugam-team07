@@ -22,8 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Dashboard extends BaseEntity {
 
-  //@Column(nullable = false)
-  @Column(name = "\"key\"", nullable = false)  //수정
+  @Column(name = "\"key\"", nullable = false)
   private UUID key;
 
   @Enumerated(EnumType.STRING) //추가함 (옵션 빠져있음)
@@ -34,12 +33,13 @@ public class Dashboard extends BaseEntity {
   @Column(nullable = false)
   private Period period;
 
-  //@Column(nullable = false)
-  @Column(name = "\"value\"", nullable = false) //추가함
+  @Column(name = "\"value\"", nullable = false)
   private double value;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private ValueType valueType;
 
+  @Column
+  private Integer rank;
 }

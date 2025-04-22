@@ -17,5 +17,4 @@ public record PopularBookDto(
     double rating,
     LocalDateTime createdAt
 ) {
-
 }
