@@ -175,11 +175,6 @@ class BookServiceTest {
 
       // when
       given(bookRepository.findById(id)).willReturn(Optional.of(book));
-      given(bookRepository.save(any(Book.class))).will(invocation -> {
-        Book book = invocation.getArgument(0);
-        ReflectionTestUtils.setField(book, "id", id);
-        return book;
-      });
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
       BookDto result = bookService.update(id, request);
