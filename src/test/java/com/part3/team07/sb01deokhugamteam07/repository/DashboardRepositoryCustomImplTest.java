@@ -209,7 +209,7 @@ class DashboardRepositoryCustomImplTest {
 
   @Test
   @DisplayName("동점자(rank 중복) 존재 시에도 페이지네이션 동작")
-  public void test_Find_PowerUSER_wITH_Tied_Ranks() {
+  public void test_Find_PowerUser_with_Tied_Ranks() {
     // 첫 페이지
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
         "asc", null, null, 31); // 동점자 포함해서 rank=30이 2개이므로 31까지 조회
@@ -229,6 +229,31 @@ class DashboardRepositoryCustomImplTest {
 
     assertTrue(secondPage.stream().allMatch(d -> d.getRank() > 30),
         "두 번째 페이지에는 rank=30보다 큰 값만 있어야 함");
+  }
+
+  @Test
+  @DisplayName("커서와 after 파라미터가 올바르게 동작")
+  public void testCursorAndAfterParameters() {
+    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(
+        Period.DAILY, "asc", null, null, 30);
+
+    // 중복되는 랭크를 가져온다
+    Dashboard duplicateRank = firstPage.stream()
+        .filter(d -> d.getRank() == 30)
+        .findFirst()
+        .orElseThrow();
+
+    String cursor = String.valueOf(duplicateRank.getRank());
+    String after = duplicateRank.getCreatedAt().toString();
+
+    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(
+        Period.DAILY, "asc", cursor, after, 30);
+
+    assertTrue(secondPage.stream().anyMatch(d ->
+        d.getRank() > duplicateRank.getRank() ||
+            (d.getRank() == duplicateRank.getRank() &&
+                d.getCreatedAt().isAfter(duplicateRank.getCreatedAt()))
+    ));
   }
 
 }
