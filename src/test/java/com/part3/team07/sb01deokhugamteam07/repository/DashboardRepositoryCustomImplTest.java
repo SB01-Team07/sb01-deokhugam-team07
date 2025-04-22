@@ -92,8 +92,9 @@ class DashboardRepositoryCustomImplTest {
 
     // 두 번째 페이지
     String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
+    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
     List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
-        "asc", cursor, null, 11);
+        "asc", cursor, after, 11);
 
     // cursor 이후의 데이터가 반환되는지 확인
     assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
@@ -132,8 +133,9 @@ class DashboardRepositoryCustomImplTest {
 
     // 두 번째 페이지
     String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
+    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
     List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.WEEKLY,
-        "asc", cursor, null, 11);
+        "asc", cursor, after, 11);
 
     // cursor 이후의 데이터가 반환되는지 확인
     assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
@@ -174,8 +176,9 @@ class DashboardRepositoryCustomImplTest {
 
     // 두 번째 페이지
     String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
+    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
     List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.MONTHLY,
-        "asc", cursor, null, 11);
+        "asc", cursor, after, 11);
 
     // cursor 이후의 데이터가 반환되는지 확인
     assertTrue(secondPage.get(0).getRank() > firstPage.get(firstPage.size() - 1).getRank(),
@@ -215,8 +218,9 @@ class DashboardRepositoryCustomImplTest {
 
     // 두 번째 페이지
     String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
+    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
     List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.ALL_TIME,
-        "asc", cursor, null, 11);
+        "asc", cursor, after, 11);
 
     // cursor 이후의 데이터가 반환되는지 확인
     assertTrue(secondPage.get(0).getRank() > firstPage.get(firstPage.size() - 1).getRank(),
@@ -265,40 +269,14 @@ class DashboardRepositoryCustomImplTest {
         rank30DashBoards.get(0).getCreatedAt().isBefore(rank30DashBoards.get(1).getCreatedAt()),
         "먼저 만든 rank=30이 먼저 나와야 함 (createdAt 기준)");
 
-    // 두 번째 페이지 조회 : cursor 를 rank = 30 으로 하면 동점자 이후로 넘어가는지 확ㅇ니
+    // 두 번째 페이지 조회 : cursor 를 rank = 30 으로 하면 동점자 이후로 넘어가는지 확인
     String cursor = String.valueOf(30);
+    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
     List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
-        "asc", cursor, null, 10);
+        "asc", cursor, after, 10);
 
     assertTrue(secondPage.stream().allMatch(d -> d.getRank() > 30),
         "두 번째 페이지에는 rank=30보다 큰 값만 있어야 함");
-  }
-
-  @Test
-  @DisplayName("커서와 after 파라미터가 올바르게 동작")
-  public void testCursorAndAfterParameters() {
-
-
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(
-        Period.DAILY, "asc", null, null, 30);
-
-    // 중복되는 랭크를 가져온다
-    Dashboard duplicateRank = firstPage.stream()
-        .filter(d -> d.getRank() == 30)
-        .findFirst()
-        .orElseThrow();
-
-    String cursor = String.valueOf(duplicateRank.getRank());
-    String after = duplicateRank.getCreatedAt().toString();
-
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(
-        Period.DAILY, "asc", cursor, after, 30);
-
-    assertTrue(secondPage.stream().anyMatch(d ->
-        d.getRank() > duplicateRank.getRank() ||
-            (d.getRank() == duplicateRank.getRank() &&
-                d.getCreatedAt().isAfter(duplicateRank.getCreatedAt()))
-    ));
   }
 
   /**
