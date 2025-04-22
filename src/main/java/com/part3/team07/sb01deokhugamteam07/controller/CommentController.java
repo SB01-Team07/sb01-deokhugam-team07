@@ -25,7 +25,7 @@ public class CommentController {
   @PostMapping
   public ResponseEntity<CommentDto> create(
       @RequestBody @Valid CommentCreateRequest createRequest
-  ){
+  ) {
     log.info("create comment request = {}", createRequest);
     CommentDto createdComment = commentService.create(createRequest);
     log.debug("create comment response = {}", createdComment);

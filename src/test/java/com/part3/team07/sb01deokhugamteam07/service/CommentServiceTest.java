@@ -15,6 +15,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -59,7 +60,7 @@ class CommentServiceTest {
   private LocalDateTime fixedNow;
 
   @BeforeEach
-  void setUp(){
+  void setUp() {
     commentId = UUID.randomUUID();
     userId = UUID.randomUUID();
     reviewId = UUID.randomUUID();
@@ -73,7 +74,6 @@ class CommentServiceTest {
 
     testUser = new User("testUser", "1234", "test@test.com");
     ReflectionTestUtils.setField(testUser, "id", userId);
-
 
     testReview = new Review(testUser, testBook, "test", 0, 2, 1);
     ReflectionTestUtils.setField(testReview, "id", reviewId);
@@ -91,7 +91,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 생성 성공")
-  void createComment(){
+  void createComment() {
     //given
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(reviewRepository.findById(reviewId)).willReturn(Optional.of(testReview));
@@ -117,7 +117,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 생성 실패 - 유저 존재X")
-  void createCommentFailByUserNotFound(){
+  void createCommentFailByUserNotFound() {
     //given
     given(userRepository.findById(eq(userId))).willReturn(Optional.empty());
 
@@ -128,14 +128,14 @@ class CommentServiceTest {
     );
 
     //when & then
-    assertThatThrownBy(()-> commentService.create(createRequest))
-        .isInstanceOf(NoSuchElementException.class); // 예외 추가 시 변경 예정
+    assertThatThrownBy(() -> commentService.create(createRequest))
+        .isInstanceOf(UserNotFoundException.class);
 
   }
 
   @Test
   @DisplayName("댓글 생성 실패 - 리뷰 존재X")
-  void createCommentFailByReviewNotFound(){
+  void createCommentFailByReviewNotFound() {
     //given
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.empty());
@@ -147,7 +147,7 @@ class CommentServiceTest {
     );
 
     //when & then
-    assertThatThrownBy(()-> commentService.create(createRequest))
+    assertThatThrownBy(() -> commentService.create(createRequest))
         .isInstanceOf(NoSuchElementException.class); // 예외 추가 시 변경 예정
 
   }
