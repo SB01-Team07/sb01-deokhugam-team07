@@ -52,31 +52,6 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
         .and(dashBoard.valueType.eq(ValueType.SCORE));
 
     // 커서 기반 페이지네이션 처리
-//    if (cursor != null) { // cursor(rank) 기준 정렬
-//      try {
-//        int rankCursor = Integer.parseInt(cursor) + 1;
-//        if (isAsc) {
-//          builder.and(dashBoard.rank.goe(rankCursor));
-//        } else {
-//          builder.and(dashBoard.rank.loe(rankCursor));
-//        }
-//      } catch (NumberFormatException e) {
-//        log.warn("findPowerUsersByPeriod()에 전달된 잘못된 cursor 값: {} : ", cursor);
-//      }
-//    } else if (after != null) { // after(createdAt) 보조 정렬 *cursor 이 없을시에만, 안정성 용도
-//      try {
-//        LocalDateTime afterTime = LocalDateTime.parse(after);
-//        if (isAsc) {
-//          builder.and(dashBoard.createdAt.goe(afterTime));
-//        } else {
-//          builder.and(dashBoard.createdAt.loe(afterTime));
-//        }
-//      } catch (DateTimeException e) {
-//        log.warn("findPowerUsersByPeriod()에 전달된 잘못된 after 값: {} : ", after);
-//      }
-//    } else { // 첫 페이지
-//      builder.and(dashBoard.rank.gt(0));
-//    }
     try {
       if (cursor != null && after != null) {  // cursor와 after 둘 다 있을 경우
         int rankCursor = Integer.parseInt(cursor);
