@@ -43,9 +43,9 @@ public class CommentController {
       @PathVariable UUID commentId,
       @RequestHeader("Deokhugam-Request-User-ID") UUID userId,
       @RequestBody @Valid CommentUpdateRequest updateRequest
-  ){
+  ) {
     log.info("update comment request = {}", updateRequest);
-    CommentDto updatedComment = commentService.update(commentId,userId, updateRequest);
+    CommentDto updatedComment = commentService.update(commentId, userId, updateRequest);
     log.debug("update comment response = {}", updatedComment);
     return ResponseEntity
         .status(HttpStatus.OK)
