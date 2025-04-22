@@ -14,4 +14,5 @@ public interface DashboardRepositoryCustom {
       int limit
   );
 
+  List<Dashboard> findPopularReviewByPeriod(Period period, String direction, String cursor, String after, int i);
 }

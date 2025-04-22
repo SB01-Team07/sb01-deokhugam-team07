@@ -1,15 +1,19 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 
+import com.part3.team07.sb01deokhugamteam07.dto.review.PopularReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponsePopularReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.PowerUserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserMetricsDTO;
 import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
+import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
+import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ public class DashboardService {
   private final DashboardRepository dashboardRepository;
   private final DashboardRepositoryCustom dashboardRepositoryCustom;
   private final UserRepository userRepository;
+  private final ReviewRepository reviewRepository;
 
   /**
    * Power User 조회합니다.
@@ -100,7 +105,7 @@ public class DashboardService {
                 d.getKey(),
                 user.getNickname(),
                 period,
-                user.getCreatedAt(),
+                user.getCreatedAt(), // TODO 나중에 수정 createdAt 이 user의 생성 시각이 아니라 집계 정보 제작 시간임
                 d.getRank(),
                 d.getValue(),
                 reviewScoreSum,
@@ -123,6 +128,97 @@ public class DashboardService {
         totalElement, content.size(), hasNext);
 
     return new CursorPageResponsePowerUserDto(
+        content,
+        nextCursor,
+        nextAfter,
+        content.size(),
+        totalElement,
+        hasNext
+    );
+  }
+
+  /**
+   * Popular Review 조회합니다.
+   *
+   * @param period    조회할 기간 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
+   * @param direction 정렬 뱡향 (e.g. asc(default), desc)
+   * @param after     createAt 기반 보조 커서
+   * @param limit     가져올 개수
+   * @return 커서 기반 페이지 응답 DTO ( content(PopularReviewDto), nextCursor, nextAfter, size, totalElement,
+   * hasNext )
+   **/
+  public CursorPageResponsePopularReviewDto getPopularReview(
+      Period period,
+      String direction,
+      String cursor,
+      String after,
+      int limit) {
+
+    // 1. 커스텀 레포지토리에서 Popular Review 대시보드 조회
+    List<Dashboard> dashboards = dashboardRepositoryCustom.findPopularReviewByPeriod(
+        period,
+        direction,
+        cursor,
+        after,
+        limit + 1); // + 1 다음 페이지 존재 여부 확인
+
+    // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
+    boolean hasNext = dashboards.size() > limit;
+    if (hasNext) {
+      dashboards = dashboards.subList(0, limit);
+    }
+
+    // 3. 대시보드의 key (Review ID) 기준으로 사용자 정보 조회
+    List<UUID> reviewIds = dashboards.stream()
+        .map(Dashboard::getKey)
+        .toList();
+    // TODO reveiws 쪽 "없을 때"관련 커스텀 예외가 있다면 추후에 적용
+    List<Review> reviews = reviewRepository.findAllById(reviewIds);
+
+    // 4. 사용자 ID -> Reviews 객체 매핑 (빠른 접근을 위해 Map 으로 변환)
+    Map<UUID, Review> reviewMap = reviews.stream()
+        .collect(Collectors.toMap(Review::getId, review -> review));;
+
+    // 6. PopularReviewDto 변환
+    List<PopularReviewDto> content = new ArrayList<>();
+    for (Dashboard d : dashboards) {
+      UUID reviewId = d.getKey();
+      Review review = reviewMap.get(reviewId);
+      if (review != null) {
+        content.add(
+            new PopularReviewDto(
+                d.getId(), // key 와 id 는 다릅니다
+                reviewId,
+                review.getBook().getId(),
+                review.getBook().getTitle(),
+                review.getBook().getThumbnailUrl(),
+                review.getUser().getId(),
+                review.getUser().getNickname(),
+                review.getContent(),
+                review.getRating(),
+                period,
+                d.getCreatedAt(),
+                d.getRank(),
+                d.getValue(),
+                review.getLikeCount(),
+                review.getCommentCount()
+            )
+        );
+      }
+    }
+
+    // 7. 다음 페이지 커서 및 after 값 설정
+    String nextCursor =
+        hasNext ? String.valueOf(dashboards.get(dashboards.size() - 1).getRank()) : null;
+    LocalDateTime nextAfter = hasNext ? dashboards.get(dashboards.size() - 1).getCreatedAt() : null;
+
+    // 8. 전체 REVIEW 수 (기간 + USER 키타입 조건)
+    long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.REVIEW, period);
+
+    log.info("Popular Review 조회 완료: 총 {}명 중 {}명 반환, 다음 페이지: {}",
+        totalElement, content.size(), hasNext);
+
+    return new CursorPageResponsePopularReviewDto(
         content,
         nextCursor,
         nextAfter,

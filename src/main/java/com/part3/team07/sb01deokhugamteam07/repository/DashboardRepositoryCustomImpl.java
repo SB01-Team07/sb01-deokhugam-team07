@@ -102,4 +102,10 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
         .limit(limit)
         .fetch();
   }
+
+  @Override
+  public List<Dashboard> findPopularReviewByPeriod(Period period, String direction, String cursor,
+      String after, int i) {
+    return List.of();
+  }
 }
