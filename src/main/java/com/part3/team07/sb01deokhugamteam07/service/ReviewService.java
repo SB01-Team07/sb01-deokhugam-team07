@@ -54,7 +54,7 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public ReviewDto find(UUID reviewId){
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
         return ReviewMapper.toDto(review);
     }
 }

@@ -172,4 +172,16 @@ class ReviewServiceTest {
                 .hasMessage("책이 존재하지 않습니다.");
     }
 
+    @DisplayName("리뷰 Id로 리뷰 상세조회를 할 수 있다.")
+    @Test
+    void find() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        ReviewDto result = reviewService.find(reviewId);
+
+        //then
+        assertThat(result).isEqualTo(reviewDto);
+    }
 }
