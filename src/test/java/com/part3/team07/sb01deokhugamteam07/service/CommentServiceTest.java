@@ -62,6 +62,7 @@ class CommentServiceTest {
   private Review testReview;
   private Book testBook;
   private Comment comment;
+  private CommentDto commentDto;
   private LocalDateTime fixedNow;
 
   @BeforeEach
@@ -92,6 +93,16 @@ class CommentServiceTest {
     ReflectionTestUtils.setField(comment, "createdAt", fixedNow);
     ReflectionTestUtils.setField(comment, "updatedAt", fixedNow);
 
+    commentDto = new CommentDto(
+        commentId,
+        reviewId,
+        userId,
+        testUser.getNickname(),
+        comment.getContent(),
+        fixedNow,
+        fixedNow
+    );
+
   }
 
   @Test
@@ -101,17 +112,7 @@ class CommentServiceTest {
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(reviewRepository.findById(reviewId)).willReturn(Optional.of(testReview));
     given(commentRepository.save(any(Comment.class))).willReturn(comment);
-    given(commentMapper.toDto(any(Comment.class))).willReturn(
-        new CommentDto(
-            commentId,
-            reviewId,
-            userId,
-            testUser.getNickname(),
-            comment.getContent(),
-            fixedNow,
-            fixedNow
-        )
-    );
+    given(commentMapper.toDto(any(Comment.class))).willReturn(commentDto);
     CommentCreateRequest createRequest = new CommentCreateRequest(
         reviewId,
         userId,
