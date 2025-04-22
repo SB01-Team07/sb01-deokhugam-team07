@@ -13,4 +13,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime startDateTime,
       LocalDateTime endDateTime
   );
+
+    boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 }
