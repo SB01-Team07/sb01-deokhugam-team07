@@ -43,7 +43,7 @@ deokhugam:
     type: local # local | s3
     local:
       root-path: src/test/resources/static/storage
- 
+
 jwt:
   security:
     jwt-secret: tRsLycvAv+NdFne3uTGzRHlH4XNXGP2v/6QW5dCT0Fs=
