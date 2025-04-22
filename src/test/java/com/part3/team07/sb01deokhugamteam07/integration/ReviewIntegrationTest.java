@@ -118,8 +118,8 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailUrl("Url")
-                .review_count(0)
+                .thumbnailFileName("Url")
+                .reviewCount(0)
                 .rating(0.0)
                 .build();
         bookRepository.save(book);
