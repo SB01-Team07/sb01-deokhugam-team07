@@ -39,7 +39,8 @@ public class SecurityConfig {
                 "/",
                 "/index.html",
                 "/favicon.ico",
-                "/error"
+                "/error",
+                "/api/users"
             ).permitAll() // 위의 엔드포인트 허용
             .requestMatchers("/api/**").authenticated() // 나머지 엔드포인트 막음
         )
