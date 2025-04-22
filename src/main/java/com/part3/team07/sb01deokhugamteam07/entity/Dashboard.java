@@ -41,5 +41,4 @@ public class Dashboard extends BaseEntity {
 
   @Column
   private Integer rank;
-
 }
