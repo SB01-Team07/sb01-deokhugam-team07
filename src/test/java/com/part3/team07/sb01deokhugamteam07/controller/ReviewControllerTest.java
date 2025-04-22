@@ -1,6 +1,5 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
@@ -138,7 +137,7 @@ class ReviewControllerTest {
 
         //then
         mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
-                .contentType(MediaType.APPLICATION_JSON))
+                    .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(reviewId.toString()))
                 .andExpect(jsonPath("$.bookId").value(bookId.toString()))
@@ -154,4 +153,20 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.updatedAt").exists());
     }
+
+
+    //커스텀 예외 추가시 동작
+/*    @DisplayName("존재하지 않은 리뷰는 상세 조회 불가능 하다.")
+    @Test
+    void findReview_Failure_NotFound() throws Exception {
+        //given
+        UUID invalidReviewId = UUID.randomUUID();
+        given(reviewService.find(invalidReviewId))
+                .willThrow(new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        //when then
+        mockMvc.perform(get("/api/reviews/{reviewId}", invalidReviewId)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }*/
 }
