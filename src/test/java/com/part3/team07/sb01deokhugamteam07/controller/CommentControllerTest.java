@@ -42,7 +42,7 @@ class CommentControllerTest {
 
   @Test
   @DisplayName("댓글 생성 성공")
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser
   void createComment() throws Exception {
     //given
     UUID testReviewId = UUID.randomUUID();
@@ -84,7 +84,7 @@ class CommentControllerTest {
 
   @Test
   @DisplayName("댓글 생성 실패 - 잘못된 요청")
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser
   void createCommentFailByInvalidRequest() throws Exception {
     // given
     CommentCreateRequest invalidRequest = new CommentCreateRequest(
@@ -103,7 +103,7 @@ class CommentControllerTest {
 
   @Test
   @DisplayName("댓글 수정 성공")
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser
   void updateComment() throws Exception {
     //given
     String newContent = "updated content";
@@ -143,7 +143,7 @@ class CommentControllerTest {
 
   @Test
   @DisplayName("댓글 수정 실패 - 잘못된 요청")
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser
   void updateCommentFailByInvalidRequest() throws Exception {
     //given
     UUID testCommentId = UUID.randomUUID();

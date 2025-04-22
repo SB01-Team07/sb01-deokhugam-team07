@@ -33,9 +33,10 @@ public class Comment extends BaseSoftDeletableEntity {
   private String content;
 
   public void update(String newContent){
-    if (newContent != null && !newContent.equals(this.content)) {
-      this.content = newContent;
+    if (newContent == null || newContent.isBlank()) {
+      throw new IllegalArgumentException();
     }
+    this.content = newContent;
   }
 
 }
