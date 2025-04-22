@@ -184,4 +184,16 @@ class ReviewServiceTest {
         //then
         assertThat(result).isEqualTo(reviewDto);
     }
+
+    @DisplayName("리뷰 Id로 조회 시 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void find_ReviewNotFound() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.find(reviewId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("리뷰를 찾을 수 없습니다.");
+    }
 }
