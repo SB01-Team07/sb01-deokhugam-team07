@@ -140,7 +140,18 @@ class ReviewControllerTest {
         mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(reviewId.toString()));
-
+                .andExpect(jsonPath("$.id").value(reviewId.toString()))
+                .andExpect(jsonPath("$.bookId").value(bookId.toString()))
+                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                .andExpect(jsonPath("$.bookTitle").value("Book"))
+                .andExpect(jsonPath("$.bookThumbnailUrl").value("url"))
+                .andExpect(jsonPath("$.userNickName").value("User"))
+                .andExpect(jsonPath("$.content").value("책입니다"))
+                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.likeCount").value(0))
+                .andExpect(jsonPath("$.commentCount").value(0))
+                .andExpect(jsonPath("$.likeByMe").value(false))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists());
     }
 }
