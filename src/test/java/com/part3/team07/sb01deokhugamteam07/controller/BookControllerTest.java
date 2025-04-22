@@ -131,7 +131,7 @@ public class BookControllerTest {
       String newTitle = "new title";
       String newAuthor = "new author";
       String newDescription = "new description";
-      String newPublisher = "new publisher";
+      String newPublisher = null;
       LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
 
       BookUpdateRequest request = new BookUpdateRequest(
@@ -147,7 +147,7 @@ public class BookControllerTest {
           newTitle,
           newAuthor,
           newDescription,
-          newPublisher,
+          publisher,
           newPublishedDate,
           "",
           "",
@@ -170,7 +170,7 @@ public class BookControllerTest {
           .andExpect(jsonPath("$.title").value(newTitle))
           .andExpect(jsonPath("$.author").value(newAuthor))
           .andExpect(jsonPath("$.description").value(newDescription))
-          .andExpect(jsonPath("$.publisher").value(newPublisher))
+          .andExpect(jsonPath("$.publisher").value(publisher))
           .andExpect(jsonPath("$.publishedDate").value("2025-04-22"));
     }
 

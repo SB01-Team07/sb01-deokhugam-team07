@@ -6257,3 +6257,45 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.boo
 	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
 	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
 25-04-23 03:06:35.999 [Test worker] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver [reqId= | ip= | method= | url=] - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [1] in public org.springframework.http.ResponseEntity<com.part3.team07.sb01deokhugamteam07.dto.book.BookDto> com.part3.team07.sb01deokhugamteam07.controller.BookController.update(java.util.UUID,com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest): [Field error in object 'bookUpdateRequest' on field 'title': rejected value []; codes [NullableNotBlank.bookUpdateRequest.title,NullableNotBlank.title,NullableNotBlank.java.lang.String,NullableNotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [bookUpdateRequest.title,title]; arguments []; default message [title]]; default message [값이 비어 있을 수 없습니다.]] ]
+25-04-23 03:08:26.712 [background-preinit] INFO  o.h.validator.internal.util.Version  [reqId= | ip= | method= | url=] - HV000001: Hibernate Validator 8.0.2.Final
+25-04-23 03:08:26.745 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - Starting BookControllerTest using Java 17.0.14 with PID 93075 (started by seoyeon in /Users/seoyeon/codeit_sprint_SB01/sb01-deokhugam-team07)
+25-04-23 03:08:26.746 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
+25-04-23 03:08:28.254 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+25-04-23 03:08:28.413 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+
+Using generated security password: 1308763a-f152-4a5f-861e-0539038d17e5
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+25-04-23 03:08:28.460 [Test worker] INFO  o.s.b.t.m.w.SpringBootMockServletContext [reqId= | ip= | method= | url=] - Initializing Spring TestDispatcherServlet ''
+25-04-23 03:08:28.461 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
+25-04-23 03:08:28.462 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
+25-04-23 03:08:28.489 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - Started BookControllerTest in 2.082 seconds (process running for 3.032)
+25-04-23 03:10:16.872 [background-preinit] INFO  o.h.validator.internal.util.Version  [reqId= | ip= | method= | url=] - HV000001: Hibernate Validator 8.0.2.Final
+25-04-23 03:10:16.906 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - Starting BookControllerTest using Java 17.0.14 with PID 93151 (started by seoyeon in /Users/seoyeon/codeit_sprint_SB01/sb01-deokhugam-team07)
+25-04-23 03:10:16.907 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
+25-04-23 03:10:18.473 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+25-04-23 03:10:18.597 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+
+Using generated security password: e8ace5aa-225c-41df-a59b-4cc4f1c1218c
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+25-04-23 03:10:18.644 [Test worker] INFO  o.s.b.t.m.w.SpringBootMockServletContext [reqId= | ip= | method= | url=] - Initializing Spring TestDispatcherServlet ''
+25-04-23 03:10:18.644 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
+25-04-23 03:10:18.645 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
+25-04-23 03:10:18.673 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - Started BookControllerTest in 2.084 seconds (process running for 2.948)
+25-04-23 03:10:25.912 [background-preinit] INFO  o.h.validator.internal.util.Version  [reqId= | ip= | method= | url=] - HV000001: Hibernate Validator 8.0.2.Final
+25-04-23 03:10:26.002 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - Starting BookControllerTest using Java 17.0.14 with PID 93190 (started by seoyeon in /Users/seoyeon/codeit_sprint_SB01/sb01-deokhugam-team07)
+25-04-23 03:10:26.002 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
+25-04-23 03:10:28.234 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+25-04-23 03:10:28.459 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+
+Using generated security password: 4ae11ae9-62e0-4ccc-88dc-f882e6607672
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+25-04-23 03:10:28.526 [Test worker] INFO  o.s.b.t.m.w.SpringBootMockServletContext [reqId= | ip= | method= | url=] - Initializing Spring TestDispatcherServlet ''
+25-04-23 03:10:28.526 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
+25-04-23 03:10:28.527 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
+25-04-23 03:10:28.564 [Test worker] INFO  c.p.t.s.c.BookControllerTest         [reqId= | ip= | method= | url=] - Started BookControllerTest in 3.226 seconds (process running for 4.622)
