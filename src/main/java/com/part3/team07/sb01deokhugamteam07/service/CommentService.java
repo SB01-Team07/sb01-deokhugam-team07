@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
+import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -26,6 +27,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final UserRepository userRepository;
   private final ReviewRepository reviewRepository;
+  private final CommentMapper commentMapper;
 
   public CommentDto create(CommentCreateRequest createRequest) {
     log.debug("create comment {}", createRequest);
@@ -44,15 +46,7 @@ public class CommentService {
     commentRepository.save(comment);
 
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
-    return CommentDto.builder()
-        .id(comment.getId())
-        .reviewId(review.getId())
-        .userId(user.getId())
-        .userNickname(user.getNickname())
-        .content(comment.getContent())
-        .createdAt(comment.getCreatedAt())
-        .updatedAt(comment.getUpdatedAt())
-        .build();
+    return commentMapper.toDto(comment);
   }
 
   public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest) {
@@ -70,15 +64,7 @@ public class CommentService {
 
     comment.update(updateRequest.content());
     commentRepository.save(comment);
-    return CommentDto.builder()
-        .id(comment.getId())
-        .reviewId(comment.getReview().getId())
-        .userId(user.getId())
-        .userNickname(user.getNickname())
-        .content(comment.getContent())
-        .createdAt(comment.getCreatedAt())
-        .updatedAt(comment.getUpdatedAt())
-        .build();
+    return commentMapper.toDto(comment);
   }
 
 }
