@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
@@ -40,6 +41,22 @@ public class BookService {
         .publishDate(request.publishedDate())
         .isbn(request.isbn())
         .thumbnailFileName(thumbnailFileName)
+        .build();
+    Book savedBook = bookRepository.save(book);
+
+    return bookMapper.toDto(savedBook);
+  }
+
+  public BookDto update(UUID id, BookUpdateRequest request) {
+    bookRepository.findById(id);
+    Book book = Book.builder()
+        .title(request.title())
+        .author(request.author())
+        .description(request.description())
+        .publisher(request.publisher())
+        .publishDate(request.publishedDate())
+        .isbn("")
+        .thumbnailFileName("")
         .build();
     Book savedBook = bookRepository.save(book);
 
