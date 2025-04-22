@@ -25,7 +25,7 @@ public class MDCLoggingFilter extends OncePerRequestFilter {
 
   private static final String HEADER_REQUEST_ID = "X-Request-ID";
   private static final String HEADER_CLIENT_IP = "X-Client-IP";
-  private static final String HEADER_FOWARD_FOR = "X-Forwared-For";
+  private static final String HEADER_FOWARD_FOR = "X-Forwarded-For";
 
 
   @Override
