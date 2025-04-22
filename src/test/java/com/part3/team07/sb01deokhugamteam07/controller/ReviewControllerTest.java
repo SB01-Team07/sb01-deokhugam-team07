@@ -21,6 +21,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -105,5 +106,41 @@ class ReviewControllerTest {
                         .content(objectMapper.writeValueAsString(invalidRequest))
                         .with(csrf())) //csrf 추가
                 .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("리뷰 상세 조회를 할 수 있다.")
+    @Test
+    void find() throws Exception {
+        //given
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+
+        ReviewDto reviewDto = new ReviewDto(
+                reviewId,
+                bookId,
+                "Book",
+                "url",
+                userId,
+                "User",
+                "책입니다",
+                5,
+                0,
+                0,
+                false,
+                now,
+                now
+        );
+
+        //when
+        given(reviewService.find(reviewId)).willReturn(reviewDto);
+
+        //then
+        mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(reviewId.toString()));
+
     }
 }
