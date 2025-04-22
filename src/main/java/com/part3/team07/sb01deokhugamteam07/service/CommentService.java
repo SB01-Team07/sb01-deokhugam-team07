@@ -18,6 +18,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -29,6 +30,7 @@ public class CommentService {
   private final ReviewRepository reviewRepository;
   private final CommentMapper commentMapper;
 
+  @Transactional
   public CommentDto create(CommentCreateRequest createRequest) {
     log.debug("create comment {}", createRequest);
     User user = userRepository.findById(createRequest.userId())
@@ -49,6 +51,7 @@ public class CommentService {
     return commentMapper.toDto(comment);
   }
 
+  @Transactional
   public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest) {
     log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId,
         updateRequest);
@@ -67,6 +70,7 @@ public class CommentService {
     return commentMapper.toDto(comment);
   }
 
+  @Transactional(readOnly = true)
   public CommentDto find(UUID commentId) {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(()-> CommentNotFoundException.withId(commentId));

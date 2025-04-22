@@ -252,4 +252,29 @@ class CommentServiceTest {
     assertThat(result).isEqualTo(commentDto);
   }
 
+  @Test
+  @DisplayName("댓글 상세 정보 조회 실패 - 댓글 존재X(물리 삭제 상태)")
+  void findCommentFailCommentNotFound() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
+
+    //when & then
+    assertThatThrownBy(()-> commentService.find(commentId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("댓글 상세 정보 조회 실패 - 논리 삭제 상태")
+  void findCommentFailCommentIsDeleted() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    comment.logicalDelete();
+
+    //when & then
+    assertThatThrownBy(()-> commentService.find(commentId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+
+
 }
