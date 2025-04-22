@@ -14,5 +14,7 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime endDateTime
   );
 
+
   List<Review> findByIsDeletedFalse();
+  boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 }
