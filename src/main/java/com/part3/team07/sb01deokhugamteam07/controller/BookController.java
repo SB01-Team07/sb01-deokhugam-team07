@@ -39,7 +39,7 @@ public class BookController {
 
   @PatchMapping("/{id}")
   public ResponseEntity<BookDto> update(@PathVariable UUID id,
-      @Valid @RequestBody BookUpdateRequest request) {
+      @RequestBody @Valid BookUpdateRequest request) {
     BookDto bookDto = bookService.update(id, request);
 
     return ResponseEntity
