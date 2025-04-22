@@ -157,7 +157,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 수정 성공")
-  void updateComment(){
+  void updateComment() {
     //given
     String newContent = "updated content";
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
@@ -179,7 +179,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 수정 실패 - 권한없음")
-  void updateCommentFailByUnauthorizedUser(){
+  void updateCommentFailByUnauthorizedUser() {
     //given
     UUID otherUserId = UUID.randomUUID();
     String newContent = "updated content";
@@ -192,14 +192,14 @@ class CommentServiceTest {
     );
 
     //when & then
-    assertThatThrownBy(()-> commentService.update(commentId, otherUserId, updateRequest))
+    assertThatThrownBy(() -> commentService.update(commentId, otherUserId, updateRequest))
         .isInstanceOf(CommentUnauthorizedException.class);
 
   }
 
   @Test
   @DisplayName("댓글 수정 실패 - 댓글 존재X")
-  void updateCommentFailCommentNotFound(){
+  void updateCommentFailCommentNotFound() {
     //given
     String newContent = "updated content";
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
@@ -209,7 +209,7 @@ class CommentServiceTest {
     );
 
     //when & then
-    assertThatThrownBy(()-> commentService.update(commentId, userId, updateRequest))
+    assertThatThrownBy(() -> commentService.update(commentId, userId, updateRequest))
         .isInstanceOf(CommentNotFoundException.class);
 
   }

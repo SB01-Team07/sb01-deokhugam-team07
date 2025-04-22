@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import java.time.LocalDateTime;
@@ -102,7 +103,8 @@ class CommentControllerTest {
 
   @Test
   @DisplayName("댓글 수정 성공")
-  void updateComment() throws Exception{
+  @WithMockUser(roles = "ADMIN")
+  void updateComment() throws Exception {
     //given
     String newContent = "updated content";
     UUID testCommentId = UUID.randomUUID();
@@ -129,9 +131,10 @@ class CommentControllerTest {
 
     //when & then
     mockMvc.perform(patch("/api/comments/{commentId}", testCommentId)
-        .header("Deokhugam-Request-User-ID", testUserId.toString())
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(updateRequest)))
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest))
+            .with(csrf()))  // 스프링 시큐리티 토큰
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(testCommentId.toString()))
         .andExpect(jsonPath("$.content").value(newContent))
@@ -140,7 +143,8 @@ class CommentControllerTest {
 
   @Test
   @DisplayName("댓글 수정 실패 - 잘못된 요청")
-  void updateCommentFailByInvalidRequest() throws Exception{
+  @WithMockUser(roles = "ADMIN")
+  void updateCommentFailByInvalidRequest() throws Exception {
     //given
     UUID testCommentId = UUID.randomUUID();
     UUID testUserId = UUID.randomUUID();
@@ -152,7 +156,8 @@ class CommentControllerTest {
     mockMvc.perform(patch("/api/comments/{commentId}", testCommentId)
             .header("Deokhugam-Request-User-ID", testUserId.toString())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(invalidRequest)))
+            .content(objectMapper.writeValueAsString(invalidRequest))
+            .with(csrf()))  // 스프링 시큐리티 토큰
         .andExpect(status().isBadRequest());
   }
 }
