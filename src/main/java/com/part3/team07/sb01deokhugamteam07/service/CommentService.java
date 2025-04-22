@@ -67,4 +67,19 @@ public class CommentService {
     return commentMapper.toDto(comment);
   }
 
+  public CommentDto find(UUID commentId) {
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(()-> CommentNotFoundException.withId(commentId));
+
+    isDeleted(comment);
+
+    return commentMapper.toDto(comment);
+  }
+
+  private void isDeleted(Comment comment){
+    if (comment.isDeleted()){
+      throw CommentNotFoundException.withId(comment.getId());
+    }
+  }
+
 }

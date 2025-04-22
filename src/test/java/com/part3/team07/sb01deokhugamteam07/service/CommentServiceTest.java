@@ -238,4 +238,18 @@ class CommentServiceTest {
 
   }
 
+  @Test
+  @DisplayName("댓글 상세 정보 조회 성공")
+  void findComment() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentMapper.toDto(any(Comment.class))).willReturn(commentDto);
+
+    //when
+    CommentDto result = commentService.find(commentId);
+
+    //then
+    assertThat(result).isEqualTo(commentDto);
+  }
+
 }
