@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,13 +39,12 @@ public class BookController {
 
   @PatchMapping("/{id}")
   public ResponseEntity<BookDto> update(@PathVariable UUID id,
-      @RequestBody BookUpdateRequest request) {
+      @Valid @RequestBody BookUpdateRequest request) {
     BookDto bookDto = bookService.update(id, request);
 
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(bookDto);
-
   }
 
 }
