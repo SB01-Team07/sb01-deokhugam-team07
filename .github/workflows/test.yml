@@ -26,7 +26,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: 테스트 수행
-        run: ./gradlew test -Dspring.profiles.active=test
+        env:
+          SPRING_PROFILES_ACTIVE: test
+        run: ./gradlew test
 
       - name: codecov 확인
         uses: codecov/codecov-action@v5
