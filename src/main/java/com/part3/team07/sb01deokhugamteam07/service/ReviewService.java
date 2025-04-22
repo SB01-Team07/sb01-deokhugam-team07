@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -46,6 +48,13 @@ public class ReviewService {
         reviewRepository.save(review);
 
         log.info("리뷰 생성 완료: id={}, userId={}, bookId{}", review.getId(), user.getId(), book.getId());
-        return ReviewMapper.toDto(user, book, review);
+        return ReviewMapper.toDto(review);
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewDto find(UUID reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+        return ReviewMapper.toDto(review);
     }
 }
