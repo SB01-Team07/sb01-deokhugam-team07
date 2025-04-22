@@ -84,4 +84,20 @@ public class UserService {
       throw new DuplicateUserEmailException(request);
     }
   }
+
+  public UserDto find(UUID userId) {
+    if (userId == null) {
+      throw new IllegalArgumentException();
+    }
+
+    User findUser = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    return UserDto.builder()
+        .id(findUser.getId())
+        .email(findUser.getEmail())
+        .createdAt(findUser.getCreatedAt())
+        .nickname(findUser.getNickname())
+        .build();
+  }
 }
