@@ -21,8 +21,8 @@ import jakarta.persistence.Table;
 public class Like extends BaseEntity {
 
   @Column(nullable = false)
-  private UUID user_id;
+  private UUID userId;
 
   @Column(nullable = false)
-  private UUID review_id;
+  private UUID reviewId;
 }
