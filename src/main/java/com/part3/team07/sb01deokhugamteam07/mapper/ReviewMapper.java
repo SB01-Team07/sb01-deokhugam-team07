@@ -7,14 +7,14 @@ import com.part3.team07.sb01deokhugamteam07.entity.User;
 
 public class ReviewMapper {
 
-    public static ReviewDto toDto(Review review) {
+    public static ReviewDto toDto(User user, Book book, Review review) {
         return new ReviewDto(
                 review.getId(),
-                review.getBook().getId(),
-                review.getBook().getTitle(),
-                review.getBook().getThumbnailUrl(),
-                review.getUser().getId(),
-                review.getUser().getNickname(),
+                book.getId(),
+                book.getTitle(),
+                book.getThumbnailFileName(),
+                user.getId(),
+                user.getNickname(),
                 review.getContent(),
                 review.getRating(),
                 review.getLikeCount(),

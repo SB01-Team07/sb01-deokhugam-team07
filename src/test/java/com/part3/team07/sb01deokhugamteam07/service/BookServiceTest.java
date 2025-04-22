@@ -1,0 +1,139 @@
+package com.part3.team07.sb01deokhugamteam07.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
+import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
+import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+@ExtendWith(MockitoExtension.class)
+class BookServiceTest {
+
+  @Mock
+  private BookRepository bookRepository;
+
+  @Mock
+  private BookMapper bookMapper;
+
+  @Mock
+  private ThumbnailImageService thumbnailImageService;
+
+  @InjectMocks
+  private BookService bookService;
+
+  private UUID id;
+  private String title;
+  private String author;
+  private String description;
+  private String publisher;
+  private LocalDate publishedDate;
+  private String isbn;
+  private Book book;
+
+  @BeforeEach
+  void setUp() {
+    id = UUID.randomUUID();
+    title = "title";
+    author = "author";
+    description = "description";
+    publisher = "publisher";
+    publishedDate = LocalDate.of(1618, 1, 1);
+
+    book = new Book(title, author, description, publisher, publishedDate,
+        isbn, "", 0, 0);
+  }
+
+  @Nested
+  @DisplayName("도서 생성")
+  class CreateTest {
+    @Test
+    @DisplayName("도서 생성 성공")
+    void create_success() {
+      // given
+      BookCreateRequest request = new BookCreateRequest(
+          title,
+          author,
+          description,
+          publisher,
+          publishedDate,
+          ""
+      );
+
+      BookDto bookDto = new BookDto(
+          id,
+          title,
+          author,
+          description,
+          publisher,
+          publishedDate,
+          "",
+          "",
+          0,
+          0,
+          LocalDateTime.now(),
+          LocalDateTime.now()
+      );
+
+      given(bookRepository.existsByIsbn(request.isbn())).willReturn(false);
+      given(thumbnailImageService.save(any())).willReturn("");
+      given(bookRepository.save(any(Book.class))).will(invocation -> {
+        Book book = invocation.getArgument(0);
+        ReflectionTestUtils.setField(book, "id", id);
+        return book;
+      });
+      given(bookMapper.toDto(any(Book.class))).willReturn(bookDto);
+
+      // when
+      BookDto result = bookService.create(request, null);
+
+      // then
+      assertThat(result).isEqualTo(bookDto);
+      verify(thumbnailImageService).save(any());
+      verify(bookRepository).save(any(Book.class));
+    }
+
+    @Test
+    @DisplayName("도서 생성 실패 - 중복 ISBN")
+    void create_fail_duplicateIsbn() {
+      // given
+      BookCreateRequest request = new BookCreateRequest(
+          title,
+          author,
+          description,
+          publisher,
+          publishedDate,
+          ""
+      );
+
+      given(bookRepository.existsByIsbn(request.isbn())).willReturn(true);
+
+      // when & then
+      assertThrows(DuplicateIsbnException.class,
+          () -> bookService.create(request, null)
+      );
+
+    }
+  }
+
+
+
+}

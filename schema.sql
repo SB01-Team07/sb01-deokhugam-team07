@@ -27,7 +27,7 @@ CREATE TABLE books
     isbn         VARCHAR(255) UNIQUE,
     thumbnailUrl TEXT,
     review_count INTEGER       NOT NULL DEFAULT 0,
-    rating       DECIMAL(2, 1) NOT NULL
+    rating       DECIMAL(2, 1) NOT NULL DEFAULT 0.0
 );
 
 CREATE TABLE reviews

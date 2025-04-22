@@ -70,8 +70,8 @@ class ReviewServiceTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn(UUID.randomUUID().toString())
-                .thumbnailUrl("url")
-                .review_count(0)
+                .thumbnailFileName("url")
+                .reviewCount(0)
                 .rating(0.0)
                 .build();
         ReflectionTestUtils.setField(book, "id", bookId);
@@ -90,7 +90,7 @@ class ReviewServiceTest {
                 reviewId,
                 bookId,
                 book.getTitle(),
-                book.getThumbnailUrl(),
+                book.getThumbnailFileName(),
                 userId,
                 user.getNickname(),
                 review.getContent(),
