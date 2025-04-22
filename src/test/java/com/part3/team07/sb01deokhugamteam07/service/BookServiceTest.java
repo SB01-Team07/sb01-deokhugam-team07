@@ -10,6 +10,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
@@ -214,7 +215,7 @@ class BookServiceTest {
     given(bookRepository.findById(nonExistentId)).willReturn(Optional.empty());
 
     // when & then
-    assertThrows(IllegalArgumentException.class,
+    assertThrows(BookNotFoundException.class,
         () -> bookService.update(nonExistentId, request)
     );
 

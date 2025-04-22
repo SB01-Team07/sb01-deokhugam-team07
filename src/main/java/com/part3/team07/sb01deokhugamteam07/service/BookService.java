@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
@@ -50,7 +51,7 @@ public class BookService {
 
   public BookDto update(UUID id, BookUpdateRequest request) {
     Book book = bookRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException());
+        .orElseThrow(() -> new BookNotFoundException());
 
     Optional.ofNullable(request.title()).ifPresent(book::updateTitle);
     Optional.ofNullable(request.author()).ifPresent(book::updateAuthor);
