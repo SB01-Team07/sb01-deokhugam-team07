@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.part3.team07.sb01deokhugamteam07.dto.user.PowerUserDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.UserMetricsDTO;
 import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
@@ -71,13 +72,10 @@ class DashboardServiceTest {
     );
 
     // dashboardRepository 반환 목 객체
-    Map<UUID, Map<String, Double>> mockUserMetrics = Map.of(
-        userId, Map.of(
-            ValueType.REVIEW_SCORE_SUM.toString(), 94.19999999999999,
-            ValueType.LIKE_COUNT.toString(), 38.0,
-            ValueType.COMMENT_COUNT.toString(), 80.0
-        )
-    );
+    List<UserMetricsDTO> mockUserMetrics = List.of(new UserMetricsDTO(userId,
+        94.19999999999999,
+        38.0,
+        80.0));
     // content 으로 쓰이는 PowerUserDto 객체
     List<PowerUserDto> mockPowerUsers = List.of(
         new PowerUserDto(

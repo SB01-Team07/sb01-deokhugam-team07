@@ -2,12 +2,12 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 
 import com.part3.team07.sb01deokhugamteam07.dto.user.PowerUserDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.UserMetricsDTO;
 import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
-import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,16 +76,23 @@ public class DashboardService {
         .collect(Collectors.toMap(User::getId, user -> user));
 
     // 5. 사용자별 추가 지표 정보 (리뷰점수합, 좋아요수, 댓글수) 조회
-    Map<UUID, Map<String, Double>> userMetrics = dashboardRepository.getUserMetrics(period);
+    List<UserMetricsDTO> userMetrics = dashboardRepository.getUserMetrics(period);
+    Map<UUID, UserMetricsDTO> metricsDTOMap = userMetrics.stream()
+        .collect(Collectors.toMap(UserMetricsDTO::userId, Function.identity()));
 
     // 6. PowerUserDto 변환
     List<PowerUserDto> content = new ArrayList<>();
     for (Dashboard d : dashboards) {
-      User user = userMap.get(d.getKey());
-      Map<String, Double> metrics = userMetrics.getOrDefault(d.getKey(), Map.of());
-      double reviewScoreSum = metrics.get(ValueType.REVIEW_SCORE_SUM.name());
-      int likeCount = metrics.get(ValueType.LIKE_COUNT.name()).intValue();
-      int commentCount = metrics.get(ValueType.COMMENT_COUNT.name()).intValue();
+      UUID userId = d.getKey();
+      User user = userMap.get(userId);
+      // 유저 지표 정보
+      UserMetricsDTO metrics = metricsDTOMap.get(userId);
+      double reviewScoreSum =
+          metrics != null && metrics.reviewScoreSum() != null ? metrics.reviewScoreSum() : 0.0;
+      int likeCount =
+          metrics != null && metrics.likeCount() != null ? metrics.likeCount().intValue() : 0;
+      int commentCount =
+          metrics != null && metrics.commentCount() != null ? metrics.commentCount().intValue() : 0;
 
       if (user != null) {
         content.add(

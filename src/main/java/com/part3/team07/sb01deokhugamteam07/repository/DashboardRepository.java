@@ -1,9 +1,10 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
+import com.part3.team07.sb01deokhugamteam07.dto.user.UserMetricsDTO;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,7 @@ public interface DashboardRepository extends JpaRepository<Dashboard, UUID> {
       "AND value_type IN ('REVIEW_SCORE_SUM', 'LIKE_COUNT', 'COMMENT_COUNT') " +
       "AND period = :period " +
       "GROUP BY \"key\"", nativeQuery = true)
-  Map<UUID, Map<String, Double>> getUserMetrics(@Param("period") Period period);
+  List<UserMetricsDTO> getUserMetrics(@Param("period") Period period);
 
   long countByKeyTypeAndPeriod(KeyType keyType, Period period);
 }
