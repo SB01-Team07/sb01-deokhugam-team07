@@ -12,8 +12,10 @@ import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -24,6 +26,7 @@ public class ReviewService {
 
     @Transactional
     public ReviewDto create(ReviewCreateRequest request){
+        log.debug("리뷰 생성 시작: {}", request);
         if(reviewRepository.existsByUserIdAndBookId(request.userId(), request.bookId())){
             throw new IllegalArgumentException("이미 해당 도서에 대한 리뷰가 존재합니다.");
         }
@@ -42,6 +45,7 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
+        log.info("리뷰 생성 완료: id={}, userId={}, bookId{}", review.getId(), user.getId(), book.getId());
         return ReviewMapper.toDto(user, book, review);
     }
 }
