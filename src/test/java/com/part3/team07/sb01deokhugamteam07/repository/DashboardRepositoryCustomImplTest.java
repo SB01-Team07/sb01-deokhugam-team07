@@ -45,6 +45,23 @@ class DashboardRepositoryCustomImplTest {
     dashboardRepositoryCustom = new DashboardRepositoryCustomImpl(queryFactory);
 
     // 테스트용 데이터 삽입
+
+    // 영속성 컨텍스트 초기화
+    entityManager.flush();
+    entityManager.clear();
+  }
+
+  /**
+   * findPowerUsersByPeriod 메서드
+   * 파워 유저 데이터를 담고 있는 대시보드 테이블을 조회해 페이지네이션을 지원하여 반환하는 메서드에 대한 테스트입니다.
+   *
+   * limit 이 11 인 이유는 서비스 단에서 hasNext 를 위해 limit + 1 값을 전달하기 때문입니다.
+   **/
+
+  @Test
+  @DisplayName("Daily 기간에 대해 데이터 조회")
+  public void testfindPowerUsersByDailyWithCursor() {
+
     for (int i = 1; i <= 40; i++) {
       Dashboard dashboard = Dashboard.builder()
           .key(UUID.randomUUID())
@@ -57,65 +74,10 @@ class DashboardRepositoryCustomImplTest {
 
       testEntityManager.persist(dashboard);
     }
-    Dashboard tiedDashboard = Dashboard.builder() // 동점자 처리 테스트 용
-        .key(UUID.randomUUID())
-        .keyType(KeyType.USER)
-        .period(Period.DAILY)
-        .value(60)
-        .rank(30)
-        .valueType(ValueType.SCORE)
-        .build();
-    testEntityManager.persist(tiedDashboard);
-
-    for (int i = 1; i <= 30; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.USER)
-          .period(Period.WEEKLY)
-          .value(90 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-
-      testEntityManager.persist(dashboard);
-    }
-    for (int i = 1; i <= 30; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.USER)
-          .period(Period.MONTHLY)
-          .value(90 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-
-      testEntityManager.persist(dashboard);
-    }
-    for (int i = 1; i <= 30; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.USER)
-          .period(Period.ALL_TIME)
-          .value(90 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-
-      testEntityManager.persist(dashboard);
-    }
 
     // 영속성 컨텍스트 초기화
     entityManager.flush();
     entityManager.clear();
-  }
-
-  /**
-   * limit 이 11 인 이유는 서비스 단에서 hasNext 를 위해 limit + 1 값을 전달하기 때문입니다.
-   **/
-
-  @Test
-  @DisplayName("Daily 기간에 대해 데이터 조회")
-  public void testfindPowerUsersByDailyWithCursor() {
 
     // 첫 번째 페이지
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
@@ -141,6 +103,24 @@ class DashboardRepositoryCustomImplTest {
   @Test
   @DisplayName("Weekly 기간에 대해 데이터 조회")
   public void testfindPowerUsersByWeekly() {
+
+    for (int i = 1; i <= 30; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.USER)
+          .period(Period.WEEKLY)
+          .value(90 - i)
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+    }
+
+    // 영속성 컨텍스트 초기화
+    entityManager.flush();
+    entityManager.clear();
+
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.WEEKLY,
         "asc", null, null, 11);
 
@@ -164,6 +144,24 @@ class DashboardRepositoryCustomImplTest {
   @Test
   @DisplayName("Monthly 기간에 대해 데이터 조회")
   public void testfindPowerUsersByMonthly() {
+
+    for (int i = 1; i <= 30; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.USER)
+          .period(Period.MONTHLY)
+          .value(90 - i)
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+    }
+
+    // 영속성 컨텍스트 초기화
+    entityManager.flush();
+    entityManager.clear();
+
     // Monthly 기간에 대해 데이터 조회
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.MONTHLY,
         "asc", null, null, 11);
@@ -187,6 +185,24 @@ class DashboardRepositoryCustomImplTest {
   @Test
   @DisplayName("AllTime 기간에 대해 데이터 조회")
   public void testfindPowerUsersByAllTime() {
+
+    for (int i = 1; i <= 30; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.USER)
+          .period(Period.ALL_TIME)
+          .value(90 - i)
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+    }
+
+    // 영속성 컨텍스트 초기화
+    entityManager.flush();
+    entityManager.clear();
+
     // Monthly 기간에 대해 데이터 조회
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.ALL_TIME,
         "asc", null, null, 11);
@@ -210,6 +226,33 @@ class DashboardRepositoryCustomImplTest {
   @Test
   @DisplayName("동점자(rank 중복) 존재 시에도 페이지네이션 동작")
   public void test_Find_PowerUser_with_Tied_Ranks() {
+
+    for (int i = 1; i <= 40; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.USER)
+          .period(Period.DAILY)
+          .value(90 - i)
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+    }
+    Dashboard tiedDashboard = Dashboard.builder() // 동점자 처리 테스트 용
+        .key(UUID.randomUUID())
+        .keyType(KeyType.USER)
+        .period(Period.DAILY)
+        .value(60)
+        .rank(30)
+        .valueType(ValueType.SCORE)
+        .build();
+    testEntityManager.persist(tiedDashboard);
+
+    // 영속성 컨텍스트 초기화
+    entityManager.flush();
+    entityManager.clear();
+
     // 첫 페이지
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
         "asc", null, null, 31); // 동점자 포함해서 rank=30이 2개이므로 31까지 조회
@@ -234,6 +277,8 @@ class DashboardRepositoryCustomImplTest {
   @Test
   @DisplayName("커서와 after 파라미터가 올바르게 동작")
   public void testCursorAndAfterParameters() {
+
+
     List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(
         Period.DAILY, "asc", null, null, 30);
 
@@ -255,5 +300,54 @@ class DashboardRepositoryCustomImplTest {
                 d.getCreatedAt().isAfter(duplicateRank.getCreatedAt()))
     ));
   }
+
+  /**
+   * findPopularReviewByPeriod 메서드
+   * 인기 리뷰 데이터를 담고 있는 대시보드 테이블을 조회해 페이지네이션을 지원하여 반환하는 메서드에 대한 테스트입니다.
+   *
+   * limit 이 51 인 이유는 서비스 단에서 hasNext 를 위해 limit + 1 값을 전달하고, limit 의 default가 50이기 때문입니다.
+   **/
+
+  @Test
+  @DisplayName("Daily 기간에 대해 데이터 조회")
+  public void testFindPopularReviewByDailyWithCursor() {
+
+    for (int i = 1; i <= 100; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.REVIEW)
+          .period(Period.DAILY)
+          .value(90 - i)
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+      testEntityManager.persist(dashboard);
+    }
+
+    // 영속성 컨텍스트 초기화
+    entityManager.flush();
+    entityManager.clear();
+
+    // 첫 번째 페이지
+    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.DAILY,
+        "asc", null, null, 51);
+
+    assertEquals(51, firstPage.size());
+    for (int i = 0; i < firstPage.size() - 1; i++) {
+      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
+          "랭킹 오름차순 정렬");
+    }
+    // 두 번째 페이지
+    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
+    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
+    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.DAILY,
+        "asc", cursor, after, 51);
+
+    // cursor 이후의 데이터가 반환되는지 확인
+    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
+        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
+  }
+
+
 
 }
