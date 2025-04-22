@@ -17,9 +17,9 @@
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${LOG_DIR}/application.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <!-- 일자별 롤링, 일별 보관 -->
+      <!-- 일자별 롤링, 14일 보관 -->
       <fileNamePattern>${LOG_DIR}/application.%d{yyyy-MM-dd}.log</fileNamePattern>
-      <maxHistory>1</maxHistory>
+      <maxHistory>14</maxHistory>
     </rollingPolicy>
     <encoder>
       <pattern>${LOG_PATTERN}</pattern>
