@@ -21,6 +21,9 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
+          
+      - name: Create storage directory
+        run: mkdir -p src/test/resources/static/storage
 
       - name: Set up application-test.yml
         run: |
