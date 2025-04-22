@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import com.part3.team07.sb01deokhugamteam07.logging.MDCLoggingFilter;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.security.filter.HeaderAuthenticationFilter;
 import com.part3.team07.sb01deokhugamteam07.security.filter.UserIdHeaderFilter;
@@ -27,6 +28,7 @@ public class SecurityConfig {
   private final CustomUserDetailsService userDetailsService;
   private final UserIdHeaderFilter userIdHeaderFilter;
   private final HeaderAuthenticationFilter headerAuthenticationFilter;
+  private final MDCLoggingFilter mdcLoggingFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,6 +45,7 @@ public class SecurityConfig {
             ).permitAll() // 위의 엔드포인트 허용
             .requestMatchers("/api/**").authenticated() // 나머지 엔드포인트 막음
         )
+        .addFilterBefore(mdcLoggingFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(headerAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class) // 인증 전 헤더 필터
         .addFilterAfter(userIdHeaderFilter,
