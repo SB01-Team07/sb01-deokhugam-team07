@@ -1,8 +1,10 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,14 @@ public class UserExceptionHandler {
     log.error("Duplicate Email: {}", e.getRequest().email());
 
     return e.getRequest();
+  }
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler(IllegalUserPasswordException.class)
+  public UserLoginRequest duplicatedEmail(IllegalUserPasswordException e) {
+    log.error("Invalid Password: {}", e.getUserLoginRequest().password());
+
+    return e.getUserLoginRequest();
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)

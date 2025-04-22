@@ -8,10 +8,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,5 +74,50 @@ class UserServiceTest {
         .isInstanceOf(DuplicateUserEmailException.class);
 
     verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  @DisplayName("유저 로그인 - 성공")
+  void login() {
+    UserLoginRequest request = new UserLoginRequest("test@mail.com", "password123");
+
+    User user = new User("test", "encodedpassword123", "test@mail.com");
+
+    when(userRepository.findByEmail(any(String.class)))
+        .thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(any(String.class), any(String.class)))
+        .thenReturn(true);
+
+    UserDto loginedUser = userService.login(request);
+
+    assertThat("test@mail.com").isEqualTo(loginedUser.email());
+    assertThat("test").isEqualTo(loginedUser.nickname());
+
+    verify(userRepository).findByEmail(any(String.class));
+  }
+
+  @Test
+  @DisplayName("유저 로그인 - 실패(없는 유저)")
+  void notFoundUserLogin() {
+    UserLoginRequest request = new UserLoginRequest("test@mail.com", "password123");
+
+    when(userRepository.findByEmail(any(String.class)))
+        .thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> userService.login(request))
+        .isInstanceOf(UserNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("유저 로그인 - 실패(잘못된 패스워드)")
+  void invalidPassword() throws Exception {
+    UserLoginRequest request = new UserLoginRequest("test@mail.com", "password123");
+    User user = new User("test", "realpassword", "test@mail.com");
+
+    when(userRepository.findByEmail(any(String.class)))
+        .thenReturn(Optional.of(user));
+
+    assertThatThrownBy(() -> userService.login(request))
+        .isInstanceOf(IllegalUserPasswordException.class);
   }
 }
