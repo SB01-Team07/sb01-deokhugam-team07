@@ -8,6 +8,11 @@ import com.part3.team07.sb01deokhugamteam07.service.UserService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final AuthenticationManager authenticationManager;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -32,11 +38,25 @@ public class UserController {
     return userService.register(request);
   }
 
+  /**
+  * @methodName : login
+  * @date : 2025. 4. 21. 13:20
+  * @author : wongil
+  * @Description: 유저 로그인
+  **/
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
-  public UserDto login(@RequestBody @Validated UserLoginRequest request) {
+  public ResponseEntity<UserDto> loginUser(@RequestBody @Validated UserLoginRequest request) {
 
-    return userService.login(request);
+    Authentication auth = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(request.email(), request.password())
+    );
+
+    // SecurityContext에 저장
+    SecurityContextHolder.getContext().setAuthentication(auth);
+
+    UserDto loginUser = userService.login(request);
+    return ResponseEntity.ok(loginUser);
   }
 
   @PostMapping("/{userId}")
