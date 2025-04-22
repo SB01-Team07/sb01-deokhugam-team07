@@ -20,7 +20,7 @@ public class UserService {
 
   public UserDto register(UserRegisterRequest request) {
     if (userRepository.existsByEmail(request.email())) {
-      throw new DuplicateUserEmailException();
+      throw new DuplicateUserEmailException(request);
     }
 
     String encodedPassword = passwordEncoder.encode(request.password());
