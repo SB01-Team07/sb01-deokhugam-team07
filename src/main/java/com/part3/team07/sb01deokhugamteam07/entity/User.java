@@ -29,6 +29,10 @@ public class User extends BaseSoftDeletableEntity {
   private String email;
 
   public void changeNickname(String nickname) {
+    if (nickname == null || nickname.isBlank()) {
+      throw new IllegalArgumentException();
+    }
+
     this.nickname = nickname;
   }
 
