@@ -141,7 +141,7 @@ class BookServiceTest {
   class UpdateTest {
     @Test
     @DisplayName("도서 수정 성공")
-    void update() {
+    void update_success() {
       // given
       String newTitle = "new title";
       String newAuthor = "new author";
@@ -190,6 +190,34 @@ class BookServiceTest {
       assertThat(result.publisher()).isEqualTo(newPublisher);
       assertThat(result.publishedDate()).isEqualTo(newPublishedDate);
     }
+  }
+
+  @Test
+  @DisplayName("도서 수정 실패 - 없는 id")
+  void update_fail_idNotFound() {
+    // given
+    UUID nonExistentId = UUID.randomUUID();
+    String newTitle = "new title";
+    String newAuthor = "new author";
+    String newDescription = "new description";
+    String newPublisher = "new publisher";
+    LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
+
+    BookUpdateRequest request = new BookUpdateRequest(
+        newTitle,
+        newAuthor,
+        newDescription,
+        newPublisher,
+        newPublishedDate
+    );
+
+    given(bookRepository.findById(nonExistentId)).willReturn(Optional.empty());
+
+    // when & then
+    assertThrows(IllegalArgumentException.class,
+        () -> bookService.update(nonExistentId, request)
+    );
+
   }
 
 
