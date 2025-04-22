@@ -21,19 +21,6 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
-          
-      - name: Create storage directory
-        run: mkdir -p src/test/resources/static/storage
-
-      - name: Set up application-test.yml
-        run: |
-          cat > src/test/resources/application-test.yml << EOF
-          deokhugam:
-            storage:
-              type: local
-              local:
-                root-path: src/test/resources/static/storage
-          EOF
 
       - name: gradlew 권한 부여
         run: chmod +x gradlew
