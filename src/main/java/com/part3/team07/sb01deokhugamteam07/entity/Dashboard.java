@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "dashboards")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Dashboarad extends BaseEntity {
+public class Dashboard extends BaseEntity {
 
   //@Column(nullable = false)
   @Column(name = "\"key\"", nullable = false)  //수정

@@ -28,4 +28,15 @@ public class User extends BaseSoftDeletableEntity {
   @Column(nullable = false)
   private String email;
 
+  public void changeNickname(String nickname) {
+    if (nickname == null || nickname.isBlank()) {
+      throw new IllegalArgumentException();
+    }
+
+    this.nickname = nickname;
+  }
+
+  public void logiDelete() {
+    super.delete();
+  }
 }
