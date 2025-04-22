@@ -55,15 +55,16 @@ public class CommentService {
         .build();
   }
 
-  public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest){
-    log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId, updateRequest);
+  public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest) {
+    log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId,
+        updateRequest);
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> CommentNotFoundException.withId(commentId));
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다.")); // todo: 예외 추가 시 변경 예정
+        .orElseThrow(() -> new UserNotFoundException(userId));
 
-    if (!comment.getUser().getId().equals(user.getId())){
+    if (!comment.getUser().getId().equals(user.getId())) {
       throw CommentUnauthorizedException.withId(userId);
     }
 
