@@ -48,11 +48,4 @@ public class ReviewService {
         log.info("리뷰 생성 완료: id={}, userId={}, bookId{}", review.getId(), user.getId(), book.getId());
         return ReviewMapper.toDto(user, book, review);
     }
-
-    @Transactional(readOnly = true)
-    public ReviewDto find(){
-
-
-
-    }
 }
