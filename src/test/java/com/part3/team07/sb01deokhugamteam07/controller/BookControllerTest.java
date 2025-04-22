@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -120,53 +121,83 @@ public class BookControllerTest {
         .andExpect(jsonPath("$.title").value(title));
   }
 
-  @Test
+  @Nested
   @DisplayName("도서 수정")
-  void update() throws Exception {
-    // given
-    String newTitle = "new title";
-    String newAuthor = "new author";
-    String newDescription = "new description";
-    String newPublisher = "new publisher";
-    LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
+  class UpdateTest {
+    @Test
+    @DisplayName("도서 수정 성공")
+    void update_success() throws Exception {
+      // given
+      String newTitle = "new title";
+      String newAuthor = "new author";
+      String newDescription = "new description";
+      String newPublisher = "new publisher";
+      LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
 
-    BookUpdateRequest request = new BookUpdateRequest(
-        newTitle,
-        newAuthor,
-        newDescription,
-        newPublisher,
-        newPublishedDate
-    );
+      BookUpdateRequest request = new BookUpdateRequest(
+          newTitle,
+          newAuthor,
+          newDescription,
+          newPublisher,
+          newPublishedDate
+      );
 
-    BookDto updatedBook = new BookDto(
-        id,
-        newTitle,
-        newAuthor,
-        newDescription,
-        newPublisher,
-        newPublishedDate,
-        "",
-        "",
-        0,
-        0,
-        LocalDateTime.now(),
-        LocalDateTime.now()
-    );
+      BookDto updatedBook = new BookDto(
+          id,
+          newTitle,
+          newAuthor,
+          newDescription,
+          newPublisher,
+          newPublishedDate,
+          "",
+          "",
+          0,
+          0,
+          LocalDateTime.now(),
+          LocalDateTime.now()
+      );
 
-    given(bookService.update(eq(id), any(BookUpdateRequest.class)))
-        .willReturn(updatedBook);
+      given(bookService.update(eq(id), any(BookUpdateRequest.class)))
+          .willReturn(updatedBook);
 
-    // when & then
-    mockMvc.perform(patch("/api/books/{id}", id)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request))
-            .with(csrf()))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(id.toString()))
-        .andExpect(jsonPath("$.title").value(newTitle))
-        .andExpect(jsonPath("$.author").value(newAuthor))
-        .andExpect(jsonPath("$.description").value(newDescription))
-        .andExpect(jsonPath("$.publisher").value(newPublisher))
-        .andExpect(jsonPath("$.publishedDate").value("2025-04-22"));
+      // when & then
+      mockMvc.perform(patch("/api/books/{id}", id)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(request))
+              .with(csrf()))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id").value(id.toString()))
+          .andExpect(jsonPath("$.title").value(newTitle))
+          .andExpect(jsonPath("$.author").value(newAuthor))
+          .andExpect(jsonPath("$.description").value(newDescription))
+          .andExpect(jsonPath("$.publisher").value(newPublisher))
+          .andExpect(jsonPath("$.publishedDate").value("2025-04-22"));
+    }
+
+    @Test
+    @DisplayName("도서 수정 실패 - 허용되지 않은 값")
+    void update_fail_NullableNotBlank() throws Exception {
+      // given
+      String newTitle = "";
+      String newAuthor = "new author";
+      String newDescription = "new description";
+      String newPublisher = "new publisher";
+      LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
+
+      BookUpdateRequest request = new BookUpdateRequest(
+          newTitle,
+          newAuthor,
+          newDescription,
+          newPublisher,
+          newPublishedDate
+      );
+
+      // when & then
+      mockMvc.perform(patch("/api/books/{id}", id)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(request))
+              .with(csrf()))
+          .andExpect(status().isBadRequest());
+    }
   }
 }
