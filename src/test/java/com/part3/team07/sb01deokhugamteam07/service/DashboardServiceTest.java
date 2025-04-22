@@ -24,7 +24,6 @@ import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -109,6 +108,7 @@ class DashboardServiceTest {
         false
     );
 
+    when(userRepository.findAllById(List.of(userId))).thenReturn(mockUsers);
     when(dashboardRepositoryCustom.findPowerUsersByPeriod(
         eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1))
     ).thenReturn(mockDashboards);
