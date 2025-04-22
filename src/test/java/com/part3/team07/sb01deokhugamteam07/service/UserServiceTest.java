@@ -201,4 +201,42 @@ class UserServiceTest {
 
     verify(userRepository).findById(any(UUID.class));
   }
+
+  @Test
+  @DisplayName("사용자 논리 삭제")
+  void logicalDelete() {
+    UUID userId = UUID.randomUUID();
+    User user = new User("user", "password123", "user@mail.com");
+    user.logiDelete();
+
+    when(userRepository.existsById(any(UUID.class)))
+        .thenReturn(true);
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+
+    userService.logicalDelete(userId);
+
+    assertThatThrownBy(() -> userService.find(userId))
+        .isInstanceOf(UserNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("사용자 논리 삭제 - 실패(잘못된 id)")
+  void failLogicalDeleteCauseInvalidId() throws Exception {
+    UUID userId = null;
+
+    assertThatThrownBy(() -> userService.logicalDelete(userId))
+        .isInstanceOf(IllegalArgumentException.class);
+
+    verify(userRepository, never()).findById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("사용자 논리 삭제 - 실패(사용자 정보 없음)")
+  void failLogicalDeleteCauseNotFoundUser() throws Exception {
+    UUID userId = UUID.randomUUID();
+
+    assertThatThrownBy(() -> userService.logicalDelete(userId))
+        .isInstanceOf(UserNotFoundException.class);
+  }
 }
