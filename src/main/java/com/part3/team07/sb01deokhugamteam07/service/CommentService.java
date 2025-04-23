@@ -33,11 +33,8 @@ public class CommentService {
   @Transactional
   public CommentDto create(CommentCreateRequest createRequest) {
     log.debug("create comment {}", createRequest);
-    User user = userRepository.findById(createRequest.userId())
-        .orElseThrow(() -> new UserNotFoundException(createRequest.userId()));
-
-    Review review = reviewRepository.findById(createRequest.reviewId())
-        .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다.")); // 예외 추가 시 변경 예정
+    User user = findUser(createRequest.userId());
+    Review review = findReview(createRequest.reviewId());
 
     Comment comment = Comment.builder()
         .user(user)
@@ -46,7 +43,6 @@ public class CommentService {
         .build();
 
     commentRepository.save(comment);
-
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
     return commentMapper.toDto(comment);
   }
@@ -55,16 +51,9 @@ public class CommentService {
   public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest) {
     log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId,
         updateRequest);
-    Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new CommentNotFoundException());
-
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
-
-    if (!comment.getUser().getId().equals(user.getId())) {
-      throw new CommentUnauthorizedException();
-    }
-
+    Comment comment = findComment(commentId);
+    User user = findUser(userId);
+    validWriter(comment, user);
     comment.update(updateRequest.content());
     log.info("update comment complete: id={}, comment={}", comment.getId(), comment.getContent());
     return commentMapper.toDto(comment);
@@ -73,9 +62,7 @@ public class CommentService {
   @Transactional(readOnly = true)
   public CommentDto find(UUID commentId) {
     log.debug("find comment: commentId = {}", commentId);
-    Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new CommentNotFoundException());
-
+    Comment comment = findComment(commentId);
     isDeleted(comment);
     log.info("find comment complete: commentId = {}", comment.getId());
     return commentMapper.toDto(comment);
@@ -84,18 +71,10 @@ public class CommentService {
   @Transactional
   public void logicalDelete(UUID commentId, UUID userId) {
     log.debug("logicalDelete comment: commentId = {}", commentId);
-    Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new CommentNotFoundException());
-
+    Comment comment = findComment(commentId);
     isDeleted(comment);
-
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
-
-    if (!comment.getUser().getId().equals(user.getId())) {
-      throw new CommentUnauthorizedException();
-    }
-
+    User user = findUser(userId);
+    validWriter(comment, user);
     comment.logicalDelete();
     log.info("logicalDelete comment complete");
   }
@@ -104,6 +83,28 @@ public class CommentService {
   private void isDeleted(Comment comment) {
     if (comment.isDeleted()) {
       throw new CommentNotFoundException();
+    }
+  }
+
+  private Comment findComment(UUID commentId) {
+    return commentRepository.findById(commentId)
+        .orElseThrow(() -> new CommentNotFoundException());
+  }
+
+  private User findUser(UUID userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+  }
+
+  private Review findReview(UUID reviewId) {
+    return reviewRepository.findById(reviewId)
+        .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다."));
+    //todo 예외 추가 시 변경 예정
+  }
+
+  private void validWriter(Comment comment, User user) {
+    if (!comment.getUser().equals(user)) {
+      throw new CommentUnauthorizedException();
     }
   }
 
