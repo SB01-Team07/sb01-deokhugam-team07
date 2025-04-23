@@ -88,8 +88,8 @@ public class ReviewService {
 
         // TODO 댓글 논리 삭제 로직 추가
 
-        log.info("리뷰 논리 삭제 완료: id={}", reviewId);
         review.softDelete();
+        log.info("리뷰 논리 삭제 완료: id={}", reviewId);
     }
 
     @Transactional
@@ -116,12 +116,14 @@ public class ReviewService {
 
     @Transactional
     public void hardDelete(UUID userId, UUID reviewId){
+        log.debug("리뷰 물리 삭제 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));//404 리뷰 정보 없음
         if(!review.isReviewer(userId)){
             throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
         }
         reviewRepository.delete(review);
+        log.info("리뷰 물리 삭제 완료: id={}", reviewId);
     }
     
 }
