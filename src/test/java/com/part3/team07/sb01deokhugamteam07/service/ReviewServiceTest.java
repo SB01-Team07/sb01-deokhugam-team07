@@ -275,4 +275,17 @@ class ReviewServiceTest {
         assertThatThrownBy(() -> reviewService.softDelete(otherUserId, reviewId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("리뷰를 물리 삭제할 수 있다.")
+    @Test
+    void hardDelete() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        reviewService.hardDelete(userId, reviewId);
+
+        //then
+        verify(reviewRepository).delete(review);
+    }
 }
