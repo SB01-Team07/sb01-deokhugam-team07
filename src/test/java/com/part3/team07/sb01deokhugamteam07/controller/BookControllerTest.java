@@ -3,7 +3,9 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -200,4 +202,22 @@ public class BookControllerTest {
           .andExpect(status().isBadRequest());
     }
   }
+
+  @Nested
+  @DisplayName("도서 논리 삭제")
+  class SoftDeleteTest {
+    @Test
+    @DisplayName("도서 논리 삭제 성공")
+    void softDelete_success() throws Exception {
+      // given
+      willDoNothing().given(bookService).softDelete(id);
+
+      // when & then
+      mockMvc.perform(delete("/api/books/{id}", id)
+              .contentType(MediaType.APPLICATION_JSON)
+              .with(csrf()))
+          .andExpect(status().isNoContent());
+    }
+  }
+
 }
