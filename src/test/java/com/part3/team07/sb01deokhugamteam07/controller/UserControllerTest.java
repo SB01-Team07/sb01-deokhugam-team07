@@ -409,4 +409,61 @@ class UserControllerTest {
             .header("Deokhugam-Request-User-ID", userId))
         .andExpect(status().isNotFound());
   }
+  
+  @Test
+  @DisplayName("DELETE /api/users/{userId}/hard - 사용자 물리 삭제")
+  void physicalDelete() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User authUser = new User("test", "password1234", "test@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", userId);
+
+    // when
+    when(userRepository.findById(eq(userId)))
+        .thenReturn(Optional.of(authUser));
+    doNothing().when(userService).physicalDelete(eq(userId));
+
+    mockMvc
+        .perform(delete("/api/users/{userId}/hard", userId)
+            .header("Deokhugam-Request-User-ID", userId))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @DisplayName("DELETE /api/users/{userId}/hard - 사용자 물리 삭제 실패(권한 없음)")
+  void failPhysicalDeleteCauseUnauthorize() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User authUser = new User("test", "password1234", "test@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", userId);
+
+    // when
+    when(userRepository.findById(eq(userId)))
+        .thenReturn(Optional.of(authUser));
+    doNothing().when(userService).physicalDelete(eq(userId));
+
+    mockMvc
+        .perform(delete("/api/users/{userId}/hard", userId))
+        .andExpect(status().is4xxClientError()); // 403
+  }
+
+  @Test
+  @DisplayName("DELETE /api/users/{userId}/hard - 사용자 물리 삭제 실패(유저 없음)")
+  void failPhysicalDeleteCauseUserNotFound() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User authUser = new User("test", "password1234", "test@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", userId);
+
+    // when
+    when(userRepository.findById(eq(userId)))
+        .thenReturn(Optional.of(authUser));
+    doThrow(new UserNotFoundException(userId))
+        .when(userService).physicalDelete(eq(userId));
+
+    mockMvc
+        .perform(delete("/api/users/{userId}/hard", userId)
+            .header("Deokhugam-Request-User-ID", userId))
+        .andExpect(status().isNotFound());
+  }
 }
