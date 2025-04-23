@@ -47,4 +47,23 @@ public class Book extends BaseSoftDeletableEntity {
   @Builder.Default
   private double rating = 0;
 
+  public void updateTitle(String newTitle) {
+    this.title = newTitle;
+  }
+
+  public void updateAuthor(String newAuthor) {
+    this.author = newAuthor;
+  }
+
+  public void updateDescription(String newDescription) {
+    this.description = newDescription;
+  }
+
+  public void updatePublisher(String newPublisher) {
+    this.publisher = newPublisher;
+  }
+
+  public void updatePublishDate(LocalDate newPublishDate) {
+    this.publishDate = newPublishDate;
+  }
 }
