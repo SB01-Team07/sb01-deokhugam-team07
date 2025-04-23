@@ -67,21 +67,23 @@ public class CommentService {
 
     comment.update(updateRequest.content());
     commentRepository.save(comment);
+    log.info("update comment complete: id={}, comment={}", comment.getId(), comment.getContent());
     return commentMapper.toDto(comment);
   }
 
   @Transactional(readOnly = true)
   public CommentDto find(UUID commentId) {
+    log.debug("find comment: commentId = {}", commentId);
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(()-> new CommentNotFoundException());
+        .orElseThrow(() -> new CommentNotFoundException());
 
     isDeleted(comment);
-
+    log.info("find comment complete: commentId = {}", comment.getId());
     return commentMapper.toDto(comment);
   }
 
-  private void isDeleted(Comment comment){
-    if (comment.isDeleted()){
+  private void isDeleted(Comment comment) {
+    if (comment.isDeleted()) {
       throw new CommentNotFoundException();
     }
   }

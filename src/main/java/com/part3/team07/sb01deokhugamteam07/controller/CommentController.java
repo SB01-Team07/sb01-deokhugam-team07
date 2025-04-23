@@ -57,7 +57,9 @@ public class CommentController {
   public ResponseEntity<CommentDto> find(
       @PathVariable UUID commentId
   ) {
+    log.info("find comment request: commentId = {}", commentId);
     CommentDto findComment = commentService.find(commentId);
+    log.debug("find comment response = {}", findComment);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(findComment);
