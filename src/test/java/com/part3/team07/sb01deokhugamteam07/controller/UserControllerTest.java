@@ -1,7 +1,11 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -344,5 +348,65 @@ class UserControllerTest {
             .header("Deokhugam-Request-User-ID", userId))
         .andExpect(status().isBadRequest())
     ;
+  }
+
+  @Test
+  @DisplayName("DELETE /api/users/{userId} - 사용자 논리 삭제")
+  void logicalDelete() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User authUser = new User("test", "password1234", "test@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", userId);
+
+    // when
+    when(userRepository.findById(eq(userId)))
+        .thenReturn(Optional.of(authUser));
+    doNothing().when(userService).logicalDelete(eq(userId));
+
+    // then
+    mockMvc
+        .perform(delete("/api/users/{userId}", userId)
+            .header("Deokhugam-Request-User-ID", userId))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @DisplayName("DELETE /api/users/{userId} - 사용자 논리 삭제 실패(권한 부족)")
+  void failLogicalDeleteCauseUnauthorize() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User authUser = new User("test", "password1234", "test@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", userId);
+
+    // when
+    when(userRepository.findById(eq(userId)))
+        .thenReturn(Optional.of(authUser));
+    doNothing().when(userService).logicalDelete(eq(userId));
+
+    // then
+    mockMvc
+        .perform(delete("/api/users/{userId}", userId))
+        .andExpect(status().is4xxClientError()); // 403
+  }
+
+  @Test
+  @DisplayName("DELETE /api/users/{userId} - 사용자 논리 삭제 실패(사용자 정보 없음)")
+  void failLogicalDeleteCauseNotFoundUser() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User authUser = new User("test", "password1234", "test@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", userId);
+
+    // when
+    when(userRepository.findById(eq(userId)))
+        .thenReturn(Optional.of(authUser));
+    doThrow(new UserNotFoundException(userId))
+        .when(userService).logicalDelete(eq(userId));
+
+    // then
+    mockMvc
+        .perform(delete("/api/users/{userId}", userId)
+            .header("Deokhugam-Request-User-ID", userId))
+        .andExpect(status().isNotFound());
   }
 }
