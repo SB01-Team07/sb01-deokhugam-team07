@@ -113,5 +113,15 @@ public class ReviewService {
         });
         log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
     }
+
+    @Transactional
+    public void hardDelete(UUID userId, UUID reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));//404 리뷰 정보 없음
+        if(!review.isReviewer(userId)){
+            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
+        }
+        reviewRepository.delete(review);
+    }
     
 }
