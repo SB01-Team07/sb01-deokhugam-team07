@@ -2,14 +2,19 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
+import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final UserRepository userRepository;
   private final ReviewRepository reviewRepository;
+  private final CommentMapper commentMapper;
 
   public CommentDto create(CommentCreateRequest createRequest) {
     log.debug("create comment {}", createRequest);
@@ -40,14 +46,25 @@ public class CommentService {
     commentRepository.save(comment);
 
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
-    return CommentDto.builder()
-        .id(comment.getId())
-        .reviewId(review.getId())
-        .userId(user.getId())
-        .userNickname(user.getNickname())
-        .content(comment.getContent())
-        .createdAt(comment.getCreatedAt())
-        .updatedAt(comment.getUpdatedAt())
-        .build();
+    return commentMapper.toDto(comment);
   }
+
+  public CommentDto update(UUID commentId, UUID userId, CommentUpdateRequest updateRequest) {
+    log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId,
+        updateRequest);
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new CommentNotFoundException());
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    if (!comment.getUser().getId().equals(user.getId())) {
+      throw new CommentUnauthorizedException();
+    }
+
+    comment.update(updateRequest.content());
+    commentRepository.save(comment);
+    return commentMapper.toDto(comment);
+  }
+
 }

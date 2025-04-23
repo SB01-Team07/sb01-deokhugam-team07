@@ -1,21 +1,24 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
@@ -48,6 +51,8 @@ class CommentServiceTest {
   @Mock
   private ReviewRepository reviewRepository;
 
+  @Mock
+  private CommentMapper commentMapper;
 
   private UUID userId;
   private UUID reviewId;
@@ -96,7 +101,17 @@ class CommentServiceTest {
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(reviewRepository.findById(reviewId)).willReturn(Optional.of(testReview));
     given(commentRepository.save(any(Comment.class))).willReturn(comment);
-
+    given(commentMapper.toDto(any(Comment.class))).willReturn(
+        new CommentDto(
+            commentId,
+            reviewId,
+            userId,
+            testUser.getNickname(),
+            comment.getContent(),
+            fixedNow,
+            fixedNow
+        )
+    );
     CommentCreateRequest createRequest = new CommentCreateRequest(
         reviewId,
         userId,
@@ -152,5 +167,74 @@ class CommentServiceTest {
 
   }
 
+  @Test
+  @DisplayName("댓글 수정 성공")
+  void updateComment() {
+    //given
+    String newContent = "updated content";
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
+    given(commentMapper.toDto(any(Comment.class))).willReturn(
+        new CommentDto(
+            commentId,
+            reviewId,
+            userId,
+            testUser.getNickname(),
+            newContent,
+            fixedNow,
+            fixedNow
+        )
+    );
+
+    UUID requestUserId = testUser.getId();
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
+
+    //when
+    CommentDto result = commentService.update(commentId, requestUserId, updateRequest);
+
+    //then
+    assertThat(result).isNotNull();
+    assertThat(result.content()).isEqualTo(newContent);
+    verify(commentRepository).save(any(Comment.class));
+  }
+
+  @Test
+  @DisplayName("댓글 수정 실패 - 권한없음")
+  void updateCommentFailByUnauthorizedUser() {
+    //given
+    UUID otherUserId = UUID.randomUUID();
+    String newContent = "updated content";
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(otherUserId)))
+        .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
+
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
+
+    //when & then
+    assertThatThrownBy(() -> commentService.update(commentId, otherUserId, updateRequest))
+        .isInstanceOf(CommentUnauthorizedException.class);
+
+  }
+
+  @Test
+  @DisplayName("댓글 수정 실패 - 댓글 존재X")
+  void updateCommentFailCommentNotFound() {
+    //given
+    String newContent = "updated content";
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
+
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        newContent
+    );
+
+    //when & then
+    assertThatThrownBy(() -> commentService.update(commentId, userId, updateRequest))
+        .isInstanceOf(CommentNotFoundException.class);
+
+  }
 
 }
