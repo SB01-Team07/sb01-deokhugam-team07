@@ -91,6 +91,26 @@ class ReviewRepositoryTest {
                 .containsExactlyInAnyOrder("닉네임1", "닉네임2");
     }
 
+    @DisplayName("유저가 작성한 모든 리뷰를 조회할 수 있다.")
+    @Test
+    void findAllByUser() {
+        //given
+        User user = userRepository.save(createTestUser("닉네임", "user1@abc.com"));
+        Book book1 = bookRepository.save(createTestBook("book1"));
+        Book book2 = bookRepository.save(createTestBook("book2"));
+        reviewRepository.save(createTestReview(user, book1));
+        reviewRepository.save(createTestReview(user, book2));
+
+        //when
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+
+        //then
+        assertThat(reviews).hasSize(2);
+        assertThat(reviews)
+                .extracting("book.title")
+                .containsExactlyInAnyOrder("book1", "book2");
+    }
+
 
     private User createTestUser(String nickname, String email) {
         return User.builder()
