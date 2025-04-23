@@ -264,7 +264,17 @@ class BookServiceTest {
       // then
       verify(bookRepository).deleteById(id);
     }
-    
+
+    @Test
+    @DisplayName("도서 물리 삭제 실패 - 없는 id")
+    void hardDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(false);
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.hardDelete(id)
+      );
+    }
   }
-  
 }

@@ -74,7 +74,7 @@ public class BookService {
     if (!bookRepository.existsById(id)) {
       throw new BookNotFoundException();
     }
-    
+
     bookRepository.deleteById(id);
   }
 }
