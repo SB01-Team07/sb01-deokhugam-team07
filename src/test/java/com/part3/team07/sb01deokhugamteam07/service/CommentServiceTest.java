@@ -62,6 +62,7 @@ class CommentServiceTest {
   private Review testReview;
   private Book testBook;
   private Comment comment;
+  private CommentDto commentDto;
   private LocalDateTime fixedNow;
 
   @BeforeEach
@@ -92,6 +93,16 @@ class CommentServiceTest {
     ReflectionTestUtils.setField(comment, "createdAt", fixedNow);
     ReflectionTestUtils.setField(comment, "updatedAt", fixedNow);
 
+    commentDto = new CommentDto(
+        commentId,
+        reviewId,
+        userId,
+        testUser.getNickname(),
+        comment.getContent(),
+        fixedNow,
+        fixedNow
+    );
+
   }
 
   @Test
@@ -101,17 +112,7 @@ class CommentServiceTest {
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(reviewRepository.findById(reviewId)).willReturn(Optional.of(testReview));
     given(commentRepository.save(any(Comment.class))).willReturn(comment);
-    given(commentMapper.toDto(any(Comment.class))).willReturn(
-        new CommentDto(
-            commentId,
-            reviewId,
-            userId,
-            testUser.getNickname(),
-            comment.getContent(),
-            fixedNow,
-            fixedNow
-        )
-    );
+    given(commentMapper.toDto(any(Comment.class))).willReturn(commentDto);
     CommentCreateRequest createRequest = new CommentCreateRequest(
         reviewId,
         userId,
@@ -236,5 +237,44 @@ class CommentServiceTest {
         .isInstanceOf(CommentNotFoundException.class);
 
   }
+
+  @Test
+  @DisplayName("댓글 상세 정보 조회 성공")
+  void findComment() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentMapper.toDto(any(Comment.class))).willReturn(commentDto);
+
+    //when
+    CommentDto result = commentService.find(commentId);
+
+    //then
+    assertThat(result).isEqualTo(commentDto);
+  }
+
+  @Test
+  @DisplayName("댓글 상세 정보 조회 실패 - 댓글 존재X(물리 삭제 상태)")
+  void findCommentFailCommentNotFound() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
+
+    //when & then
+    assertThatThrownBy(()-> commentService.find(commentId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("댓글 상세 정보 조회 실패 - 논리 삭제 상태")
+  void findCommentFailCommentIsDeleted() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    comment.logicalDelete();
+
+    //when & then
+    assertThatThrownBy(()-> commentService.find(commentId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+
 
 }
