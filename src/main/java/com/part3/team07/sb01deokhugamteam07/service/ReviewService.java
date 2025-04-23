@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -58,5 +59,10 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
         log.info("리뷰 상세 조회 완료: id={}", reviewId);
         return ReviewMapper.toDto(review);
+    }
+
+    @Transactional
+    public ReviewDto update(UUID userId, UUID reviewId, ReviewUpdateRequest request) {
+        return null;
     }
 }
