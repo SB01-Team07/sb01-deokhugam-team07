@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
@@ -24,6 +25,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -324,6 +326,27 @@ class CommentServiceTest {
     //when & then
     assertThatThrownBy(() -> commentService.logicalDelete(commentId, otherUserId))
         .isInstanceOf(CommentUnauthorizedException.class);
+  }
+
+  @Test
+  @DisplayName("리뷰에 달린 모든 댓글 논리 삭제 성공")
+  void logicalDeleteAllCommentByReview() {
+    //given
+    Comment c1 = Comment.builder().user(testUser).review(testReview).content("1").build();
+    Comment c2 = Comment.builder().user(testUser).review(testReview).content("2").build();
+    Comment comment1 = spy(c1);
+    Comment comment2 = spy(c2);
+
+    given(commentRepository.findAllByReview(eq(testReview)))
+        .willReturn(List.of(comment1, comment2));
+
+    //when
+    commentService.logicalDeleteByReview(testReview);
+
+    //then
+    verify(commentRepository).findAllByReview(testReview);
+    verify(comment1).logicalDelete();
+    verify(comment2).logicalDelete();
   }
 
 }

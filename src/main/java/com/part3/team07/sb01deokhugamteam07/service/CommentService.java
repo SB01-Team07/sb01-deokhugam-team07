@@ -13,6 +13,7 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +80,13 @@ public class CommentService {
     log.info("logicalDelete comment complete");
   }
 
+  @Transactional
+  public void logicalDeleteByReview(Review review) {
+    List<Comment> comments = commentRepository.findAllByReview(review);
+    for (Comment comment : comments) {
+      comment.logicalDelete();
+    }
+  }
 
   private void isDeleted(Comment comment) {
     if (comment.isDeleted()) {
