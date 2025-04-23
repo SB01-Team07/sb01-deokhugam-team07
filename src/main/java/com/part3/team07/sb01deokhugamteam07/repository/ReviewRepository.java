@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
+import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
   );
 
     boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
+
+    List<Review> findAllByBook(Book book);
 }
