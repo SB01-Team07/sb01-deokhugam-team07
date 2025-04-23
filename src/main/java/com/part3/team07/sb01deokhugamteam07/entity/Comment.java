@@ -31,4 +31,12 @@ public class Comment extends BaseSoftDeletableEntity {
 
   @Column(columnDefinition = "TEXT", nullable = false)
   private String content;
+
+  public void update(String newContent){
+    if (newContent == null || newContent.isBlank()) {
+      throw new IllegalArgumentException();
+    }
+    this.content = newContent;
+  }
+
 }

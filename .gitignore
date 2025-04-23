@@ -7,7 +7,7 @@ HELP.md
 **/application.yml
 **/application-*.yml
 !**/application-test.yml
-.logs
+.logs/
 src/main/resources/static/storage/
 src/test/resources/static/storage/
 
@@ -31,6 +31,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.logs/
 
 ### NetBeans ###
 /nbproject/private/
