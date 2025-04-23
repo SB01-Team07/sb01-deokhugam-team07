@@ -67,6 +67,7 @@ public class ReviewController {
     public ResponseEntity<Void> hardDelete(
             @PathVariable UUID reviewId,
             @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        log.info("리뷰 물리 삭제 요청: {}", reviewId);
         reviewService.hardDelete(userId, reviewId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
