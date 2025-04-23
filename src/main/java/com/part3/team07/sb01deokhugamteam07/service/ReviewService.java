@@ -68,10 +68,24 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
         if(!review.isReviewer(userId)){
-            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다.");
+            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 수정 권한 없음
         }
         review.update(request.content(), request.rating());
         log.info("리뷰 수정 완료: id={}", reviewId);
         return ReviewMapper.toDto(review);
+    }
+
+    @Transactional
+    public void softDelete(UUID userId, UUID reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        if(!review.isReviewer(userId)){
+            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
+        }
+
+        // TODO 댓글 논리 삭제 로직 추가
+
+        review.softDelete();
     }
 }
