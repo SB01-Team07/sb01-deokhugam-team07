@@ -71,8 +71,10 @@ public class BookService {
   }
 
   public void hardDelete(UUID id) {
-    bookRepository.existsById(id);
-
+    if (!bookRepository.existsById(id)) {
+      throw new BookNotFoundException();
+    }
+    
     bookRepository.deleteById(id);
   }
 }
