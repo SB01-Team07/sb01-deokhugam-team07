@@ -239,4 +239,17 @@ class ReviewServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("리뷰를 찾을 수 없습니다.");
     }
+
+    @DisplayName("리뷰 논리 삭제를 할 수 있다.")
+    @Test
+    void softDelete() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        reviewService.softDelete(userId, reviewId);
+
+        //then
+        assertThat(review.isDeleted()).isTrue();
+    }
 }
