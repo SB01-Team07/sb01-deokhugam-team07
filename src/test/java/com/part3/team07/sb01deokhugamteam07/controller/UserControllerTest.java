@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,6 +13,7 @@ import com.part3.team07.sb01deokhugamteam07.config.SecurityConfig;
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
+import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
@@ -20,6 +22,7 @@ import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +33,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
@@ -181,5 +185,55 @@ class UserControllerTest {
         .andExpect(status().is4xxClientError())
         .andExpect(jsonPath("$.email").value("test@mail.com"))
     ;
+  }
+
+  @Test
+  @DisplayName("GET /api/users/{userId} - 사용자 정보 조회")
+  void find() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User user = new User("test", "password123", "test@mail.com");
+    ReflectionTestUtils.setField(user, "id", userId);
+    UserDto userDto = new UserDto(userId, "test@mail.com", "test", LocalDateTime.now());
+    String response = objectMapper.writeValueAsString(userDto);
+
+    // when
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+    when(userService.find(any()))
+        .thenReturn(userDto);
+
+    // then
+    mockMvc
+        .perform(get("/api/users/{userId}", userId)
+            .header("Deokhugam-Request-User-ID", userId.toString())
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(response))
+    ;
+  }
+
+  @Test
+  @DisplayName("GET /api/users/{userId} - 사용자 정보 조회 실패(없는 유저)")
+  void failFindCauseNotFoundUser() throws Exception {
+    // given
+    UUID authenticatedUserId = UUID.randomUUID();
+    UUID findUserID = UUID.randomUUID();
+
+    // when
+    User authUser = new User("auth", "authpassword", "auth@mail.com");
+    ReflectionTestUtils.setField(authUser, "id", authenticatedUserId);
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(authUser));
+
+    when(userService.find(any()))
+        .thenThrow(new UserNotFoundException(findUserID));
+
+    // then
+    mockMvc
+        .perform(get("/api/users/{userId}", findUserID)
+            .header("Deokhugam-Request-User-ID", authenticatedUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
   }
 }
