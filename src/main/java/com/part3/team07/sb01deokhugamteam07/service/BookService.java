@@ -67,5 +67,6 @@ public class BookService {
         .orElseThrow(() -> new BookNotFoundException());
 
     book.softDelete();
+    // TODO: 관련 엔티티 논리 삭제
   }
 }
