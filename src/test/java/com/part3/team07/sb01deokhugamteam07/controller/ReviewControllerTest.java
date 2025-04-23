@@ -1,6 +1,5 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
@@ -21,6 +20,8 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -230,4 +231,23 @@ class ReviewControllerTest {
                 .with(csrf()))
                 .andExpect(status().isBadRequest());
     }*/
+
+    @DisplayName("리뷰를 논리 삭제할 수 있다.")
+    @Test
+    void softDelete() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+
+        //when
+        willDoNothing().given(reviewService).softDelete(userId, reviewId);
+
+        //then
+        mockMvc.perform(delete("/api/reviews/{reviewId}", reviewId)
+                .header("Deokhugam-Request-User-ID", userId.toString())
+                .with(csrf()))
+                    .andExpect(status().isOk());
+        verify(reviewService).softDelete(userId, reviewId);
+    }
+
 }
