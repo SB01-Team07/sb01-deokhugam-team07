@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -85,7 +86,16 @@ public class ReviewService {
         }
 
         // TODO 댓글 논리 삭제 로직 추가
-
         review.softDelete();
     }
+
+    @Transactional
+    public void softDeleteAllByBook(Book book) {
+        List<Review> reviews = reviewRepository.findAllByBook(book);
+        reviews.forEach(review -> {
+            review.softDelete();
+            // TODO 댓글 논리 삭제 로직 추가
+        });
+    }
+
 }
