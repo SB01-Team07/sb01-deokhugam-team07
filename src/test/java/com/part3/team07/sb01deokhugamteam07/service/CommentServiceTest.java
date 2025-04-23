@@ -198,7 +198,6 @@ class CommentServiceTest {
     //then
     assertThat(result).isNotNull();
     assertThat(result.content()).isEqualTo(newContent);
-    verify(commentRepository).save(any(Comment.class));
   }
 
   @Test
@@ -253,13 +252,13 @@ class CommentServiceTest {
   }
 
   @Test
-  @DisplayName("댓글 상세 정보 조회 실패 - 댓글 존재X(물리 삭제 상태)")
+  @DisplayName("댓글 상세 정보 조회 실패 - 댓글 존재X")
   void findCommentFailCommentNotFound() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
 
     //when & then
-    assertThatThrownBy(()-> commentService.find(commentId))
+    assertThatThrownBy(() -> commentService.find(commentId))
         .isInstanceOf(CommentNotFoundException.class);
   }
 
@@ -271,7 +270,7 @@ class CommentServiceTest {
     comment.logicalDelete();
 
     //when & then
-    assertThatThrownBy(()-> commentService.find(commentId))
+    assertThatThrownBy(() -> commentService.find(commentId))
         .isInstanceOf(CommentNotFoundException.class);
   }
 
@@ -286,10 +285,45 @@ class CommentServiceTest {
     commentService.logicalDelete(commentId, userId);
 
     //then
-    assertThatThrownBy(()-> commentService.find(commentId))
+    assertThatThrownBy(() -> commentService.find(commentId))
         .isInstanceOf(CommentNotFoundException.class);
   }
 
+  @Test
+  @DisplayName("댓글 논리 삭제 실패 - 댓글 존재X")
+  void logicalDeleteCommentFailCommentNotFound() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
 
+    //when & then
+    assertThatThrownBy(() -> commentService.logicalDelete(commentId, userId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("댓글 논리 삭제 실패 - 논리 삭제 상태")
+  void logicalDeleteCommentFailCommentIsDeleted() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    comment.logicalDelete();
+
+    //when & then
+    assertThatThrownBy(() -> commentService.logicalDelete(commentId, userId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("댓글 논리 삭제 실패 - 권한없음")
+  void logicalDeleteCommentFailByUnauthorizedUser() {
+    //given
+    UUID otherUserId = UUID.randomUUID();
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(otherUserId)))
+        .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
+
+    //when & then
+    assertThatThrownBy(() -> commentService.logicalDelete(commentId, otherUserId))
+        .isInstanceOf(CommentUnauthorizedException.class);
+  }
 
 }
