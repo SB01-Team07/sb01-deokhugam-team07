@@ -5,6 +5,8 @@ import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import com.part3.team07.sb01deokhugamteam07.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
@@ -15,7 +17,9 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime endDateTime
   );
 
-    boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
+  boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 
-    List<Review> findAllByBook(Book book);
+  List<Review> findAllByBook(Book book);
+
+  List<Review> findAllByUser(User user);
 }
