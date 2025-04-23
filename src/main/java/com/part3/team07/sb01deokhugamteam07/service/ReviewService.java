@@ -100,7 +100,18 @@ public class ReviewService {
             review.softDelete();
             // TODO 댓글 논리 삭제 로직 추가
         });
-        log.info("모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
+        log.info("book 이 가진 모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
     }
 
+    @Transactional
+    public void softDeleteAllByUser(User user) {
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+        log.info("{}개의 리뷰를 논리 삭제 시작. userId={}", reviews.size(), user.getId());
+        reviews.forEach(review -> {
+            review.softDelete();
+            // TODO 댓글 논리 삭제 로직 추가
+        });
+        log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
+    }
+    
 }
