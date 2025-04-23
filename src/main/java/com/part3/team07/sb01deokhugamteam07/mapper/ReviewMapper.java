@@ -12,7 +12,7 @@ public class ReviewMapper {
                 review.getId(),
                 book.getId(),
                 book.getTitle(),
-                book.getThumbnailUrl(),
+                book.getThumbnailFileName(),
                 user.getId(),
                 user.getNickname(),
                 review.getContent(),

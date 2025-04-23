@@ -1967,33 +1967,33 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.com
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
 25-04-22 11:01:04.897 [Test worker] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   [reqId= | ip= | method= | url=] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-25-04-22 11:01:04.906 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 11:01:04.906 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 11:01:04.910 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264909 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 11:01:04.910 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 11:01:04.910 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 11:01:04.910 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264910 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 11:01:04.910 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 11:01:04.910 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 11:01:04.911 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264911 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 11:01:04.911 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264911 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 11:01:04.911 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264911 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 11:01:04.911 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264911 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 11:01:04.911 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 11:01:04.912 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264912 | took 0ms | statement | connection 1| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 11:01:04.916 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mcreate[0m [34mtable[0m books (is_deleted [34mboolean[0m [34mnot[0m [34mnull[0m, publish_date [34mdate[0m [34mnot[0m [34mnull[0m, rating [34mfloat[0m(53) [34mnot[0m [34mnull[0m, review_count [34minteger[0m [34mnot[0m [34mnull[0m, created_at [34mtimestamp[0m(6) [34mnot[0m [34mnull[0m, updated_at [34mtimestamp[0m(6), id uuid [34mnot[0m [34mnull[0m, author [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, description [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, isbn [34mvarchar[0m(255) [34munique[0m, publisher [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, thumbnail_url [34mvarchar[0m(255), title [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, [34mprimary[0m [34mkey[0m (id))
 25-04-22 11:01:04.920 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287264920 | took 4ms | statement | connection 2| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
@@ -2076,33 +2076,33 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 
 ;
 25-04-22 11:01:05.711 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean [reqId= | ip= | method= | url=] - Closing JPA EntityManagerFactory for persistence unit 'default'
-25-04-22 11:01:05.780 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 11:01:05.780 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 11:01:05.782 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265782 | took 1ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 11:01:05.782 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 11:01:05.782 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 11:01:05.782 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265782 | took 0ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 11:01:05.782 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 11:01:05.782 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 11:01:05.783 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265783 | took 0ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 11:01:05.783 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 11:01:05.783 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 11:01:05.784 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265784 | took 0ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 11:01:05.784 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 11:01:05.784 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 11:01:05.784 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265784 | took 0ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 11:01:05.785 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 11:01:05.785 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 11:01:05.785 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265785 | took 0ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 11:01:05.785 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 11:01:05.785 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 11:01:05.785 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745287265785 | took 0ms | statement | connection 5| url jdbc:h2:mem:1ce17ad6-2f0c-4605-a849-adf9a5ba2a42
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 14:28:19.337 [background-preinit] INFO  o.h.validator.internal.util.Version  [reqId= | ip= | method= | url=] - HV000001: Hibernate Validator 8.0.2.Final
 25-04-22 14:28:19.389 [Test worker] INFO  c.p.t.s.r.ReviewRepositoryTest       [reqId= | ip= | method= | url=] - Starting ReviewRepositoryTest using Java 17.0.14 with PID 54055 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
@@ -2125,33 +2125,33 @@ drop table if exists users cascade ;
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
 25-04-22 14:28:21.056 [Test worker] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   [reqId= | ip= | method= | url=] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-25-04-22 14:28:21.067 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 14:28:21.067 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 14:28:21.070 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701070 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 14:28:21.070 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 14:28:21.070 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 14:28:21.071 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701071 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 14:28:21.071 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 14:28:21.071 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 14:28:21.071 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701071 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 14:28:21.071 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 14:28:21.071 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 14:28:21.072 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701072 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 14:28:21.075 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 14:28:21.075 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 14:28:21.075 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701075 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 14:28:21.075 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 14:28:21.075 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 14:28:21.075 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701075 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 14:28:21.075 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 14:28:21.075 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 14:28:21.076 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701076 | took 0ms | statement | connection 1| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 14:28:21.080 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mcreate[0m [34mtable[0m books (is_deleted [34mboolean[0m [34mnot[0m [34mnull[0m, publish_date [34mdate[0m [34mnot[0m [34mnull[0m, rating [34mfloat[0m(53) [34mnot[0m [34mnull[0m, review_count [34minteger[0m [34mnot[0m [34mnull[0m, created_at [34mtimestamp[0m(6) [34mnot[0m [34mnull[0m, updated_at [34mtimestamp[0m(6), id uuid [34mnot[0m [34mnull[0m, author [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, description [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, isbn [34mvarchar[0m(255) [34munique[0m, publisher [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, thumbnail_url [34mvarchar[0m(255), title [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, [34mprimary[0m [34mkey[0m (id))
 25-04-22 14:28:21.088 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299701088 | took 6ms | statement | connection 2| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
@@ -2235,42 +2235,42 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 
 ;
 25-04-22 14:28:21.933 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean [reqId= | ip= | method= | url=] - Closing JPA EntityManagerFactory for persistence unit 'default'
-25-04-22 14:28:22.009 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 14:28:22.009 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 14:28:22.011 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702011 | took 1ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 14:28:22.011 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 14:28:22.011 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 14:28:22.012 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702012 | took 0ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 14:28:22.012 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 14:28:22.012 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 14:28:22.012 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702012 | took 0ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 14:28:22.012 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 14:28:22.012 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 14:28:22.013 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702013 | took 0ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 14:28:22.013 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 14:28:22.013 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 14:28:22.013 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702013 | took 0ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 14:28:22.014 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 14:28:22.014 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 14:28:22.014 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702014 | took 0ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 14:28:22.014 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 14:28:22.014 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 14:28:22.015 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299702015 | took 0ms | statement | connection 5| url jdbc:h2:mem:f859c299-b57a-4993-9644-76c2598bab06
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 14:28:57.405 [background-preinit] INFO  o.h.validator.internal.util.Version  [reqId= | ip= | method= | url=] - HV000001: Hibernate Validator 8.0.2.Final
 25-04-22 14:28:57.440 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54123 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:28:57.441 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:28:58.390 [Test worker] WARN  o.s.w.c.s.GenericWebApplicationContext [reqId= | ip= | method= | url=] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'headerAuthenticationFilter' defined in file [/Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07/build/classes/java/main/com/part3/team07/sb01deokhugamteam07/security/filter/HeaderAuthenticationFilter.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-25-04-22 14:28:58.415 [Test worker] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [reqId= | ip= | method= | url=] - 
+25-04-22 14:28:58.415 [Test worker] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [reqId= | ip= | method= | url=] -
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-25-04-22 14:28:58.453 [Test worker] ERROR o.s.b.d.LoggingFailureAnalysisReporter [reqId= | ip= | method= | url=] - 
+25-04-22 14:28:58.453 [Test worker] ERROR o.s.b.d.LoggingFailureAnalysisReporter [reqId= | ip= | method= | url=] -
 
 ***************************
 APPLICATION FAILED TO START
@@ -2509,7 +2509,7 @@ java.lang.IllegalStateException: ApplicationContext failure threshold (1) exceed
 25-04-22 14:30:10.191 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54158 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:30:10.192 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:30:11.885 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:30:12.045 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:30:12.045 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: 6d24d043-6831-4273-ac5a-7e3ad530b0bb
 
@@ -2520,7 +2520,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:30:12.091 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
 25-04-22 14:30:12.120 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.336 seconds (process running for 3.328)
 25-04-22 14:30:12.368 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
-25-04-22 14:30:12.369 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:30:12.369 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:30:12.369 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
 25-04-22 14:30:12.369 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
 25-04-22 14:30:12.369 [Test worker] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver [reqId= | ip= | method= | url=] - Failure in @ExceptionHandler com.part3.team07.sb01deokhugamteam07.exception.UserExceptionHandler#failValidateArgument(MethodArgumentNotValidException)
@@ -2661,33 +2661,33 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
 25-04-22 14:31:11.538 [Test worker] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   [reqId= | ip= | method= | url=] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-25-04-22 14:31:11.550 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 14:31:11.550 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 14:31:11.556 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871556 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 14:31:11.557 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871557 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 14:31:11.557 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871557 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 14:31:11.557 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871557 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 14:31:11.557 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 14:31:11.557 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871557 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 14:31:11.558 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 14:31:11.558 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 14:31:11.558 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871558 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 14:31:11.559 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 14:31:11.559 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 14:31:11.559 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871559 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 14:31:11.563 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mcreate[0m [34mtable[0m books (is_deleted [34mboolean[0m [34mnot[0m [34mnull[0m, publish_date [34mdate[0m [34mnot[0m [34mnull[0m, rating [34mfloat[0m(53) [34mnot[0m [34mnull[0m, review_count [34minteger[0m [34mnot[0m [34mnull[0m, created_at [34mtimestamp[0m(6) [34mnot[0m [34mnull[0m, updated_at [34mtimestamp[0m(6), id uuid [34mnot[0m [34mnull[0m, author [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, description [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, isbn [34mvarchar[0m(255) [34munique[0m, publisher [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, thumbnail_url [34mvarchar[0m(255), title [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, [34mprimary[0m [34mkey[0m (id))
 25-04-22 14:31:11.567 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299871567 | took 4ms | statement | connection 2| url jdbc:h2:mem:testdb
@@ -2746,76 +2746,76 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 25-04-22 14:31:12.859 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
 25-04-22 14:31:12.860 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
 25-04-22 14:31:12.903 [Test worker] INFO  c.p.t.s.i.ReviewIntegrationTest      [reqId= | ip= | method= | url=] - Started ReviewIntegrationTest in 4.043 seconds (process running for 4.856)
-25-04-22 14:31:13.391 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:31:13.391 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
 25-04-22 14:31:13.413 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean [reqId= | ip= | method= | url=] - Closing JPA EntityManagerFactory for persistence unit 'default'
-25-04-22 14:31:13.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
-25-04-22 14:31:13.503 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS BOOKS CASCADE 
+25-04-22 14:31:13.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
+25-04-22 14:31:13.503 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS BOOKS CASCADE
 
 	Connection ID: 5
 	Execution Time: 1 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:31:13.503 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
-25-04-22 14:31:13.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS COMMENTS CASCADE 
+25-04-22 14:31:13.503 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
+25-04-22 14:31:13.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS COMMENTS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:31:13.504 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
-25-04-22 14:31:13.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS DASHBOARDS CASCADE 
+25-04-22 14:31:13.504 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
+25-04-22 14:31:13.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS DASHBOARDS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:31:13.504 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
-25-04-22 14:31:13.505 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS LIKES CASCADE 
+25-04-22 14:31:13.504 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
+25-04-22 14:31:13.505 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS LIKES CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:31:13.506 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
-25-04-22 14:31:13.507 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS NOTIFICATIONS CASCADE 
+25-04-22 14:31:13.506 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
+25-04-22 14:31:13.507 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS NOTIFICATIONS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:31:13.507 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
-25-04-22 14:31:13.507 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS REVIEWS CASCADE 
+25-04-22 14:31:13.507 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
+25-04-22 14:31:13.507 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS REVIEWS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:31:13.507 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
-25-04-22 14:31:13.508 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS USERS CASCADE 
+25-04-22 14:31:13.507 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
+25-04-22 14:31:13.508 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS USERS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:31:13.509 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   [reqId= | ip= | method= | url=] - HikariPool-1 - Shutdown initiated...
@@ -2842,33 +2842,33 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
 25-04-22 14:33:18.359 [Test worker] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   [reqId= | ip= | method= | url=] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-25-04-22 14:33:18.370 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 14:33:18.370 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 14:33:18.373 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998373 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 14:33:18.374 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 14:33:18.374 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 14:33:18.374 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998374 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 14:33:18.374 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 14:33:18.374 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 14:33:18.374 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998374 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 14:33:18.374 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 14:33:18.374 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 14:33:18.374 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998374 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 14:33:18.375 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 14:33:18.375 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 14:33:18.375 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998375 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 14:33:18.375 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 14:33:18.375 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 14:33:18.375 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998375 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 14:33:18.375 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 14:33:18.375 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 14:33:18.375 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998375 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 14:33:18.379 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mcreate[0m [34mtable[0m books (is_deleted [34mboolean[0m [34mnot[0m [34mnull[0m, publish_date [34mdate[0m [34mnot[0m [34mnull[0m, rating [34mfloat[0m(53) [34mnot[0m [34mnull[0m, review_count [34minteger[0m [34mnot[0m [34mnull[0m, created_at [34mtimestamp[0m(6) [34mnot[0m [34mnull[0m, updated_at [34mtimestamp[0m(6), id uuid [34mnot[0m [34mnull[0m, author [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, description [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, isbn [34mvarchar[0m(255) [34munique[0m, publisher [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, thumbnail_url [34mvarchar[0m(255), title [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, [34mprimary[0m [34mkey[0m (id))
 25-04-22 14:33:18.383 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745299998383 | took 4ms | statement | connection 2| url jdbc:h2:mem:testdb
@@ -2929,130 +2929,130 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 25-04-22 14:33:19.718 [Test worker] INFO  c.p.t.s.i.ReviewIntegrationTest      [reqId= | ip= | method= | url=] - Started ReviewIntegrationTest in 4.104 seconds (process running for 4.905)
 25-04-22 14:33:20.202 [Test worker] INFO  c.p.t.s.controller.ReviewController  [reqId= | ip= | method= | url=] - 리뷰 생성 요청: ReviewCreateRequest[bookId=846794eb-1001-4112-9c9b-0da045acbf35, userId=19577efd-7c8c-4b7a-8664-a623c2757b34, content=정말 좋은 책입니다., rating=5]
 25-04-22 14:33:20.284 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - /* [34minsert[0m [34mfor[0m com.part3.team07.sb01deokhugamteam07.entity.[34mUser[0m */[34minsert[0m [34minto[0m users (created_at,email,is_deleted,nickname,password,updated_at,id) [34mvalues[0m (?,?,?,?,?,?,?)
-25-04-22 14:33:20.297 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:20.297 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
     /* INSERT FOR
-        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.USER */INSERT 
+        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.USER */INSERT
     INTO
-        USERS (CREATED_AT, EMAIL, IS_DELETED, NICKNAME, PASSWORD, UPDATED_AT, ID) 
+        USERS (CREATED_AT, EMAIL, IS_DELETED, NICKNAME, PASSWORD, UPDATED_AT, ID)
     VALUES
         ('2025-04-22T14:33:20.058', 'USER@ABC.COM', FALSE, 'USER', 'USER1234', '2025-04-22T14:33:20.058', '19577EFD-7C8C-4B7A-8664-A623C2757B34')
 
 	Connection ID: 4
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:20.307 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - /* [34minsert[0m [34mfor[0m com.part3.team07.sb01deokhugamteam07.entity.Book */[34minsert[0m [34minto[0m books (author,created_at,description,is_deleted,isbn,publish_date,publisher,rating,review_count,thumbnail_url,title,updated_at,id) [34mvalues[0m (?,?,?,?,?,?,?,?,?,?,?,?,?)
-25-04-22 14:33:20.308 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:20.308 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
     /* INSERT FOR
-        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.BOOK */INSERT 
+        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.BOOK */INSERT
     INTO
-        BOOKS (AUTHOR, CREATED_AT, DESCRIPTION, IS_DELETED, ISBN, PUBLISH_DATE, PUBLISHER, RATING, REVIEW_COUNT, THUMBNAIL_URL, TITLE, UPDATED_AT, ID) 
+        BOOKS (AUTHOR, CREATED_AT, DESCRIPTION, IS_DELETED, ISBN, PUBLISH_DATE, PUBLISHER, RATING, REVIEW_COUNT, THUMBNAIL_URL, TITLE, UPDATED_AT, ID)
     VALUES
         ('AUTHOR', '2025-04-22T14:33:20.073', 'GOOD BOOK', FALSE, '1234567890123', '2025-04-22T00:00:00.000', 'PUBLISHER', 0.0, 0, 'URL', 'BOOK', '2025-04-22T14:33:20.073', '846794EB-1001-4112-9C9B-0DA045ACBF35')
 
 	Connection ID: 4
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:20.314 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - /* <criteria> */ [34mselect[0m r1_0.id [34mfrom[0m reviews r1_0 [34mleft[0m [34mjoin[0m users u1_0 [34mon[0m u1_0.id=r1_0.user_id [34mleft[0m [34mjoin[0m books b1_0 [34mon[0m b1_0.id=r1_0.book_id [34mwhere[0m u1_0.id=? [34mand[0m b1_0.id=? [34mfetch[0m first ? [34mrows[0m [34monly[0m
-25-04-22 14:33:20.323 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:20.323 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
     /* <CRITERIA> */ SELECT
-        R1_0.ID 
+        R1_0.ID
     FROM
-        REVIEWS R1_0 
+        REVIEWS R1_0
     LEFT JOIN
-        USERS U1_0 
-            ON U1_0.ID=R1_0.USER_ID 
+        USERS U1_0
+            ON U1_0.ID=R1_0.USER_ID
     LEFT JOIN
-        BOOKS B1_0 
-            ON B1_0.ID=R1_0.BOOK_ID 
+        BOOKS B1_0
+            ON B1_0.ID=R1_0.BOOK_ID
     WHERE
-        U1_0.ID='19577EFD-7C8C-4B7A-8664-A623C2757B34' 
-        AND B1_0.ID='846794EB-1001-4112-9C9B-0DA045ACBF35' 
+        U1_0.ID='19577EFD-7C8C-4B7A-8664-A623C2757B34'
+        AND B1_0.ID='846794EB-1001-4112-9C9B-0DA045ACBF35'
     FETCH
         FIRST 1 ROWS ONLY
 
 	Connection ID: 4
 	Execution Time: 6 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:20.339 [Test worker] INFO  c.p.t.s.service.ReviewService        [reqId= | ip= | method= | url=] - 리뷰 생성 완료: id=5f61d4eb-47d3-4648-a905-f6e5f92314b4, userId=19577efd-7c8c-4b7a-8664-a623c2757b34, bookId846794eb-1001-4112-9c9b-0da045acbf35
-25-04-22 14:33:20.384 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:20.384 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
 25-04-22 14:33:20.402 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean [reqId= | ip= | method= | url=] - Closing JPA EntityManagerFactory for persistence unit 'default'
-25-04-22 14:33:20.497 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
-25-04-22 14:33:20.500 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS BOOKS CASCADE 
+25-04-22 14:33:20.497 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
+25-04-22 14:33:20.500 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS BOOKS CASCADE
 
 	Connection ID: 5
 	Execution Time: 2 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:20.500 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
-25-04-22 14:33:20.501 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS COMMENTS CASCADE 
+25-04-22 14:33:20.500 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
+25-04-22 14:33:20.501 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS COMMENTS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:20.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
-25-04-22 14:33:20.501 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS DASHBOARDS CASCADE 
+25-04-22 14:33:20.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
+25-04-22 14:33:20.501 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS DASHBOARDS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:20.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
-25-04-22 14:33:20.501 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS LIKES CASCADE 
+25-04-22 14:33:20.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
+25-04-22 14:33:20.501 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS LIKES CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:20.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
-25-04-22 14:33:20.502 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS NOTIFICATIONS CASCADE 
+25-04-22 14:33:20.501 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
+25-04-22 14:33:20.502 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS NOTIFICATIONS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:20.503 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
-25-04-22 14:33:20.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS REVIEWS CASCADE 
+25-04-22 14:33:20.503 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
+25-04-22 14:33:20.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS REVIEWS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:20.504 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
-25-04-22 14:33:20.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS USERS CASCADE 
+25-04-22 14:33:20.504 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
+25-04-22 14:33:20.504 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS USERS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:20.505 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   [reqId= | ip= | method= | url=] - HikariPool-1 - Shutdown initiated...
@@ -3079,33 +3079,33 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
 25-04-22 14:33:36.495 [Test worker] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   [reqId= | ip= | method= | url=] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-25-04-22 14:33:36.508 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
+25-04-22 14:33:36.508 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
 25-04-22 14:33:36.511 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016511 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists books cascade 
+drop table if exists books cascade
 drop table if exists books cascade ;
-25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
+25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
 25-04-22 14:33:36.511 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016511 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists comments cascade 
+drop table if exists comments cascade
 drop table if exists comments cascade ;
-25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
+25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
 25-04-22 14:33:36.511 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016511 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists dashboards cascade 
+drop table if exists dashboards cascade
 drop table if exists dashboards cascade ;
-25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
+25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
 25-04-22 14:33:36.511 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016511 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists likes cascade 
+drop table if exists likes cascade
 drop table if exists likes cascade ;
-25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
+25-04-22 14:33:36.511 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
 25-04-22 14:33:36.512 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016512 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists notifications cascade 
+drop table if exists notifications cascade
 drop table if exists notifications cascade ;
-25-04-22 14:33:36.512 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
+25-04-22 14:33:36.512 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
 25-04-22 14:33:36.512 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016512 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists reviews cascade 
+drop table if exists reviews cascade
 drop table if exists reviews cascade ;
-25-04-22 14:33:36.512 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
+25-04-22 14:33:36.512 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
 25-04-22 14:33:36.512 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016512 | took 0ms | statement | connection 1| url jdbc:h2:mem:testdb
-drop table if exists users cascade 
+drop table if exists users cascade
 drop table if exists users cascade ;
 25-04-22 14:33:36.515 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mcreate[0m [34mtable[0m books (is_deleted [34mboolean[0m [34mnot[0m [34mnull[0m, publish_date [34mdate[0m [34mnot[0m [34mnull[0m, rating [34mfloat[0m(53) [34mnot[0m [34mnull[0m, review_count [34minteger[0m [34mnot[0m [34mnull[0m, created_at [34mtimestamp[0m(6) [34mnot[0m [34mnull[0m, updated_at [34mtimestamp[0m(6), id uuid [34mnot[0m [34mnull[0m, author [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, description [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, isbn [34mvarchar[0m(255) [34munique[0m, publisher [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, thumbnail_url [34mvarchar[0m(255), title [34mvarchar[0m(255) [34mnot[0m [34mnull[0m, [34mprimary[0m [34mkey[0m (id))
 25-04-22 14:33:36.520 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - #1745300016520 | took 3ms | statement | connection 2| url jdbc:h2:mem:testdb
@@ -3166,130 +3166,130 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 25-04-22 14:33:37.784 [Test worker] INFO  c.p.t.s.i.ReviewIntegrationTest      [reqId= | ip= | method= | url=] - Started ReviewIntegrationTest in 3.85 seconds (process running for 4.633)
 25-04-22 14:33:38.259 [Test worker] INFO  c.p.t.s.controller.ReviewController  [reqId= | ip= | method= | url=] - 리뷰 생성 요청: ReviewCreateRequest[bookId=ba62f299-1aab-4b67-8720-7271cbeca565, userId=09d13504-e024-4aab-ab87-83deb643d17d, content=정말 좋은 책입니다., rating=5]
 25-04-22 14:33:38.347 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - /* [34minsert[0m [34mfor[0m com.part3.team07.sb01deokhugamteam07.entity.[34mUser[0m */[34minsert[0m [34minto[0m users (created_at,email,is_deleted,nickname,password,updated_at,id) [34mvalues[0m (?,?,?,?,?,?,?)
-25-04-22 14:33:38.359 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:38.359 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
     /* INSERT FOR
-        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.USER */INSERT 
+        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.USER */INSERT
     INTO
-        USERS (CREATED_AT, EMAIL, IS_DELETED, NICKNAME, PASSWORD, UPDATED_AT, ID) 
+        USERS (CREATED_AT, EMAIL, IS_DELETED, NICKNAME, PASSWORD, UPDATED_AT, ID)
     VALUES
         ('2025-04-22T14:33:38.115', 'USER@ABC.COM', FALSE, 'USER', 'USER1234', '2025-04-22T14:33:38.115', '09D13504-E024-4AAB-AB87-83DEB643D17D')
 
 	Connection ID: 4
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:38.370 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - /* [34minsert[0m [34mfor[0m com.part3.team07.sb01deokhugamteam07.entity.Book */[34minsert[0m [34minto[0m books (author,created_at,description,is_deleted,isbn,publish_date,publisher,rating,review_count,thumbnail_url,title,updated_at,id) [34mvalues[0m (?,?,?,?,?,?,?,?,?,?,?,?,?)
-25-04-22 14:33:38.371 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:38.371 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
     /* INSERT FOR
-        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.BOOK */INSERT 
+        COM.PART3.TEAM07.SB01DEOKHUGAMTEAM07.ENTITY.BOOK */INSERT
     INTO
-        BOOKS (AUTHOR, CREATED_AT, DESCRIPTION, IS_DELETED, ISBN, PUBLISH_DATE, PUBLISHER, RATING, REVIEW_COUNT, THUMBNAIL_URL, TITLE, UPDATED_AT, ID) 
+        BOOKS (AUTHOR, CREATED_AT, DESCRIPTION, IS_DELETED, ISBN, PUBLISH_DATE, PUBLISHER, RATING, REVIEW_COUNT, THUMBNAIL_URL, TITLE, UPDATED_AT, ID)
     VALUES
         ('AUTHOR', '2025-04-22T14:33:38.128', 'GOOD BOOK', FALSE, '1234567890123', '2025-04-22T00:00:00.000', 'PUBLISHER', 0.0, 0, 'URL', 'BOOK', '2025-04-22T14:33:38.128', 'BA62F299-1AAB-4B67-8720-7271CBECA565')
 
 	Connection ID: 4
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:38.379 [Test worker] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - /* <criteria> */ [34mselect[0m r1_0.id [34mfrom[0m reviews r1_0 [34mleft[0m [34mjoin[0m users u1_0 [34mon[0m u1_0.id=r1_0.user_id [34mleft[0m [34mjoin[0m books b1_0 [34mon[0m b1_0.id=r1_0.book_id [34mwhere[0m u1_0.id=? [34mand[0m b1_0.id=? [34mfetch[0m first ? [34mrows[0m [34monly[0m
-25-04-22 14:33:38.385 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:38.385 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
     /* <CRITERIA> */ SELECT
-        R1_0.ID 
+        R1_0.ID
     FROM
-        REVIEWS R1_0 
+        REVIEWS R1_0
     LEFT JOIN
-        USERS U1_0 
-            ON U1_0.ID=R1_0.USER_ID 
+        USERS U1_0
+            ON U1_0.ID=R1_0.USER_ID
     LEFT JOIN
-        BOOKS B1_0 
-            ON B1_0.ID=R1_0.BOOK_ID 
+        BOOKS B1_0
+            ON B1_0.ID=R1_0.BOOK_ID
     WHERE
-        U1_0.ID='09D13504-E024-4AAB-AB87-83DEB643D17D' 
-        AND B1_0.ID='BA62F299-1AAB-4B67-8720-7271CBECA565' 
+        U1_0.ID='09D13504-E024-4AAB-AB87-83DEB643D17D'
+        AND B1_0.ID='BA62F299-1AAB-4B67-8720-7271CBECA565'
     FETCH
         FIRST 1 ROWS ONLY
 
 	Connection ID: 4
 	Execution Time: 5 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:38.402 [Test worker] INFO  c.p.t.s.service.ReviewService        [reqId= | ip= | method= | url=] - 리뷰 생성 완료: id=686585d8-6b49-4723-a97b-9d8a48c898ee, userId=09d13504-e024-4aab-ab87-83deb643d17d, bookIdba62f299-1aab-4b67-8720-7271cbeca565
-25-04-22 14:33:38.441 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
+25-04-22 14:33:38.441 [Test worker] INFO  p6spy                                [reqId= | ip= | method= | url=] -
 25-04-22 14:33:38.453 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean [reqId= | ip= | method= | url=] - Closing JPA EntityManagerFactory for persistence unit 'default'
-25-04-22 14:33:38.549 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m 
-25-04-22 14:33:38.550 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS BOOKS CASCADE 
+25-04-22 14:33:38.549 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m books [34mcascade[0m
+25-04-22 14:33:38.550 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS BOOKS CASCADE
 
 	Connection ID: 5
 	Execution Time: 1 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:38.551 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m 
-25-04-22 14:33:38.551 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS COMMENTS CASCADE 
+25-04-22 14:33:38.551 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m comments [34mcascade[0m
+25-04-22 14:33:38.551 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS COMMENTS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:38.551 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m 
-25-04-22 14:33:38.551 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS DASHBOARDS CASCADE 
+25-04-22 14:33:38.551 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m dashboards [34mcascade[0m
+25-04-22 14:33:38.551 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS DASHBOARDS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:38.551 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m 
-25-04-22 14:33:38.552 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS LIKES CASCADE 
+25-04-22 14:33:38.551 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m likes [34mcascade[0m
+25-04-22 14:33:38.552 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS LIKES CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:38.552 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m 
-25-04-22 14:33:38.552 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS NOTIFICATIONS CASCADE 
+25-04-22 14:33:38.552 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m notifications [34mcascade[0m
+25-04-22 14:33:38.552 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS NOTIFICATIONS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:38.552 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m 
-25-04-22 14:33:38.553 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS REVIEWS CASCADE 
+25-04-22 14:33:38.552 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m reviews [34mcascade[0m
+25-04-22 14:33:38.553 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS REVIEWS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
-25-04-22 14:33:38.553 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m 
-25-04-22 14:33:38.553 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] - 
-    DROP TABLE IF EXISTS USERS CASCADE 
+25-04-22 14:33:38.553 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL                    [reqId= | ip= | method= | url=] - [34mdrop[0m [34mtable[0m [34mif[0m [34mexists[0m users [34mcascade[0m
+25-04-22 14:33:38.553 [SpringApplicationShutdownHook] INFO  p6spy                                [reqId= | ip= | method= | url=] -
+    DROP TABLE IF EXISTS USERS CASCADE
 
 	Connection ID: 5
 	Execution Time: 0 ms
 
-	Call Stack (number 1 is entry point): 
+	Call Stack (number 1 is entry point):
 
 ----------------------------------------------------------------------------------------------------
 25-04-22 14:33:38.555 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   [reqId= | ip= | method= | url=] - HikariPool-1 - Shutdown initiated...
@@ -3298,7 +3298,7 @@ alter table if exists reviews add constraint FKcgy7qjc1r99dp117y9en6lxye foreign
 25-04-22 14:36:44.797 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54356 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:36:44.797 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:36:46.202 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:36:46.342 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:36:46.342 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: bb831457-d6d4-4435-9620-8d34dfb0b8ae
 
@@ -3312,7 +3312,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:36:55.768 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54368 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:36:55.768 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:36:57.339 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:36:57.482 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:36:57.482 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: 1a61ca22-0d7e-461a-8137-c1c8b9e0c696
 
@@ -3322,7 +3322,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:36:57.518 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
 25-04-22 14:36:57.518 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 0 ms
 25-04-22 14:36:57.546 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.143 seconds (process running for 2.935)
-25-04-22 14:36:57.769 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:36:57.769 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:36:57.769 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
 25-04-22 14:36:57.769 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
 25-04-22 14:36:57.769 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
@@ -3446,7 +3446,7 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 25-04-22 14:38:20.421 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54412 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:38:20.422 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:38:21.894 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:38:22.037 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:38:22.037 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: b6ae02c7-fe14-4621-9d70-1c8134bfaab7
 
@@ -3460,7 +3460,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:42:16.390 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54466 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:42:16.390 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:42:17.802 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:42:17.939 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:42:17.939 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: d4bbeb54-6a99-41ab-b8f3-5fd42a41ff6b
 
@@ -3474,7 +3474,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:43:37.691 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54507 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:43:37.691 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:43:39.118 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:43:39.259 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:43:39.259 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: e1ce19a9-6c2d-4bec-975d-f38a68b60766
 
@@ -3486,7 +3486,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:43:39.335 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 1.965 seconds (process running for 2.731)
 25-04-22 14:43:39.576 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
 25-04-22 14:43:39.577 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
-25-04-22 14:43:39.577 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:43:39.577 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:43:39.577 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
 25-04-22 14:43:39.577 [Test worker] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver [reqId= | ip= | method= | url=] - Failure in @ExceptionHandler com.part3.team07.sb01deokhugamteam07.exception.UserExceptionHandler#failValidateArgument(MethodArgumentNotValidException)
 java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest cannot be cast to class com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest (com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest and com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest are in unnamed module of loader 'app')
@@ -3686,7 +3686,7 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 25-04-22 14:43:53.640 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54541 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:43:53.641 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:43:55.091 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:43:55.240 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:43:55.240 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: 432e972e-8dfd-45c0-8880-0fd1d4f2b422
 
@@ -3700,7 +3700,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:44:00.626 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54555 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:44:00.627 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:44:02.092 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:44:02.238 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:44:02.238 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: d2c3c903-6961-4090-90d8-9e99a1104e5d
 
@@ -3710,7 +3710,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:44:02.287 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
 25-04-22 14:44:02.288 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
 25-04-22 14:44:02.316 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.019 seconds (process running for 2.819)
-25-04-22 14:44:02.561 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:44:02.561 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:44:02.561 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
 25-04-22 14:44:02.561 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
 25-04-22 14:44:02.562 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
@@ -3911,7 +3911,7 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 25-04-22 14:44:45.442 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54567 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:44:45.443 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:44:47.004 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:44:47.187 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:44:47.187 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: c0c787b6-dab1-41aa-bac9-576616b3c3c5
 
@@ -3922,7 +3922,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:44:47.243 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
 25-04-22 14:44:47.273 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.185 seconds (process running for 2.926)
 25-04-22 14:44:47.567 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
-25-04-22 14:44:47.567 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:44:47.567 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:44:47.567 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
 25-04-22 14:44:47.567 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
 25-04-22 14:44:47.568 [Test worker] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver [reqId= | ip= | method= | url=] - Failure in @ExceptionHandler com.part3.team07.sb01deokhugamteam07.exception.UserExceptionHandler#failValidateArgument(MethodArgumentNotValidException)
@@ -4123,10 +4123,10 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 25-04-22 14:45:27.902 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54606 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:45:27.902 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:45:28.883 [Test worker] WARN  o.s.w.c.s.GenericWebApplicationContext [reqId= | ip= | method= | url=] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'headerAuthenticationFilter' defined in file [/Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07/build/classes/java/main/com/part3/team07/sb01deokhugamteam07/security/filter/HeaderAuthenticationFilter.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-25-04-22 14:45:28.906 [Test worker] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [reqId= | ip= | method= | url=] - 
+25-04-22 14:45:28.906 [Test worker] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [reqId= | ip= | method= | url=] -
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-25-04-22 14:45:28.955 [Test worker] ERROR o.s.b.d.LoggingFailureAnalysisReporter [reqId= | ip= | method= | url=] - 
+25-04-22 14:45:28.955 [Test worker] ERROR o.s.b.d.LoggingFailureAnalysisReporter [reqId= | ip= | method= | url=] -
 
 ***************************
 APPLICATION FAILED TO START
@@ -4365,7 +4365,7 @@ java.lang.IllegalStateException: ApplicationContext failure threshold (1) exceed
 25-04-22 14:49:59.516 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54681 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:49:59.517 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:50:01.050 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:50:01.196 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:50:01.196 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: ea0b6070-780f-422e-9f7b-2f2d7732e62e
 
@@ -4376,7 +4376,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:50:01.242 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
 25-04-22 14:50:01.265 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.077 seconds (process running for 2.885)
 25-04-22 14:50:01.473 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
-25-04-22 14:50:01.474 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:50:01.474 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:50:01.474 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
 25-04-22 14:50:01.474 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
 25-04-22 14:50:01.474 [Test worker] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver [reqId= | ip= | method= | url=] - Failure in @ExceptionHandler com.part3.team07.sb01deokhugamteam07.exception.UserExceptionHandler#failValidateArgument(MethodArgumentNotValidException)
@@ -4577,10 +4577,10 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 25-04-22 14:50:33.496 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54719 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:50:33.497 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:50:34.510 [Test worker] WARN  o.s.w.c.s.GenericWebApplicationContext [reqId= | ip= | method= | url=] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'headerAuthenticationFilter' defined in file [/Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07/build/classes/java/main/com/part3/team07/sb01deokhugamteam07/security/filter/HeaderAuthenticationFilter.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-25-04-22 14:50:34.533 [Test worker] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [reqId= | ip= | method= | url=] - 
+25-04-22 14:50:34.533 [Test worker] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [reqId= | ip= | method= | url=] -
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-25-04-22 14:50:34.580 [Test worker] ERROR o.s.b.d.LoggingFailureAnalysisReporter [reqId= | ip= | method= | url=] - 
+25-04-22 14:50:34.580 [Test worker] ERROR o.s.b.d.LoggingFailureAnalysisReporter [reqId= | ip= | method= | url=] -
 
 ***************************
 APPLICATION FAILED TO START
@@ -4819,7 +4819,7 @@ java.lang.IllegalStateException: ApplicationContext failure threshold (1) exceed
 25-04-22 14:53:45.393 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54751 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:53:45.393 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:53:47.212 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:53:47.448 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:53:47.448 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: fb39b7b0-522a-4336-9e46-b627ff52e04c
 
@@ -4831,7 +4831,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 14:53:47.558 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.5 seconds (process running for 3.273)
 25-04-22 14:53:47.835 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
 25-04-22 14:53:47.836 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
-25-04-22 14:53:47.836 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 14:53:47.836 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 14:53:47.836 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
 25-04-22 14:53:47.836 [Test worker] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver [reqId= | ip= | method= | url=] - Failure in @ExceptionHandler com.part3.team07.sb01deokhugamteam07.exception.UserExceptionHandler#failValidateArgument(MethodArgumentNotValidException)
 java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest cannot be cast to class com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest (com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest and com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest are in unnamed module of loader 'app')
@@ -5030,7 +5030,7 @@ java.lang.ClassCastException: class com.part3.team07.sb01deokhugamteam07.dto.rev
 25-04-22 14:54:00.703 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54769 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 14:54:00.703 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 14:54:02.182 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 14:54:02.329 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 14:54:02.329 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: c791c31f-4dbf-475a-b6be-6932ab74a132
 
@@ -5045,7 +5045,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 15:00:08.173 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Starting ReviewControllerTest using Java 17.0.14 with PID 54854 (started by iyong-gu in /Users/iyong-gu/Desktop/study/project2/sb01-deokhugam-team07)
 25-04-22 15:00:08.174 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - The following 1 profile is active: "default"
 25-04-22 15:00:09.763 [Test worker] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer [reqId= | ip= | method= | url=] - Found 2 UserDetailsService beans, with names [inMemoryUserDetailsManager, com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService#0]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
-25-04-22 15:00:09.930 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] - 
+25-04-22 15:00:09.930 [Test worker] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration [reqId= | ip= | method= | url=] -
 
 Using generated security password: f8e3baef-fc64-4854-9258-2578b373c0e8
 
@@ -5055,7 +5055,7 @@ This generated password is for development use only. Your security configuration
 25-04-22 15:00:09.982 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Initializing Servlet ''
 25-04-22 15:00:09.983 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet      [reqId= | ip= | method= | url=] - Completed initialization in 1 ms
 25-04-22 15:00:10.015 [Test worker] INFO  c.p.t.s.c.ReviewControllerTest       [reqId= | ip= | method= | url=] - Started ReviewControllerTest in 2.215 seconds (process running for 3.03)
-25-04-22 15:00:10.271 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value: 
+25-04-22 15:00:10.271 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: content, value:
 25-04-22 15:00:10.271 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: bookId, value: null
 25-04-22 15:00:10.271 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: rating, value: 6
 25-04-22 15:00:10.271 [Test worker] ERROR c.p.t.s.e.UserExceptionHandler       [reqId= | ip= | method= | url=] - Validation failed - field: userId, value: null
