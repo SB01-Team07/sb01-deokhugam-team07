@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
@@ -213,6 +215,26 @@ class BookServiceTest {
     assertThrows(BookNotFoundException.class,
         () -> bookService.update(nonExistentId, request)
     );
+
+  }
+
+  @Nested
+  @DisplayName("도서 논리 삭제")
+  class SoftDeleteTest {
+    @Test
+    @DisplayName("도서 논리 삭제 성공")
+    void softDelete_success() {
+      // given
+      Book book = mock(Book.class);
+      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+
+      // when
+      bookService.softDelete(id);
+
+      // then
+      verify(book).softDelete();
+    }
+
 
   }
 
