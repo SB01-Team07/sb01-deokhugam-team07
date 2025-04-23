@@ -69,4 +69,10 @@ public class BookService {
     book.softDelete();
     // TODO: 관련 엔티티 논리 삭제
   }
+
+  public void hardDelete(UUID id) {
+    bookRepository.existsById(id);
+
+    bookRepository.deleteById(id);
+  }
 }
