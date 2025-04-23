@@ -71,7 +71,9 @@ public class CommentController {
       @PathVariable UUID commentId,
       @RequestHeader("Deokhugam-Request-User-ID") UUID userId
   ) {
+    log.info("logical delete comment request: commentId = {}, userId = {}", commentId, userId);
     commentService.logicalDelete(commentId, userId);
+    log.debug("logical delete comment success");
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
