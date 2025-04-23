@@ -116,7 +116,7 @@ class DashboardServiceTest {
 
     when(userRepository.findAllById(List.of(userId))).thenReturn(mockUsers);
     when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), KeyType.USER)
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), eq(KeyType.USER))
     ).thenReturn(mockDashboards);
 
     when(dashboardRepository.getUserMetrics(eq(period))).thenReturn(mockUserMetrics);
@@ -204,7 +204,7 @@ class DashboardServiceTest {
     );
 
     when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), KeyType.REVIEW
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), eq(KeyType.REVIEW)
     )).thenReturn(mockDashboards);
     when(reviewRepository.findAllById(any(List.class))).thenReturn(reviews);
     when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.REVIEW),
@@ -253,7 +253,7 @@ class DashboardServiceTest {
     List<Book> books = List.of(book);
 
     when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), KeyType.BOOK
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), eq(KeyType.BOOK)
     )).thenReturn(dashboards);
     when(bookRepository.findAllById(any(List.class))).thenReturn(books);
     when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.BOOK), eq(period))).thenReturn(1L);
