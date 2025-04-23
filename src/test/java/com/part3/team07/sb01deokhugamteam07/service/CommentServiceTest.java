@@ -266,7 +266,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 상세 정보 조회 실패 - 논리 삭제 상태")
-  void findCommentFailCommentIsDeleted() {
+  void findCommentFailCommentIsSoftDeleted() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
     comment.softDelete();
@@ -304,7 +304,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 논리 삭제 실패 - 논리 삭제 상태")
-  void softDeleteCommentFailCommentIsDeleted() {
+  void softDeleteCommentFailCommentIsSoftDeleted() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
     comment.softDelete();
@@ -347,6 +347,20 @@ class CommentServiceTest {
     verify(commentRepository).findAllByReview(testReview);
     verify(comment1).softDelete();
     verify(comment2).softDelete();
+  }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 성공")
+  void hardDeleteComment() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
+
+    //when
+    commentService.hardDelete(commentId, userId);
+
+    //then
+    verify(commentRepository).delete(comment);
   }
 
 }

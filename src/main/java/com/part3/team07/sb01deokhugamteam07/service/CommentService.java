@@ -64,7 +64,7 @@ public class CommentService {
   public CommentDto find(UUID commentId) {
     log.debug("find comment: commentId = {}", commentId);
     Comment comment = findComment(commentId);
-    isDeleted(comment);
+    isSoftDeleted(comment);
     log.info("find comment complete: commentId = {}", comment.getId());
     return commentMapper.toDto(comment);
   }
@@ -73,7 +73,7 @@ public class CommentService {
   public void softDelete(UUID commentId, UUID userId) {
     log.debug("softDelete comment: commentId = {}", commentId);
     Comment comment = findComment(commentId);
-    isDeleted(comment);
+    isSoftDeleted(comment);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
@@ -91,7 +91,15 @@ public class CommentService {
     log.info("softDelete all comments by review complete");
   }
 
-  private void isDeleted(Comment comment) {
+  @Transactional
+  public void hardDelete(UUID commentId, UUID userId) {
+    Comment comment = findComment(commentId);
+    User user = findUser(userId);
+    validateCommentAuthor(comment, user);
+    commentRepository.delete(comment);
+  }
+
+  private void isSoftDeleted(Comment comment) {
     if (comment.isDeleted()) {
       throw new CommentNotFoundException();
     }
