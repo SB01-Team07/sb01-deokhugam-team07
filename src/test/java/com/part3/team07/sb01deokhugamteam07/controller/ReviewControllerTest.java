@@ -156,7 +156,7 @@ class ReviewControllerTest {
     }
 
 
-    //커스텀 예외 추가시 동작
+    // TODO: 커스텀 예외 추가시 변경 예정
 /*    @DisplayName("존재하지 않은 리뷰는 상세 조회 불가능 하다.")
     @Test
     void findReview_Failure_NotFound() throws Exception {
@@ -167,8 +167,8 @@ class ReviewControllerTest {
 
         //when then
         mockMvc.perform(get("/api/reviews/{reviewId}", invalidReviewId)
-                    .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                    .contentType(MediaType.APPLICATION_JSON));
+                //.andExpect(status().isBadRequest());
     }*/
 
     @DisplayName("리뷰를 수정할 수 있다.")
@@ -208,4 +208,26 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.content").value(reviewDto.content()))
                 .andExpect(jsonPath("$.rating").value(reviewDto.rating()));
     }
+
+    // TODO: 커스텀 예외 추가시 변경 예정
+/*    @DisplayName("작성자가 아닌 사용자가 리뷰를 작성하는 경우 400 에러가 발생한다.")
+    @Test
+    void test() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+
+        //when
+        given(reviewService.update(userId, reviewId, request))
+                .willThrow(new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."));
+
+        //then
+        mockMvc.perform(patch("/api/reviews/{reviewId}", reviewId)
+                .header("Deokhugam-Request-User-ID", userId.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+                .andExpect(status().isBadRequest());
+    }*/
 }
