@@ -73,7 +73,7 @@ public class CommentService {
   @Transactional(readOnly = true)
   public CommentDto find(UUID commentId) {
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(()-> CommentNotFoundException.withId(commentId));
+        .orElseThrow(()-> new CommentNotFoundException());
 
     isDeleted(comment);
 
@@ -82,7 +82,7 @@ public class CommentService {
 
   private void isDeleted(Comment comment){
     if (comment.isDeleted()){
-      throw CommentNotFoundException.withId(comment.getId());
+      throw new CommentNotFoundException();
     }
   }
 
