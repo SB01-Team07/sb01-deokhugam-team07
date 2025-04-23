@@ -1,6 +1,5 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
@@ -21,6 +20,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -106,4 +106,67 @@ class ReviewControllerTest {
                         .with(csrf())) //csrf 추가
                 .andExpect(status().isBadRequest());
     }
+
+    @DisplayName("리뷰 상세 조회를 할 수 있다.")
+    @Test
+    void find() throws Exception {
+        //given
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+
+        ReviewDto reviewDto = new ReviewDto(
+                reviewId,
+                bookId,
+                "Book",
+                "url",
+                userId,
+                "User",
+                "책입니다",
+                5,
+                0,
+                0,
+                false,
+                now,
+                now
+        );
+
+        //when
+        given(reviewService.find(reviewId)).willReturn(reviewDto);
+
+        //then
+        mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(reviewId.toString()))
+                .andExpect(jsonPath("$.bookId").value(bookId.toString()))
+                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                .andExpect(jsonPath("$.bookTitle").value("Book"))
+                .andExpect(jsonPath("$.bookThumbnailUrl").value("url"))
+                .andExpect(jsonPath("$.userNickName").value("User"))
+                .andExpect(jsonPath("$.content").value("책입니다"))
+                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.likeCount").value(0))
+                .andExpect(jsonPath("$.commentCount").value(0))
+                .andExpect(jsonPath("$.likeByMe").value(false))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists());
+    }
+
+
+    //커스텀 예외 추가시 동작
+/*    @DisplayName("존재하지 않은 리뷰는 상세 조회 불가능 하다.")
+    @Test
+    void findReview_Failure_NotFound() throws Exception {
+        //given
+        UUID invalidReviewId = UUID.randomUUID();
+        given(reviewService.find(invalidReviewId))
+                .willThrow(new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        //when then
+        mockMvc.perform(get("/api/reviews/{reviewId}", invalidReviewId)
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }*/
 }

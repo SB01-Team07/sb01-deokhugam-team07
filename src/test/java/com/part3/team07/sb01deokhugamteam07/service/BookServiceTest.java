@@ -8,12 +8,15 @@ import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -132,6 +135,85 @@ class BookServiceTest {
       );
 
     }
+  }
+
+  @Nested
+  @DisplayName("도서 수정")
+  class UpdateTest {
+    @Test
+    @DisplayName("도서 수정 성공")
+    void update_success() {
+      // given
+      String newTitle = "new title";
+      String newAuthor = "new author";
+      String newDescription = "new description";
+      String newPublisher = "new publisher";
+      LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
+
+      BookUpdateRequest request = new BookUpdateRequest(
+          newTitle,
+          newAuthor,
+          newDescription,
+          newPublisher,
+          newPublishedDate
+      );
+
+      BookDto newBookDto = new BookDto(
+          id,
+          newTitle,
+          newAuthor,
+          newDescription,
+          newPublisher,
+          newPublishedDate,
+          "",
+          "",
+          0,
+          0,
+          LocalDateTime.now(),
+          LocalDateTime.now()
+      );
+
+      // when
+      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
+
+      BookDto result = bookService.update(id, request);
+
+      // then
+      assertThat(result.title()).isEqualTo(newTitle);
+      assertThat(result.author()).isEqualTo(newAuthor);
+      assertThat(result.description()).isEqualTo(newDescription);
+      assertThat(result.publisher()).isEqualTo(newPublisher);
+      assertThat(result.publishedDate()).isEqualTo(newPublishedDate);
+    }
+  }
+
+  @Test
+  @DisplayName("도서 수정 실패 - 없는 id")
+  void update_fail_idNotFound() {
+    // given
+    UUID nonExistentId = UUID.randomUUID();
+    String newTitle = "new title";
+    String newAuthor = "new author";
+    String newDescription = "new description";
+    String newPublisher = "new publisher";
+    LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
+
+    BookUpdateRequest request = new BookUpdateRequest(
+        newTitle,
+        newAuthor,
+        newDescription,
+        newPublisher,
+        newPublishedDate
+    );
+
+    given(bookRepository.findById(nonExistentId)).willReturn(Optional.empty());
+
+    // when & then
+    assertThrows(BookNotFoundException.class,
+        () -> bookService.update(nonExistentId, request)
+    );
+
   }
 
 
