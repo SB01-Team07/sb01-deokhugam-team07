@@ -17,7 +17,7 @@ public enum ErrorCode {
 
   //Comment
   COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다"),
-  COMMENT_UNAUTHORIZED("댓글 수정 권한이 없습니다");
+  COMMENT_UNAUTHORIZED("권한이 없습니다");
 
   private final String message;
 
