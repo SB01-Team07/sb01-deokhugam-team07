@@ -19,7 +19,6 @@ import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -126,7 +125,7 @@ class PopularReviewDashboardBatchServiceTest {
 
     );
 
-    when(reviewRepository.findByIsDeletedFalse()).thenReturn(reviews);
+    when(reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(reviews);
     when(dataRangeUtil.getDateRange(period)).thenReturn(dateRange);
 
     // 좋아요, 댓글 카운트 설정
@@ -156,7 +155,7 @@ class PopularReviewDashboardBatchServiceTest {
     // when
     popularReviewDashboardBatchService.savePopularReviewDashboardData(period);
 
-    verify(reviewRepository).findByIsDeletedFalse();
+    verify(reviewRepository).findByIsDeletedFalseOrderByCreatedAtAsc();
     verify(dashboardRepository).saveAll(any());
     verify(likeRepository, times(2)).countByReviewIdAndCreatedAtBetween(any(), any(), any());
     verify(commentRepository, times(2)).countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(any(),

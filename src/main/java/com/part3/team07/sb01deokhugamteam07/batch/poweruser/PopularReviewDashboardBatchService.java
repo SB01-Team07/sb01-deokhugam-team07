@@ -11,7 +11,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class PopularReviewDashboardBatchService {
    **/
   public void savePopularReviewDashboardData(Period period) {
     // 1. 전체 리뷰 조회 (is_deleted = false)
-    List<Review> reviews = reviewRepository.findByIsDeletedFalse();
+    List<Review> reviews = reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
 
     // 날짜 범위 계산
     LocalDate[] dateRange = dateRangeUtil.getDateRange(period);
@@ -44,7 +44,7 @@ public class PopularReviewDashboardBatchService {
 
     // 결과 저장용 대시보드 리스트
     List<Dashboard> dashboards = new ArrayList<>();
-    Map<UUID, Double> reviewScoreMap = new HashMap<>();
+    Map<UUID, Double> reviewScoreMap = new LinkedHashMap<>();
 
     // 2. 각 리뷰의 정보 가져오기
     for (Review review : reviews) {

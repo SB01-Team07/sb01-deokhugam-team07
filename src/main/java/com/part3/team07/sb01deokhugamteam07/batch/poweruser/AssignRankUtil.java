@@ -19,7 +19,7 @@ public class AssignRankUtil {
     List<Map.Entry<UUID, Double>> scoreList = new ArrayList<>(scoreMap.entrySet());
 
     // Score 기준 내림차순으로 정렬
-    scoreList.sort((entry1, entry2) -> entry1.getValue().compareTo(entry2.getValue()));
+    scoreList.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
     // 정렬된 점수를 기반으로 순위 할당
     int rank = 1;
