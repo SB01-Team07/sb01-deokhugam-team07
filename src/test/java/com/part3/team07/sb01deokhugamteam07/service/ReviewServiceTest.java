@@ -264,4 +264,15 @@ class ReviewServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("본인이 작성하지 않은 리뷰는 논리 삭제할 수 없다.")
+    @Test
+    void softDelete_fail_whenReviewNotFound() {
+        //given
+        UUID otherUserId = UUID.randomUUID();
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when then
+        assertThatThrownBy(() -> reviewService.softDelete(otherUserId, reviewId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
