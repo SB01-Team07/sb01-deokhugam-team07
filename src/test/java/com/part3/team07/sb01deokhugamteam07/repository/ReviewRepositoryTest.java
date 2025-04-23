@@ -15,8 +15,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @DataJpaTest
 @EnableJpaAuditing

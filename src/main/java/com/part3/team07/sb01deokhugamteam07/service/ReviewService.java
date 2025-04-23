@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,9 +27,9 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ReviewDto create(ReviewCreateRequest request){
+    public ReviewDto create(ReviewCreateRequest request) {
         log.debug("리뷰 생성 시작: {}", request);
-        if(reviewRepository.existsByUserIdAndBookId(request.userId(), request.bookId())){
+        if(reviewRepository.existsByUserIdAndBookId(request.userId(), request.bookId())) {
             throw new IllegalArgumentException("이미 해당 도서에 대한 리뷰가 존재합니다.");
         }
         User user = userRepository.findById(request.userId())
@@ -46,6 +48,15 @@ public class ReviewService {
         reviewRepository.save(review);
 
         log.info("리뷰 생성 완료: id={}, userId={}, bookId{}", review.getId(), user.getId(), book.getId());
-        return ReviewMapper.toDto(user, book, review);
+        return ReviewMapper.toDto(review);
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewDto find(UUID reviewId) {
+        log.debug("리뷰 상세 조회 시작: id={}", reviewId);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        log.info("리뷰 상세 조회 완료: id={}", reviewId);
+        return ReviewMapper.toDto(review);
     }
 }
