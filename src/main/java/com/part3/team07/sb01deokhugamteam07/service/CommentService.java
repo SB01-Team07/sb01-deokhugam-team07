@@ -66,7 +66,6 @@ public class CommentService {
     }
 
     comment.update(updateRequest.content());
-    commentRepository.save(comment);
     log.info("update comment complete: id={}, comment={}", comment.getId(), comment.getContent());
     return commentMapper.toDto(comment);
   }
@@ -83,11 +82,20 @@ public class CommentService {
   }
 
   @Transactional
-  public void logicalDelete(UUID commentId) {
+  public void logicalDelete(UUID commentId, UUID userId) {
+    log.debug("logicalDelete comment: commentId = {}", commentId);
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new CommentNotFoundException());
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
+
+    if (!comment.getUser().getId().equals(user.getId())) {
+      throw new CommentUnauthorizedException();
+    }
+
     comment.logicalDelete();
-    commentRepository.save(comment);
+    log.info("logicalDelete comment complete");
   }
 
 

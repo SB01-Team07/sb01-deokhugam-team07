@@ -280,9 +280,10 @@ class CommentServiceTest {
   void logicalDeleteComment() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
 
     //when
-    commentService.logicalDelete(commentId);
+    commentService.logicalDelete(commentId, userId);
 
     //then
     assertThatThrownBy(()-> commentService.find(commentId))
