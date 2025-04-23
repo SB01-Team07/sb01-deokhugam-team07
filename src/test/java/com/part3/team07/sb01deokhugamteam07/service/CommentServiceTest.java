@@ -269,7 +269,7 @@ class CommentServiceTest {
   void findCommentFailCommentIsDeleted() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
-    comment.logicalDelete();
+    comment.softDelete();
 
     //when & then
     assertThatThrownBy(() -> commentService.find(commentId))
@@ -278,13 +278,13 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 논리 삭제 성공")
-  void logicalDeleteComment() {
+  void softDeleteComment() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
 
     //when
-    commentService.logicalDelete(commentId, userId);
+    commentService.softDelete(commentId, userId);
 
     //then
     assertThatThrownBy(() -> commentService.find(commentId))
@@ -293,30 +293,30 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("댓글 논리 삭제 실패 - 댓글 존재X")
-  void logicalDeleteCommentFailCommentNotFound() {
+  void softDeleteCommentFailCommentNotFound() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
 
     //when & then
-    assertThatThrownBy(() -> commentService.logicalDelete(commentId, userId))
+    assertThatThrownBy(() -> commentService.softDelete(commentId, userId))
         .isInstanceOf(CommentNotFoundException.class);
   }
 
   @Test
   @DisplayName("댓글 논리 삭제 실패 - 논리 삭제 상태")
-  void logicalDeleteCommentFailCommentIsDeleted() {
+  void softDeleteCommentFailCommentIsDeleted() {
     //given
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
-    comment.logicalDelete();
+    comment.softDelete();
 
     //when & then
-    assertThatThrownBy(() -> commentService.logicalDelete(commentId, userId))
+    assertThatThrownBy(() -> commentService.softDelete(commentId, userId))
         .isInstanceOf(CommentNotFoundException.class);
   }
 
   @Test
   @DisplayName("댓글 논리 삭제 실패 - 권한없음")
-  void logicalDeleteCommentFailByUnauthorizedUser() {
+  void softDeleteCommentFailByUnauthorizedUser() {
     //given
     UUID otherUserId = UUID.randomUUID();
     given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
@@ -324,13 +324,13 @@ class CommentServiceTest {
         .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
 
     //when & then
-    assertThatThrownBy(() -> commentService.logicalDelete(commentId, otherUserId))
+    assertThatThrownBy(() -> commentService.softDelete(commentId, otherUserId))
         .isInstanceOf(CommentUnauthorizedException.class);
   }
 
   @Test
   @DisplayName("리뷰에 달린 모든 댓글 논리 삭제 성공")
-  void logicalDeleteAllCommentByReview() {
+  void softDeleteAllCommentByReview() {
     //given
     Comment c1 = Comment.builder().user(testUser).review(testReview).content("1").build();
     Comment c2 = Comment.builder().user(testUser).review(testReview).content("2").build();
@@ -341,12 +341,12 @@ class CommentServiceTest {
         .willReturn(List.of(comment1, comment2));
 
     //when
-    commentService.logicalDeleteAllByReview(testReview);
+    commentService.softDeleteAllByReview(testReview);
 
     //then
     verify(commentRepository).findAllByReview(testReview);
-    verify(comment1).logicalDelete();
-    verify(comment2).logicalDelete();
+    verify(comment1).softDelete();
+    verify(comment2).softDelete();
   }
 
 }

@@ -54,7 +54,7 @@ public class CommentService {
         updateRequest);
     Comment comment = findComment(commentId);
     User user = findUser(userId);
-    validWriter(comment, user);
+    validateCommentAuthor(comment, user);
     comment.update(updateRequest.content());
     log.info("update comment complete: id={}, comment={}", comment.getId(), comment.getContent());
     return commentMapper.toDto(comment);
@@ -70,25 +70,25 @@ public class CommentService {
   }
 
   @Transactional
-  public void logicalDelete(UUID commentId, UUID userId) {
-    log.debug("logicalDelete comment: commentId = {}", commentId);
+  public void softDelete(UUID commentId, UUID userId) {
+    log.debug("softDelete comment: commentId = {}", commentId);
     Comment comment = findComment(commentId);
     isDeleted(comment);
     User user = findUser(userId);
-    validWriter(comment, user);
-    comment.logicalDelete();
-    log.info("logicalDelete comment complete");
+    validateCommentAuthor(comment, user);
+    comment.softDelete();
+    log.info("softDelete comment complete");
   }
 
   // 리뷰 존재 검증은 따로 안했습니다.
   @Transactional
-  public void logicalDeleteAllByReview(Review review) {
-    log.debug("logicalDelete all comments by review: review = {}", review);
+  public void softDeleteAllByReview(Review review) {
+    log.debug("softDelete all comments by review: review = {}", review);
     List<Comment> comments = commentRepository.findAllByReview(review);
     for (Comment comment : comments) {
-      comment.logicalDelete();
+      comment.softDelete();
     }
-    log.info("logicalDelete all comments by review complete");
+    log.info("softDelete all comments by review complete");
   }
 
   private void isDeleted(Comment comment) {
@@ -113,7 +113,7 @@ public class CommentService {
     //todo 예외 추가 시 변경 예정
   }
 
-  private void validWriter(Comment comment, User user) {
+  private void validateCommentAuthor(Comment comment, User user) {
     if (!comment.getUser().equals(user)) {
       throw new CommentUnauthorizedException();
     }

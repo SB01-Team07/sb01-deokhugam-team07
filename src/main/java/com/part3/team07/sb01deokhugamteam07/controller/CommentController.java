@@ -67,13 +67,13 @@ public class CommentController {
   }
 
   @DeleteMapping(value = "/{commentId}")
-  public ResponseEntity<Void> logicalDelete(
+  public ResponseEntity<Void> softDelete(
       @PathVariable UUID commentId,
       @RequestHeader("Deokhugam-Request-User-ID") UUID userId
   ) {
-    log.info("logical delete comment request: commentId = {}, userId = {}", commentId, userId);
-    commentService.logicalDelete(commentId, userId);
-    log.debug("logical delete comment success");
+    log.info("soft delete comment request: commentId = {}, userId = {}", commentId, userId);
+    commentService.softDelete(commentId, userId);
+    log.debug("soft delete comment success");
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

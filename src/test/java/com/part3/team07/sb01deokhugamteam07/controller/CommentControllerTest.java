@@ -206,7 +206,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 논리 삭제 성공")
   @WithMockUser
-  void logicalDeleteComment() throws Exception {
+  void softDeleteComment() throws Exception {
     //given
     UUID testUserId = UUID.randomUUID();
     UUID testCommentId = UUID.randomUUID();
