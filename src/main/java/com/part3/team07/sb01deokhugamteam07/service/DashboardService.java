@@ -256,7 +256,7 @@ public class DashboardService {
         period, direction, cursor, after, limit);
 
     // 1. 커스텀 레포지토리에서 Popular Book 대시보드 조회
-    List<Dashboard> dashboards = dashboardRepositoryCustom.findPopularBookPeriod(
+    List<Dashboard> dashboards = dashboardRepositoryCustom.findPopularBookByPeriod(
         period,
         direction,
         cursor,
