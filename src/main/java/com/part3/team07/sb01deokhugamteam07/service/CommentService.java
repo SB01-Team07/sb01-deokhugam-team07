@@ -53,13 +53,13 @@ public class CommentService {
     log.debug("update comment: commentId = {}, userId = {}, request = {}", commentId, userId,
         updateRequest);
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> CommentNotFoundException.withId(commentId));
+        .orElseThrow(() -> new CommentNotFoundException());
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(userId));
 
     if (!comment.getUser().getId().equals(user.getId())) {
-      throw CommentUnauthorizedException.withId(userId);
+      throw new CommentUnauthorizedException();
     }
 
     comment.update(updateRequest.content());

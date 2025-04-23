@@ -5,11 +5,8 @@ import java.util.UUID;
 
 public class CommentUnauthorizedException extends CommentException {
 
-  public CommentUnauthorizedException() {super(ErrorCode.COMMENT_UNAUTHORIZED);}
-
-  public static CommentUnauthorizedException withId(UUID userId){
-    CommentUnauthorizedException exception = new CommentUnauthorizedException();
-    exception.addDetail("userId", userId);
-    return exception;
+  public CommentUnauthorizedException() {
+    super(ErrorCode.COMMENT_UNAUTHORIZED);
   }
+
 }
