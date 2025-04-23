@@ -59,7 +59,18 @@ public class ReviewController {
         log.info("리뷰 논리 삭제 요청: {}", reviewId);
         reviewService.softDelete(userId, reviewId);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.NO_CONTENT)
                 .build();
     }
+
+    @DeleteMapping({"{reviewId}/hard"})
+    public ResponseEntity<Void> hardDelete(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        reviewService.hardDelete(userId, reviewId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
 }
