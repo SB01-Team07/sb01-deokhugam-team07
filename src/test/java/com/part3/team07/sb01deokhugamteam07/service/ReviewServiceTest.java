@@ -217,13 +217,26 @@ class ReviewServiceTest {
     @Test
     void updateReview_ShouldFail_WhenUserIsNotAuthor() {
         //given
-        UUID otherId = UUID.randomUUID();
+        UUID otherUserId = UUID.randomUUID();
         ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
         //when then
-        assertThatThrownBy(()-> reviewService.update(otherId, reviewId, request))
+        assertThatThrownBy(()-> reviewService.update(otherUserId, reviewId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("본인이 작성한 리뷰가 아닙니다.");
+    }
+
+    @DisplayName("존재하지 않은 리뷰는 수정할 수 없다")
+    @Test
+    void updateReview_ShouldFail_WhenReviewDoesNotExist() {
+        //given
+        UUID otherReviewId = UUID.randomUUID();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+
+        //when then
+        assertThatThrownBy(()-> reviewService.update(userId, otherReviewId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("리뷰를 찾을 수 없습니다.");
     }
 }
