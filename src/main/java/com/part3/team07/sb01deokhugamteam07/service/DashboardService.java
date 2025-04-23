@@ -191,7 +191,7 @@ public class DashboardService {
                 reviewId,
                 review.getBook().getId(),
                 review.getBook().getTitle(),
-                review.getBook().getThumbnailUrl(),
+                review.getBook().getThumbnailFileName(),
                 review.getUser().getId(),
                 review.getUser().getNickname(),
                 review.getContent(),
