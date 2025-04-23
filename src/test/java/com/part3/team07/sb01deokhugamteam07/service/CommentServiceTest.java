@@ -363,4 +363,29 @@ class CommentServiceTest {
     verify(commentRepository).delete(comment);
   }
 
+  @Test
+  @DisplayName("댓글 물리 삭제 실패 - 댓글 존재X ")
+  void hardDeleteCommentFailCommentNotFound() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
+
+    //when & then
+    assertThatThrownBy(() -> commentService.hardDelete(commentId, userId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 실패 - 권한없음")
+  void hardDeleteCommentFailByUnauthorizedUser() {
+    //given
+    UUID otherUserId = UUID.randomUUID();
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(otherUserId)))
+        .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
+
+    //when & then
+    assertThatThrownBy(() -> commentService.hardDelete(commentId, otherUserId))
+        .isInstanceOf(CommentUnauthorizedException.class);
+  }
+
 }
