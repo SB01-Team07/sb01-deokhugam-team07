@@ -33,6 +33,12 @@ public class UserController {
   private final UserService userService;
   private final AuthenticationManager authenticationManager;
 
+  /**
+  * @methodName : join
+  * @date : 2025. 4. 23. 09:43
+  * @author : wongil
+  * @Description: 유저 회원가입
+  **/
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public UserDto join(@RequestBody @Validated UserRegisterRequest request) {
