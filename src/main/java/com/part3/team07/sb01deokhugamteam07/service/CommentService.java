@@ -82,6 +82,15 @@ public class CommentService {
     return commentMapper.toDto(comment);
   }
 
+  @Transactional
+  public void logicalDelete(UUID commentId) {
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new CommentNotFoundException());
+    comment.logicalDelete();
+    commentRepository.save(comment);
+  }
+
+
   private void isDeleted(Comment comment) {
     if (comment.isDeleted()) {
       throw new CommentNotFoundException();

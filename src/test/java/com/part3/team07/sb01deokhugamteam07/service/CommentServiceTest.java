@@ -275,6 +275,20 @@ class CommentServiceTest {
         .isInstanceOf(CommentNotFoundException.class);
   }
 
+  @Test
+  @DisplayName("댓글 논리 삭제 성공")
+  void logicalDeleteComment() {
+    //given
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+
+    //when
+    commentService.logicalDelete(commentId);
+
+    //then
+    assertThatThrownBy(()-> commentService.find(commentId))
+        .isInstanceOf(CommentNotFoundException.class);
+  }
+
 
 
 }
