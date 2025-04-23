@@ -23,6 +23,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -246,8 +247,26 @@ class ReviewControllerTest {
         mockMvc.perform(delete("/api/reviews/{reviewId}", reviewId)
                 .header("Deokhugam-Request-User-ID", userId.toString())
                 .with(csrf()))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
         verify(reviewService).softDelete(userId, reviewId);
+    }
+
+    @DisplayName("리뷰를 물리 삭제할 수 있다.")
+    @Test
+    void hardDelete() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+
+        //when
+        willDoNothing().given(reviewService).hardDelete(userId, reviewId);
+
+        //then
+        mockMvc.perform(delete("/api/reviews/{reviewId}/hard",reviewId)
+                .header("Deokhugam-Request-User-ID", userId.toString())
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        verify(reviewService).hardDelete(userId, reviewId);
     }
 
 }
