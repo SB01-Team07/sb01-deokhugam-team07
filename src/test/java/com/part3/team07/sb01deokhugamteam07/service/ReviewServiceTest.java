@@ -252,4 +252,16 @@ class ReviewServiceTest {
         //then
         assertThat(review.isDeleted()).isTrue();
     }
+
+    @DisplayName("존재하지 않은 리뷰는 논리 삭제할 수 없다.")
+    @Test
+    void softDelete_fail_whenUserIsNotAuthor() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.softDelete(userId, reviewId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
 }
