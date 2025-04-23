@@ -1,8 +1,10 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +22,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -169,4 +170,42 @@ class ReviewControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }*/
+
+    @DisplayName("리뷰를 수정할 수 있다.")
+    @Test
+    void update() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        UUID bookId = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("변경 내용",3);
+        ReviewDto reviewDto = new ReviewDto(
+                reviewId,
+                bookId,
+                "Book",
+                "url",
+                userId,
+                "User",
+                "변경 내용",
+                3,
+                0,
+                0,
+                false,
+                now,
+                now
+        );
+
+        given(reviewService.update(userId, reviewId, request)).willReturn(reviewDto);
+
+        //when then
+        mockMvc.perform(patch("/api/reviews/{reviewId}",reviewId)
+                    .header("Deokhugam-Request-User-ID", userId.toString())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+                    .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").value(reviewDto.content()))
+                .andExpect(jsonPath("$.rating").value(reviewDto.rating()));
+    }
 }
