@@ -152,7 +152,7 @@ class DashboardServiceTest {
     // bookRepository 반환 목 객체
     Book book = Book.builder()
         .title("testBook")
-        .thumbnailUrl("dummyUrl")
+        .thumbnailFileName("dummyUrl")
         .build();
     UUID bookId = UUID.randomUUID();
     ReflectionTestUtils.setField(book, "id", bookId);
@@ -184,7 +184,7 @@ class DashboardServiceTest {
             reviewId,
             bookId,
             book.getTitle(),
-            book.getThumbnailUrl(),
+            book.getThumbnailFileName(),
             user.getId(),
             user.getNickname(),
             review.getContent(),

@@ -51,7 +51,7 @@ class PopularReviewDashboardBatchServiceTest {
 
   @Test
   @DisplayName("인기 리뷰 대시보드 데이터 저장 성공")
-  void saveopularReviewDashboardData_success() {
+  void save_Popular_Review_Dashboard_Data_success() {
     Period period = Period.WEEKLY;
 
     // Period 설정
@@ -66,7 +66,7 @@ class PopularReviewDashboardBatchServiceTest {
 
     Book book = Book.builder()
         .title("testBook")
-        .thumbnailUrl("dummyUrl")
+        .thumbnailFileName("dummyUrl")
         .build();
     UUID bookId = UUID.randomUUID();
     ReflectionTestUtils.setField(book, "id", bookId);
