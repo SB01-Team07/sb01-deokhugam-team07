@@ -93,10 +93,12 @@ public class CommentService {
 
   @Transactional
   public void hardDelete(UUID commentId, UUID userId) {
+    log.debug("hardDelete comment: commentId = {}, userId = {}",commentId, userId);
     Comment comment = findComment(commentId);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     commentRepository.delete(comment);
+    log.info("hardDelete comment complete");
   }
 
   private void isSoftDeleted(Comment comment) {

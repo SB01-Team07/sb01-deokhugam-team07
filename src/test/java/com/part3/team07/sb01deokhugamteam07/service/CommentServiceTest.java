@@ -330,7 +330,7 @@ class CommentServiceTest {
 
   @Test
   @DisplayName("리뷰에 달린 모든 댓글 논리 삭제 성공")
-  void softDeleteAllCommentByReview() {
+  void softDeleteAllCommentsByReview() {
     //given
     Comment c1 = Comment.builder().user(testUser).review(testReview).content("1").build();
     Comment c2 = Comment.builder().user(testUser).review(testReview).content("2").build();
