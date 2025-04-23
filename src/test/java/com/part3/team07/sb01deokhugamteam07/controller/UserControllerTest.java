@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,6 +14,7 @@ import com.part3.team07.sb01deokhugamteam07.config.SecurityConfig;
 import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
@@ -206,8 +208,7 @@ class UserControllerTest {
     // then
     mockMvc
         .perform(get("/api/users/{userId}", userId)
-            .header("Deokhugam-Request-User-ID", userId.toString())
-            .contentType(MediaType.APPLICATION_JSON))
+            .header("Deokhugam-Request-User-ID", userId.toString()))
         .andExpect(status().isOk())
         .andExpect(content().json(response))
     ;
@@ -232,8 +233,116 @@ class UserControllerTest {
     // then
     mockMvc
         .perform(get("/api/users/{userId}", findUserID)
-            .header("Deokhugam-Request-User-ID", authenticatedUserId.toString())
-            .contentType(MediaType.APPLICATION_JSON))
+            .header("Deokhugam-Request-User-ID", authenticatedUserId.toString()))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName("PATCH /api/users/{userId} - 유저 수정")
+  void update() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User user = new User("test", "password123", "test@mail.com");
+    ReflectionTestUtils.setField(user, "id", userId);
+
+    UserUpdateRequest request = new UserUpdateRequest("newNick");
+    String requestJson = objectMapper.writeValueAsString(request);
+    UserDto response = new UserDto(userId, "test@mail.com", "newNick", LocalDateTime.now());
+
+    // when
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+    when(userService.update(userId, request))
+        .thenReturn(response);
+
+    // then
+    mockMvc
+        .perform(patch("/api/users/{userId}", userId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .header("Deokhugam-Request-User-ID", userId.toString()))
+        .andExpect(status().isOk())
+    ;
+  }
+
+  @Test
+  @DisplayName("PATCH /api/users/{userId} - 유저 수정 실패(권한 없음)")
+  void failUpdateCauseInvalidNickname() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User user = new User("test", "password123", "test@mail.com");
+    ReflectionTestUtils.setField(user, "id", userId);
+
+    UserUpdateRequest request = new UserUpdateRequest("newNick");
+    String requestJson = objectMapper.writeValueAsString(request);
+    UserDto response = new UserDto(userId, "test@mail.com", "newNick", LocalDateTime.now());
+
+    // when
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+    when(userService.update(userId, request))
+        .thenReturn(response);
+
+    // then
+    mockMvc
+        .perform(patch("/api/users/{userId}", userId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson))
+        .andExpect(status().is4xxClientError()) // 403
+    ;
+  }
+
+  @Test
+  @DisplayName("PATCH /api/users/{userId} - 유저 수정 실패(유저 없음)")
+  void failUpdateCauseNotFoundUser() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User user = new User("test", "password123", "test@mail.com");
+    ReflectionTestUtils.setField(user, "id", userId);
+
+    UserUpdateRequest request = new UserUpdateRequest("newNick");
+    String requestJson = objectMapper.writeValueAsString(request);
+
+    // when
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+    when(userService.update(userId, request))
+        .thenThrow(new UserNotFoundException(userId));
+
+    // then
+    mockMvc
+        .perform(patch("/api/users/{userId}", userId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .header("Deokhugam-Request-User-ID", userId))
+        .andExpect(status().isNotFound())
+    ;
+  }
+
+  @Test
+  @DisplayName("PATCH /api/users/{userId} - 유저 수정 실패(잘못된 값)")
+  void failUpdateCauseInvalidValue() throws Exception {
+    // given
+    UUID userId = UUID.randomUUID();
+    User user = new User("test", "password123", "test@mail.com");
+    ReflectionTestUtils.setField(user, "id", userId);
+
+    UserUpdateRequest request = new UserUpdateRequest("");
+    String requestJson = objectMapper.writeValueAsString(request);
+
+    // when
+    when(userRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(user));
+    when(userService.update(userId, request))
+        .thenThrow(new UserNotFoundException(userId));
+
+    // then
+    mockMvc
+        .perform(patch("/api/users/{userId}", userId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestJson)
+            .header("Deokhugam-Request-User-ID", userId))
+        .andExpect(status().isBadRequest())
+    ;
   }
 }
