@@ -78,6 +78,7 @@ public class ReviewService {
 
     @Transactional
     public void softDelete(UUID userId, UUID reviewId){
+        log.debug("리뷰 논리 삭제 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
@@ -86,16 +87,20 @@ public class ReviewService {
         }
 
         // TODO 댓글 논리 삭제 로직 추가
+
+        log.info("리뷰 논리 삭제 완료: id={}", reviewId);
         review.softDelete();
     }
 
     @Transactional
     public void softDeleteAllByBook(Book book) {
         List<Review> reviews = reviewRepository.findAllByBook(book);
+        log.info("{}개의 리뷰를 논리 삭제 시작. bookId={}", reviews.size(), book.getId());
         reviews.forEach(review -> {
             review.softDelete();
             // TODO 댓글 논리 삭제 로직 추가
         });
+        log.info("모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
     }
 
 }
