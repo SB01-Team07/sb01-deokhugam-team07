@@ -79,6 +79,7 @@ CREATE TABLE likes
     id         UUID PRIMARY KEY,
     user_id    UUID NOT NULL,
     review_id  UUID NOT NULL,
+    is_deleted BOOLEAN             NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_DATE,
     CONSTRAINT unique_review_like UNIQUE (user_id, review_id)
 );
