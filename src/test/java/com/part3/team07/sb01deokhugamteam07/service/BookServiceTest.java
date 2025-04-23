@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -175,10 +174,10 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      // when
       given(bookRepository.findById(id)).willReturn(Optional.of(book));
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
+      // when
       BookDto result = bookService.update(id, request);
 
       // then
@@ -249,7 +248,5 @@ class BookServiceTest {
 
 
   }
-
-
-
+  
 }
