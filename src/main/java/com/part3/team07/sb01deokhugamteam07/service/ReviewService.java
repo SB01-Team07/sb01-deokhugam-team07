@@ -63,6 +63,7 @@ public class ReviewService {
 
     @Transactional
     public ReviewDto update(UUID userId, UUID reviewId, ReviewUpdateRequest request) {
+        log.debug("리뷰 수정 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
@@ -70,6 +71,7 @@ public class ReviewService {
             throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다.");
         }
         review.update(request.content(), request.rating());
+        log.info("리뷰 수정 완료: id={}", reviewId);
         return ReviewMapper.toDto(review);
     }
 }

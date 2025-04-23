@@ -46,6 +46,7 @@ public class ReviewController {
             @PathVariable UUID reviewId,
             @RequestHeader("Deokhugam-Request-User-ID") UUID userId,
             @RequestBody @Valid ReviewUpdateRequest request){
+        log.info("리뷰 수정 요청: {}", reviewId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.update(userId, reviewId, request));
