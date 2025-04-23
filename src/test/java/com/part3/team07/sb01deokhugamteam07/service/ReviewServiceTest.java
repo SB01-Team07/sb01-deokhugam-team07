@@ -202,12 +202,14 @@ class ReviewServiceTest {
     @Test
     void update() {
         //given
-        ReviewUpdateRequest request = new ReviewUpdateRequest("수정", 3);
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
         //when
         ReviewDto result = reviewService.update(userId, reviewId, request);
 
         //then
-        assertThat(result).isEqualTo(null);
+        assertThat(result.content()).isEqualTo("수정한 내용");
+        assertThat(result.rating()).isEqualTo(3);
     }
 }
