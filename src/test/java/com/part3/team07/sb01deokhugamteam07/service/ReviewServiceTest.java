@@ -212,4 +212,18 @@ class ReviewServiceTest {
         assertThat(result.content()).isEqualTo("수정한 내용");
         assertThat(result.rating()).isEqualTo(3);
     }
+
+    @DisplayName("본인이 작성하지 않은 리뷰는 수정할 수 없다.")
+    @Test
+    void updateReview_ShouldFail_WhenUserIsNotAuthor() {
+        //given
+        UUID otherId = UUID.randomUUID();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when then
+        assertThatThrownBy(()-> reviewService.update(otherId, reviewId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("본인이 작성한 리뷰가 아닙니다.");
+    }
 }
