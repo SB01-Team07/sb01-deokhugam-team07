@@ -235,6 +235,18 @@ class BookServiceTest {
       verify(book).softDelete();
     }
 
+    @Test
+    @DisplayName("도서 논리 삭제 실패 - 없는 id")
+    void softDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.findById(id)).willReturn(Optional.empty());
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.softDelete(id)
+      );
+    }
+
 
   }
 
