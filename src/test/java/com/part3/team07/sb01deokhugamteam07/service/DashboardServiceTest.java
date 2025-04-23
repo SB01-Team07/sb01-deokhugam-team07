@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponsePopularBookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.PopularReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponsePopularReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.PowerUserDto;
@@ -18,10 +19,12 @@ import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
+import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -48,6 +51,9 @@ class DashboardServiceTest {
 
   @Mock
   private ReviewRepository reviewRepository;
+
+  @Mock
+  private BookRepository bookRepository;
 
   @InjectMocks
   private DashboardService dashboardService;
@@ -176,7 +182,6 @@ class DashboardServiceTest {
     ReflectionTestUtils.setField(review, "id", reviewId);
     List<Review> reviews = List.of(review);
 
-
     // content 으로 쓰이는 PopularReviewDto 객체
     List<PopularReviewDto> mockPopularReviews = List.of(
         new PopularReviewDto(
@@ -202,10 +207,59 @@ class DashboardServiceTest {
         eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1)
     )).thenReturn(mockDashboards);
     when(reviewRepository.findAllById(any(List.class))).thenReturn(reviews);
-    when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.REVIEW), eq(Period.WEEKLY))).thenReturn(1L);
+    when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.REVIEW),
+        eq(Period.WEEKLY))).thenReturn(1L);
 
     // when
     CursorPageResponsePopularReviewDto result = dashboardService.getPopularReview(
+        period, // 랭킹 기간
+        "ASC", // direction
+        null, // cursor
+        null, // atter
+        limit // limit
+    );
+
+    // then
+    assertThat(result).isNotNull();
+    assertThat(result.content().get(0).rank()).isEqualTo(1);
+  }
+
+  @Test
+  @DisplayName("주간 인기 도서를 정상적으로 조회")
+  void getPowerBooksWeeklySuccess() {
+    // given
+    int limit = 50; // Default value
+    Period period = Period.WEEKLY;
+
+    // 리뷰, 도서는 클라이언트에게 key 와 id 전부 응답시 전달되어야 합니다. *유저는 key 만
+    UUID bookId = UUID.randomUUID();
+    UUID dashboardId = UUID.randomUUID();
+
+    Dashboard bookDashboard = new Dashboard(bookId, KeyType.REVIEW, period, 12.1,
+        ValueType.SCORE, 1);
+    ReflectionTestUtils.setField(bookDashboard, "id", dashboardId);
+    List<Dashboard> dashboards = List.of(bookDashboard);
+
+    Book book = Book.builder()
+        .title("testBook")
+        .author("testAuthor")
+        .description("test decription")
+        .publishDate(LocalDate.now())
+        .reviewCount(5)
+        .rating(5)
+        .thumbnailFileName("dummyUrl")
+        .build();
+    ReflectionTestUtils.setField(book, "id", bookId);
+    List<Book> books = List.of(book);
+
+    when(dashboardRepositoryCustom.findPopularBookByPeriod(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1)
+    )).thenReturn(dashboards);
+    when(bookRepository.findAllById(any(List.class))).thenReturn(books);
+    when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.BOOK), eq(period))).thenReturn(1L);
+
+    //when
+    CursorPageResponsePopularBookDto result = dashboardService.getPopularBooks(
         period, // 랭킹 기간
         "ASC", // direction
         null, // cursor
