@@ -341,7 +341,7 @@ class CommentServiceTest {
         .willReturn(List.of(comment1, comment2));
 
     //when
-    commentService.logicalDeleteByReview(testReview);
+    commentService.logicalDeleteAllByReview(testReview);
 
     //then
     verify(commentRepository).findAllByReview(testReview);

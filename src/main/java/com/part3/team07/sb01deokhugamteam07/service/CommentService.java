@@ -80,12 +80,15 @@ public class CommentService {
     log.info("logicalDelete comment complete");
   }
 
+  // 리뷰 존재 검증은 따로 안했습니다.
   @Transactional
-  public void logicalDeleteByReview(Review review) {
+  public void logicalDeleteAllByReview(Review review) {
+    log.debug("logicalDelete all comments by review: review = {}", review);
     List<Comment> comments = commentRepository.findAllByReview(review);
     for (Comment comment : comments) {
       comment.logicalDelete();
     }
+    log.info("logicalDelete all comments by review complete");
   }
 
   private void isDeleted(Comment comment) {
