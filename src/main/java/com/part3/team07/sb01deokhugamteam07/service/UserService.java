@@ -42,6 +42,7 @@ public class UserService {
         .build();
 
     User savedUser = userRepository.save(user);
+    log.info("Register User: {}, {}", request.email(), request.nickname());
 
     return UserDto.builder()
         .id(savedUser.getId())
@@ -65,6 +66,8 @@ public class UserService {
       throw new IllegalUserPasswordException(request);
     }
 
+    log.info("Login User: {}", user.getEmail());
+
     return UserDto.builder()
         .id(user.getId())
         .nickname(user.getNickname())
@@ -86,6 +89,8 @@ public class UserService {
 
     findUser.changeNickname(request.nickname());
 
+    log.info("Update User: {} to {}", findUser.getEmail(), findUser.getNickname());
+
     return UserDto.builder()
         .id(findUser.getId())
         .email(findUser.getEmail())
@@ -105,6 +110,8 @@ public class UserService {
 
     User findUser = findUser(userId);
     isDeleted(userId, findUser);
+
+    log.debug("Find User: {}", userId);
 
     return UserDto.builder()
         .id(findUser.getId())
@@ -126,6 +133,8 @@ public class UserService {
 
     User user = findUser(userId);
     user.logiDelete();
+
+    log.info("Logical Delete User: {}", userId);
   }
 
   /**
@@ -139,6 +148,8 @@ public class UserService {
     isExistsUser(userId);
 
     userRepository.deleteById(userId);
+
+    log.info("Delete User: {}", userId);
   }
 
   private void isDeleted(UUID userId, User findUser) {
