@@ -115,8 +115,8 @@ class DashboardServiceTest {
     );
 
     when(userRepository.findAllById(List.of(userId))).thenReturn(mockUsers);
-    when(dashboardRepositoryCustom.findPowerUsersByPeriod(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1))
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), KeyType.USER)
     ).thenReturn(mockDashboards);
 
     when(dashboardRepository.getUserMetrics(eq(period))).thenReturn(mockUserMetrics);
@@ -203,15 +203,15 @@ class DashboardServiceTest {
         )
     );
 
-    when(dashboardRepositoryCustom.findPopularReviewByPeriod(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1)
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), KeyType.REVIEW
     )).thenReturn(mockDashboards);
     when(reviewRepository.findAllById(any(List.class))).thenReturn(reviews);
     when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.REVIEW),
         eq(Period.WEEKLY))).thenReturn(1L);
 
     // when
-    CursorPageResponsePopularReviewDto result = dashboardService.getPopularReview(
+    CursorPageResponsePopularReviewDto result = dashboardService.getPopularReviews(
         period, // 랭킹 기간
         "ASC", // direction
         null, // cursor
@@ -252,8 +252,8 @@ class DashboardServiceTest {
     ReflectionTestUtils.setField(book, "id", bookId);
     List<Book> books = List.of(book);
 
-    when(dashboardRepositoryCustom.findPopularBookByPeriod(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1)
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), KeyType.BOOK
     )).thenReturn(dashboards);
     when(bookRepository.findAllById(any(List.class))).thenReturn(books);
     when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.BOOK), eq(period))).thenReturn(1L);

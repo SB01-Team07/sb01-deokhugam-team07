@@ -5,6 +5,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
@@ -16,8 +17,10 @@ import java.util.Map;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PopularBookDashboardBatchService {
@@ -35,8 +38,13 @@ public class PopularBookDashboardBatchService {
    * @param period 기간 정보 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
    **/
   public void savePopularBookDashboardData(Period period) {
+    log.info("savePopularBookDashboardData 호출: period={}", period);
+
     // 1. 전체 도서 조회 (is_deleted = false)
     List<Book> books = bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
+    if(books.isEmpty()){
+      throw new BookNotFoundException();
+    }
 
     // 날짜 범위 계산
     LocalDate[] dateRange = dateRangeUtil.getDateRange(period);
@@ -76,6 +84,7 @@ public class PopularBookDashboardBatchService {
 
     // 5. 데이터베이스에 저장
     dashboardRepository.saveAll(dashboards);
+    log.info("대시보드에 인기 도서 데이터가 저장됐습니다.: period={}, 저장된 대시보드 개수={}", period, dashboards.size());
   }
 
   /**

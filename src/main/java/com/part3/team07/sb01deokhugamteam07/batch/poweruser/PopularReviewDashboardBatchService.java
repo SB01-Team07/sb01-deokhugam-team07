@@ -16,13 +16,16 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PopularReviewDashboardBatchService {
+
   private final DateRangeUtil dateRangeUtil;
-  private final AssignRankUtil assignReviewRank;
+  private final AssignRankUtil assignRank;
   private final ReviewRepository reviewRepository;
   private final CommentRepository commentRepository;
   private final LikeRepository likeRepository;
@@ -34,6 +37,7 @@ public class PopularReviewDashboardBatchService {
    * @param period 기간 정보 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
    **/
   public void savePopularReviewDashboardData(Period period) {
+    log.info("savePopularReviewDashboardData 호출: period={}", period);
     // 1. 전체 리뷰 조회 (is_deleted = false)
     List<Review> reviews = reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
 
@@ -51,14 +55,14 @@ public class PopularReviewDashboardBatchService {
       UUID reviewId = review.getId();
 
       // 2-1. 해당 기간 동안 받은 댓글 수
-      int commentCount = (int) commentRepository.countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(
+      long commentCount = commentRepository.countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(
           reviewId,
           startDateTime,
           endDateTime
       );
 
       // 2-2. 해당 기간 동안 좋아요를 받은 수
-      int likeCount = (int) likeRepository.countByReviewIdAndCreatedAtBetween(
+      long likeCount = likeRepository.countByReviewIdAndCreatedAtBetween(
           reviewId,
           startDateTime,
           endDateTime
@@ -69,22 +73,22 @@ public class PopularReviewDashboardBatchService {
       reviewScoreMap.put(reviewId, score);
     }
 
-    // 4. SCORE 기준으로 전체 리뷰 순위 매기기 -> 메모리에서 정렬 후 rank 지정
-    dashboards = assignReviewRank.assignRank(reviewScoreMap, period, KeyType.REVIEW, dashboards);
+    // 4. SCORE 기준으로 전체 리뷰 순위 매기기 -> 정렬 후 rank 지정
+    dashboards = assignRank.assignRank(reviewScoreMap, period, KeyType.REVIEW, dashboards);
 
     // 5. 데이터베이스에 저장
     dashboardRepository.saveAll(dashboards);
+    log.info("대시보드에 인기 리뷰 데이터가 저장됐습니다.: period={}, 저장된 대시보드 개수={}", period, dashboards.size());
   }
 
   /**
-   * 좋아요 수, 댓글 수를 바탕으로 리뷰의 점수를 계산하는 메서드.
-   * 점수 = (해당 기간의 좋아요 수 * 0.3) + (해당 기간의 댓글 수 * 0.7)
+   * 좋아요 수, 댓글 수를 바탕으로 리뷰의 점수를 계산하는 메서드. 점수 = (해당 기간의 좋아요 수 * 0.3) + (해당 기간의 댓글 수 * 0.7)
    *
    * @param likeCount    리뷰가 받은 좋아요 수
    * @param commentCount 리뷰에 작성된 댓글 수
    * @return 계산된 활동 점수
    **/
-  private double calculateScore(int likeCount, int commentCount) {
+  private double calculateScore(long likeCount, long commentCount) {
     return (likeCount * 0.3) + (commentCount * 0.7);
   }
 
