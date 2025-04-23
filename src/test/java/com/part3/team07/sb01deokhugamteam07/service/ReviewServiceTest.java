@@ -307,4 +307,34 @@ class ReviewServiceTest {
         assertThat(review2.isDeleted()).isTrue();
     }
 
+    @DisplayName("user 기준으로 모든 리뷰를 논리 삭제한다.")
+    @Test
+    void softDeleteAllByUser() {
+        // given
+        Review review1 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰1")
+                .rating(4)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        Review review2 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰2")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        given(reviewRepository.findAllByUser(user)).willReturn(List.of(review1, review2));
+
+        // when
+        reviewService.softDeleteAllByUser(user);
+
+        // then
+        assertThat(review1.isDeleted()).isTrue();
+        assertThat(review2.isDeleted()).isTrue();
+    }
+
 }
