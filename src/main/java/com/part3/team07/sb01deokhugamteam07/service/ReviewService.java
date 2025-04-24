@@ -135,32 +135,45 @@ public class ReviewService {
 
     @Transactional
     public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
+        log.debug("좋아요 토글 요청. reviewId={}, userId={}", reviewId, userId);
         reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다.")); //404 리뷰 정보 없음
 
         return likeRepository.findByReviewIdAndUserId(reviewId, userId)
-                .map(like -> cancelLike(like, reviewId, userId))
-                .orElseGet(() -> addLike(userId, reviewId));
+                .map(like -> {
+                    log.debug("기존 좋아요 존재. 좋아요 취소 시도 - reviewId={}, userId={}", reviewId, userId);
+                    return cancelLike(like, reviewId, userId);
+                })
+                .orElseGet(() -> {
+                    log.debug("기존 좋아요 없음. 좋아요 추가 시도 - reviewId={}, userId={}", reviewId, userId);
+                    return addLike(userId, reviewId);
+                });
     }
 
     private ReviewLikeDto addLike(UUID userId, UUID reviewId){
+        log.debug("좋아요 추가 시작. userId={}, reviewId={}", userId, reviewId);
         Like like = Like.builder()
                 .userId(userId)
                 .reviewId(reviewId)
                 .build();
         likeRepository.save(like);
         reviewRepository.incrementLikeCount(reviewId);
+        log.info("좋아요 추가 완료. userId={}, reviewId={}", userId, reviewId);
         return new ReviewLikeDto(reviewId, userId, true);
     }
 
     private ReviewLikeDto cancelLike(Like like, UUID reviewId, UUID userId){
+        log.debug("좋아요 취소 시작. userId={}, reviewId={}", userId, reviewId);
         likeRepository.delete(like);
         reviewRepository.decrementLikeCount(reviewId);
+        log.info("좋아요 취소 완료. userId={}, reviewId={}", userId, reviewId);
         return new ReviewLikeDto(reviewId, userId, false);
     }
 
     private void softDeleteAllLikesByReview(Review review) {
         List<Like> likes = likeRepository.findAllByReviewId(review.getId());
+        log.debug("리뷰 연관 좋아요 논리 삭제 시작. reviewId={}, 총 {}건", review.getId(), likes.size());
         likes.forEach(Like::softDelete);
+        log.info("리뷰 연관 좋아요 논리 삭제 완료. reviewId={}, 총 {}건", review.getId(), likes.size());
     }
 }
