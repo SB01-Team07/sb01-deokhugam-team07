@@ -111,6 +111,28 @@ class ReviewRepositoryTest {
                 .containsExactlyInAnyOrder("book1", "book2");
     }
 
+    @DisplayName("댓글 수를 1 증가시킬 수 있다")
+    @Test
+    void incrementLikeCount() {
+        //given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        em.flush();
+        em.clear();
+
+        //when
+        reviewRepository.incrementLikeCount(reviewId);
+        em.flush();
+        em.clear();
+
+        //then
+        Review result = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(result.getLikeCount()).isEqualTo(1);
+    }
+
 
     private User createTestUser(String nickname, String email) {
         return User.builder()
