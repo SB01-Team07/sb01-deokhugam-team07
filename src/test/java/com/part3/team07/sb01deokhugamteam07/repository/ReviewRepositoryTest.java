@@ -111,7 +111,7 @@ class ReviewRepositoryTest {
                 .containsExactlyInAnyOrder("book1", "book2");
     }
 
-    @DisplayName("댓글 수를 1 증가시킬 수 있다")
+    @DisplayName("좋아요 수를 1 증가시킬 수 있다")
     @Test
     void incrementLikeCount() {
         //given
@@ -132,6 +132,31 @@ class ReviewRepositoryTest {
         Review result = reviewRepository.findById(reviewId).orElseThrow();
         assertThat(result.getLikeCount()).isEqualTo(1);
     }
+
+    @DisplayName("좋아요 수가 0이 아닌 경우, 좋아요 수를 1 감소시킬 수 있다.")
+    @Test
+    void decrementLikeCount_shouldDecreaseByOne() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        // 1증가
+        reviewRepository.incrementLikeCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // when
+        reviewRepository.decrementLikeCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        Review updated = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(updated.getLikeCount()).isEqualTo(0);
+    }
+
 
 
     private User createTestUser(String nickname, String email) {
