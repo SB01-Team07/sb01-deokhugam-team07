@@ -79,6 +79,7 @@ public class ReviewController {
     public ResponseEntity<ReviewLikeDto> toggleLike(
             @PathVariable UUID reviewId,
             @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        log.info("좋아요 등록, 취소 요청: {}", reviewId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.toggleLike(reviewId, userId));
