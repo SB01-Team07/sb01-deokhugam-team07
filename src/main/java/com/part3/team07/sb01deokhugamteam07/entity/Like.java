@@ -26,4 +26,8 @@ public class Like extends BaseSoftDeletableEntity {
 
   @Column(nullable = false)
   private UUID reviewId;
+
+  public void softDelete(){
+    delete();
+  }
 }
