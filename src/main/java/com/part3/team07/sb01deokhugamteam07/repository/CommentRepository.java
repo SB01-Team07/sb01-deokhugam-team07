@@ -1,7 +1,9 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
+import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +14,5 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
       LocalDateTime startDateTime,
       LocalDateTime endDateTime);
 
+  List<Comment> findAllByReview(Review review);
 }
