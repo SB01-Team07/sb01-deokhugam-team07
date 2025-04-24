@@ -20,4 +20,11 @@ public interface DashboardRepositoryCustom {
       String cursor,
       String after,
       int limit);
+
+  List<Dashboard> findPopularBookByPeriod(
+      Period period,
+      String direction,
+      String cursor,
+      String after,
+      int limit);
 }

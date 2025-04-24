@@ -69,10 +69,10 @@ public class PopularReviewDashboardBatchService {
       reviewScoreMap.put(reviewId, score);
     }
 
-    // 5. SCORE 기준으로 전체 리뷰 순위 매기기 -> 메모리에서 정렬 후 rank 지정
+    // 4. SCORE 기준으로 전체 리뷰 순위 매기기 -> 메모리에서 정렬 후 rank 지정
     dashboards = assignReviewRank.assignRank(reviewScoreMap, period, KeyType.REVIEW, dashboards);
 
-    // 6. 데이터베이스에 저장
+    // 5. 데이터베이스에 저장
     dashboardRepository.saveAll(dashboards);
   }
 
