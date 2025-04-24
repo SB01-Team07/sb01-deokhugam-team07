@@ -2,13 +2,16 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.Like;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.mapper.ReviewMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public ReviewDto create(ReviewCreateRequest request) {
@@ -87,6 +91,7 @@ public class ReviewService {
         }
 
         // TODO 댓글 논리 삭제 로직 추가
+        // TODO 리뷰 논리 삭제 로직 추가
 
         review.softDelete();
         log.info("리뷰 논리 삭제 완료: id={}", reviewId);
@@ -99,6 +104,7 @@ public class ReviewService {
         reviews.forEach(review -> {
             review.softDelete();
             // TODO 댓글 논리 삭제 로직 추가
+            // TODO 리뷰 논리 삭제 로직 추가
         });
         log.info("book 이 가진 모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
     }
@@ -110,6 +116,7 @@ public class ReviewService {
         reviews.forEach(review -> {
             review.softDelete();
             // TODO 댓글 논리 삭제 로직 추가
+            // TODO 리뷰 논리 삭제 로직 추가
         });
         log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
     }
@@ -125,5 +132,14 @@ public class ReviewService {
         reviewRepository.delete(review);
         log.info("리뷰 물리 삭제 완료: id={}", reviewId);
     }
-    
+
+    @Transactional
+    public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+
+
+        return new ReviewLikeDto(reviewId, userId, true);
+    }
 }

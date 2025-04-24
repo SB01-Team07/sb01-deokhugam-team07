@@ -359,7 +359,7 @@ class ReviewServiceTest {
         ReviewLikeDto result = new ReviewLikeDto(reviewId, userId, true);
 
         //when
-        reviewService.toggleLike(userId, reviewId);
+        reviewService.toggleLike(reviewId, userId);
 
         //then
         assertThat(result.liked()).isTrue();
