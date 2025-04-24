@@ -27,11 +27,18 @@ public class ErrorResponse {
 
   public ErrorResponse(Exception exception, int status) {
     this(LocalDateTime.now(),
-        exception.getClass().getSimpleName(),
+        resolveErrorCode(exception),
         exception.getMessage(),
         new HashMap<>(),
         exception.getClass().getSimpleName(),
         status);
   }
 
+  private static String resolveErrorCode(Exception ex) {
+    return switch (ex.getClass().getSimpleName()) {
+      case "ConstraintViolationException" -> "VALIDATION_FAILED";
+      case "IllegalArgumentException"      -> "INVALID_ARGUMENT";
+      default                              -> "INTERNAL_ERROR";
+    };
+  }
 }
