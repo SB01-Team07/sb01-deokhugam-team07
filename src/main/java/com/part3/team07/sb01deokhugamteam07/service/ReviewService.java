@@ -32,6 +32,8 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
+    private final CommentService commentService;
+
     @Transactional
     public ReviewDto create(ReviewCreateRequest request) {
         log.debug("리뷰 생성 시작: {}", request);
@@ -89,10 +91,8 @@ public class ReviewService {
         if(!review.isReviewer(userId)){
             throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
         }
-
-        // TODO 댓글 논리 삭제 로직 추가
-        // TODO 좋아요 논리 삭제 로직 추가
-
+        commentService.softDeleteAllByReview(review);
+        softDeleteAllLikesByReview(review);
         review.softDelete();
         log.info("리뷰 논리 삭제 완료: id={}", reviewId);
     }
@@ -103,8 +103,8 @@ public class ReviewService {
         log.info("{}개의 리뷰를 논리 삭제 시작. bookId={}", reviews.size(), book.getId());
         reviews.forEach(review -> {
             review.softDelete();
-            // TODO 댓글 논리 삭제 로직 추가
-            // TODO 좋아요 논리 삭제 로직 추가
+            commentService.softDeleteAllByReview(review);
+            softDeleteAllLikesByReview(review);
         });
         log.info("book 이 가진 모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
     }
@@ -115,8 +115,8 @@ public class ReviewService {
         log.info("{}개의 리뷰를 논리 삭제 시작. userId={}", reviews.size(), user.getId());
         reviews.forEach(review -> {
             review.softDelete();
-            // TODO 댓글 논리 삭제 로직 추가
-            // TODO 좋아요 논리 삭제 로직 추가
+            commentService.softDeleteAllByReview(review);
+            softDeleteAllLikesByReview(review);
         });
         log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
     }
@@ -157,5 +157,10 @@ public class ReviewService {
         likeRepository.delete(like);
         reviewRepository.decrementLikeCount(reviewId);
         return new ReviewLikeDto(reviewId, userId, false);
+    }
+
+    private void softDeleteAllLikesByReview(Review review) {
+        List<Like> likes = likeRepository.findAllByReviewId(review.getId());
+        likes.forEach(Like::softDelete);
     }
 }
