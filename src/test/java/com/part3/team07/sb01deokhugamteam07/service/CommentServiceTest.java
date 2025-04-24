@@ -392,7 +392,10 @@ class CommentServiceTest {
   @DisplayName("리뷰에 달린 댓글 목록 조회 성공")
   void findCommentsByReviewId() {
     //given
-    int size = 3;
+    int limit = 3;
+    String direction = "DESC";
+    String cursor = null;
+    LocalDateTime after = null;
 
     Comment c1 = Comment.builder().user(testUser).review(testReview).content("1").build();
     Comment c2 = Comment.builder().user(testUser).review(testReview).content("2").build();
@@ -443,10 +446,10 @@ class CommentServiceTest {
     given(commentMapper.toDto(eq(c3))).willReturn(dto3);
 
     //when
-    var result = commentService.findCommentsByReviewId(reviewId, null, size);
+    var result = commentService.findCommentsByReviewId(reviewId, direction, cursor, after, limit);
 
     //then
-    assertThat(result.content()).hasSize(size);
+    assertThat(result.content()).hasSize(limit);
     assertThat(result.hasNext()).isTrue();
     assertThat(result.content()).containsExactly(dto1, dto2, dto3);
     assertThat(result.nextCursor()).isNotNull();
