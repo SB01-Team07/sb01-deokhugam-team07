@@ -2,15 +2,21 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
-import com.part3.team07.sb01deokhugamteam07.entity.Comment;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +38,45 @@ public class CommentController {
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdComment);
+  }
+
+  @PatchMapping(value = "/{commentId}")
+  public ResponseEntity<CommentDto> update(
+      @PathVariable UUID commentId,
+      @RequestHeader("Deokhugam-Request-User-ID") UUID userId,
+      @RequestBody @Valid CommentUpdateRequest updateRequest
+  ) {
+    log.info("update comment request = {}", updateRequest);
+    CommentDto updatedComment = commentService.update(commentId, userId, updateRequest);
+    log.debug("update comment response = {}", updatedComment);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(updatedComment);
+  }
+
+  @GetMapping(value = "/{commentId}")
+  public ResponseEntity<CommentDto> find(
+      @PathVariable UUID commentId
+  ) {
+    log.info("find comment request: commentId = {}", commentId);
+    CommentDto findComment = commentService.find(commentId);
+    log.debug("find comment response = {}", findComment);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(findComment);
+  }
+
+  @DeleteMapping(value = "/{commentId}")
+  public ResponseEntity<Void> softDelete(
+      @PathVariable UUID commentId,
+      @RequestHeader("Deokhugam-Request-User-ID") UUID userId
+  ) {
+    log.info("soft delete comment request: commentId = {}, userId = {}", commentId, userId);
+    commentService.softDelete(commentId, userId);
+    log.debug("soft delete comment success");
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .build();
   }
 
 }

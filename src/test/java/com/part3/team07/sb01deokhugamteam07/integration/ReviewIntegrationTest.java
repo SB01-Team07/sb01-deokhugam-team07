@@ -3,11 +3,11 @@ package com.part3.team07.sb01deokhugamteam07.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
-import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,6 +89,56 @@ public class ReviewIntegrationTest {
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.bookId").value(book.getId().toString()))
+                .andExpect(jsonPath("$.userId").value(user.getId().toString()))
+                .andExpect(jsonPath("$.content").value("정말 좋은 책입니다."))
+                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.likeCount").value(0))
+                .andExpect(jsonPath("$.commentCount").value(0))
+                .andExpect(jsonPath("$.likeByMe").value(false))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists());
+    }
+
+    @DisplayName("리뷰 상세 조회 api 통합 테스트")
+    @Test
+    void findReview_Success() throws Exception {
+        // Given
+        User user = User.builder()
+                .nickname("user")
+                .email("user@abc.com")
+                .password("user1234")
+                .build();
+        userRepository.save(user);
+
+        Book book = Book.builder()
+                .title("Book")
+                .author("Author")
+                .description("Description")
+                .publisher("Publisher")
+                .publishDate(LocalDate.now())
+                .isbn("1234567890123")
+                .thumbnailFileName("Url")
+                .reviewCount(0)
+                .rating(0.0)
+                .build();
+        bookRepository.save(book);
+
+        Review review = Review.builder()
+                .user(user)
+                .book(book)
+                .content("정말 좋은 책입니다.")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        reviewRepository.save(review);
+
+        // When & Then
+        mockMvc.perform(get("/api/reviews/{reviewId}", review.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(review.getId().toString()))
                 .andExpect(jsonPath("$.bookId").value(book.getId().toString()))
                 .andExpect(jsonPath("$.userId").value(user.getId().toString()))
                 .andExpect(jsonPath("$.content").value("정말 좋은 책입니다."))

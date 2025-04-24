@@ -172,4 +172,28 @@ class ReviewServiceTest {
                 .hasMessage("책이 존재하지 않습니다.");
     }
 
+    @DisplayName("리뷰 Id로 리뷰 상세조회를 할 수 있다.")
+    @Test
+    void find() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        ReviewDto result = reviewService.find(reviewId);
+
+        //then
+        assertThat(result).isEqualTo(reviewDto);
+    }
+
+    @DisplayName("리뷰 Id로 조회 시 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void find_ReviewNotFound() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.find(reviewId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("리뷰를 찾을 수 없습니다.");
+    }
 }
