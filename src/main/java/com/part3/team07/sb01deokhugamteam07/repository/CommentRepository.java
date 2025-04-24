@@ -14,5 +14,12 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
       LocalDateTime startDateTime,
       LocalDateTime endDateTime);
 
+  long countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(
+      UUID reviewId,
+      LocalDateTime startDateTime,
+      LocalDateTime endDateTime);
+
+
   List<Comment> findAllByReview(Review review);
+
 }
