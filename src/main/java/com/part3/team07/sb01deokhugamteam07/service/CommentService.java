@@ -119,7 +119,7 @@ public class CommentService {
     //다음 페이지 존재 여부 판단 위해 limit+1로 요청
     Pageable pageable = PageRequest.of(0, limit+1);
 
-    //커서를 일단 LocalDateTime으로 변환
+    //커서를 LocalDateTime 으로 변환
     LocalDateTime cursorCreatedAt = null;
     if (cursor != null && !cursor.isBlank()) {
       cursorCreatedAt = LocalDateTime.parse(cursor);
@@ -128,21 +128,37 @@ public class CommentService {
     List<Comment> comments;
 
     // 정렬 방향에 따라 Repository 호출
-    if ("ASC".equalsIgnoreCase(direction)) {
+    // DESC 정렬 (기본)
+    if("DESC".equalsIgnoreCase(direction)) {
       if (cursorCreatedAt == null) {
-        comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtAsc(review, pageable);
+        if (after == null) {
+          comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(review, pageable);
+        } else {
+          comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
+              review, after, pageable);
+        }
       } else {
-        comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
-            review, cursorCreatedAt, pageable
-        );
-      }
-    } else { // DESC
-      if (cursorCreatedAt == null) {
-        comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(review, pageable);
-      } else {
+        LocalDateTime condition = cursorCreatedAt.isBefore(after != null ? after : LocalDateTime.MAX)
+            ? cursorCreatedAt : after;
         comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
-            review, cursorCreatedAt, pageable
-        );
+            review, condition, pageable);
+      }
+    }
+
+    // ASC 정렬
+    else {
+      if (cursorCreatedAt == null) {
+        if (after == null) {
+          comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtAsc(review, pageable);
+        } else {
+          comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
+              review, after, pageable);
+        }
+      } else {
+        LocalDateTime condition = cursorCreatedAt.isAfter(after != null ? after : LocalDateTime.MIN)
+            ? cursorCreatedAt : after;
+        comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
+            review, condition, pageable);
       }
     }
 
