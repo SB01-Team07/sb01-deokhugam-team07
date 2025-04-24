@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponse> handleException(Exception e) {
-    log.error("예상치 못한 오류 발생: {}", e.getMessage(), e);
-    ErrorResponse errorResponse = new ErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR.value());
-
-    return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(errorResponse);
-  }
+//  @ExceptionHandler(Exception.class)
+//  public ResponseEntity<ErrorResponse> handleException(Exception e) {
+//    log.error("예상치 못한 오류 발생: {}", e.getMessage(), e);
+//    ErrorResponse errorResponse = new ErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR.value());
+//
+//    return ResponseEntity
+//        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//        .body(errorResponse);
+//  }
 
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<ErrorResponse> handleConstraintViolationException(
@@ -33,16 +33,16 @@ public class GlobalExceptionHandler {
         .body(errorResponse);
   }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-      ConstraintViolationException ex) {
-    log.error("요청 유효성 검사 실패: {}", ex.getMessage());
-    ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
-
-    return ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(errorResponse);
-  }
+//  @ExceptionHandler(MethodArgumentNotValidException.class)
+//  public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+//      ConstraintViolationException ex) {
+//    log.error("요청 유효성 검사 실패: {}", ex.getMessage());
+//    ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
+//
+//    return ResponseEntity
+//        .status(HttpStatus.BAD_REQUEST)
+//        .body(errorResponse);
+//  }
 
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
