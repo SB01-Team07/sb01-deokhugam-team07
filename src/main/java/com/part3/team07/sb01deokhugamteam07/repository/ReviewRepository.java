@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
   // 파워 유저에서 이용되는 메서드, 특정 사용자가 사용한 리뷰를 날짜 범위내에서 조회
@@ -22,4 +24,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
   List<Review> findAllByBook(Book book);
 
   List<Review> findAllByUser(User user);
+
+  @Modifying
+  @Query("UPDATE Review r SET r.commentCount = r.commentCount + 1 WHERE r.id = :id")
+  void incrementLikeCount(UUID reviewId);
 }
