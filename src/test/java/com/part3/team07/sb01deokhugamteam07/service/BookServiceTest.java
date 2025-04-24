@@ -2,8 +2,10 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
@@ -173,10 +175,10 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      // when
       given(bookRepository.findById(id)).willReturn(Optional.of(book));
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
+      // when
       BookDto result = bookService.update(id, request);
 
       // then
@@ -216,6 +218,37 @@ class BookServiceTest {
 
   }
 
+  @Nested
+  @DisplayName("도서 논리 삭제")
+  class SoftDeleteTest {
+    @Test
+    @DisplayName("도서 논리 삭제 성공")
+    void softDelete_success() {
+      // given
+      Book spyBook = spy(book);
+      given(bookRepository.findById(id)).willReturn(Optional.of(spyBook));
+
+      // when
+      bookService.softDelete(id);
+
+      // then
+      verify(spyBook).softDelete();
+      assertTrue(spyBook.isDeleted());
+    }
+
+    @Test
+    @DisplayName("도서 논리 삭제 실패 - 없는 id")
+    void softDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.findById(id)).willReturn(Optional.empty());
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.softDelete(id)
+      );
+    }
 
 
+  }
+  
 }
