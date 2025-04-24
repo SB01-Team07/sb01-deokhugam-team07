@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -45,11 +47,12 @@ class CommentControllerTest {
   @WithMockUser
   void createComment() throws Exception {
     //given
+    String content = "test";
+    String userNickname = "userNickname";
     UUID testReviewId = UUID.randomUUID();
     UUID testUserId = UUID.randomUUID();
     UUID testCommentId = UUID.randomUUID();
     LocalDateTime fixedNow = LocalDateTime.now();
-    String content = "test";
 
     CommentCreateRequest createRequest = new CommentCreateRequest(
         testReviewId,
@@ -61,7 +64,7 @@ class CommentControllerTest {
         testCommentId,
         testReviewId,
         testUserId,
-        "test",
+        userNickname,
         content,
         fixedNow,
         fixedNow
@@ -79,7 +82,8 @@ class CommentControllerTest {
         .andExpect(jsonPath("$.id").value(testCommentId.toString()))
         .andExpect(jsonPath("$.content").value(content))
         .andExpect(jsonPath("$.userId").value(testUserId.toString()))
-        .andExpect(jsonPath("$.reviewId").value(testReviewId.toString()));
+        .andExpect(jsonPath("$.reviewId").value(testReviewId.toString()))
+        .andExpect(jsonPath("$.userNickname").value(userNickname));
   }
 
   @Test
@@ -107,6 +111,7 @@ class CommentControllerTest {
   void updateComment() throws Exception {
     //given
     String newContent = "updated content";
+    String userNickname = "userNickname";
     UUID testCommentId = UUID.randomUUID();
     UUID testReviewId = UUID.randomUUID();
     UUID testUserId = UUID.randomUUID();
@@ -116,7 +121,7 @@ class CommentControllerTest {
         testCommentId,
         testReviewId,
         testUserId,
-        "userNickname",
+        userNickname,
         newContent,
         fixedNow,
         fixedNow
@@ -160,4 +165,74 @@ class CommentControllerTest {
             .with(csrf()))  // 스프링 시큐리티 토큰
         .andExpect(status().isBadRequest());
   }
+
+  @Test
+  @DisplayName("댓글 상세 조회 성공")
+  @WithMockUser
+  void findComment() throws Exception {
+    //given
+    String content = "find test";
+    String userNickname = "userNickname";
+    UUID testReviewId = UUID.randomUUID();
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+    LocalDateTime fixedNow = LocalDateTime.now();
+
+    CommentDto findComment = new CommentDto(
+        testCommentId,
+        testReviewId,
+        testUserId,
+        userNickname,
+        content,
+        fixedNow,
+        fixedNow
+    );
+
+    given(commentService.find(any(UUID.class)))
+        .willReturn(findComment);
+
+    //when & then
+    mockMvc.perform(get("/api/comments/{commentId}", testCommentId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(testCommentId.toString()))
+        .andExpect(jsonPath("$.content").value(content))
+        .andExpect(jsonPath("$.userId").value(testUserId.toString()))
+        .andExpect(jsonPath("$.reviewId").value(testReviewId.toString()))
+        .andExpect(jsonPath("$.userNickname").value(userNickname));
+  }
+
+  @Test
+  @DisplayName("댓글 논리 삭제 성공")
+  @WithMockUser
+  void softDeleteComment() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 성공")
+  @WithMockUser
+  void hardDeleteComment() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}/hard", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isNoContent());
+  }
+
 }

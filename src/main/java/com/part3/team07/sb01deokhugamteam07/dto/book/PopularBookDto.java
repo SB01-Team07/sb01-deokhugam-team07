@@ -9,7 +9,7 @@ public record PopularBookDto(
     UUID bookId,
     String title,
     String author,
-    String thumbnailUrl,
+    String thumbnailFileName,
     Period period,
     int rank,
     double score,

@@ -7,11 +7,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -40,4 +45,18 @@ public class Review extends BaseSoftDeletableEntity {
 
   @Column(nullable = false)
   private int commentCount;
+
+  public boolean isReviewer(UUID userId) {
+    return (this.user.getId().equals(userId));
+  }
+
+  public void update(String content, int rating) {
+    this.content = content;
+    this.rating = rating;
+  }
+
+  public void softDelete(){
+    delete();
+  }
+
 }

@@ -2,16 +2,18 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
-import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.time.LocalDate;
@@ -130,10 +132,9 @@ class BookServiceTest {
       given(bookRepository.existsByIsbn(request.isbn())).willReturn(true);
 
       // when & then
-      assertThrows(DuplicateIsbnException.class,
+      assertThrows(BookAlreadyExistsException.class,
           () -> bookService.create(request, null)
       );
-
     }
   }
 
@@ -173,10 +174,10 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      // when
       given(bookRepository.findById(id)).willReturn(Optional.of(book));
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
+      // when
       BookDto result = bookService.update(id, request);
 
       // then
@@ -213,9 +214,65 @@ class BookServiceTest {
     assertThrows(BookNotFoundException.class,
         () -> bookService.update(nonExistentId, request)
     );
-
   }
 
+  @Nested
+  @DisplayName("도서 논리 삭제")
+  class SoftDeleteTest {
+    @Test
+    @DisplayName("도서 논리 삭제 성공")
+    void softDelete_success() {
+      // given
+      Book spyBook = spy(book);
+      given(bookRepository.findById(id)).willReturn(Optional.of(spyBook));
 
+      // when
+      bookService.softDelete(id);
 
+      // then
+      verify(spyBook).softDelete();
+      assertTrue(spyBook.isDeleted());
+    }
+
+    @Test
+    @DisplayName("도서 논리 삭제 실패 - 없는 id")
+    void softDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.findById(id)).willReturn(Optional.empty());
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.softDelete(id)
+      );
+    }
+  }
+
+  @Nested
+  @DisplayName("도서 물리 삭제")
+  class HardDeleteTest {
+    @Test
+    @DisplayName("도서 물리 삭제 성공")
+    void hardDelete_success() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(true);
+
+      // when
+      bookService.hardDelete(id);
+
+      // then
+      verify(bookRepository).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("도서 물리 삭제 실패 - 없는 id")
+    void hardDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(false);
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.hardDelete(id)
+      );
+    }
+  }
 }

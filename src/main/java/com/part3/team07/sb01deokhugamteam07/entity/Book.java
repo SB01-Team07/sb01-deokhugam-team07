@@ -66,4 +66,8 @@ public class Book extends BaseSoftDeletableEntity {
   public void updatePublishDate(LocalDate newPublishDate) {
     this.publishDate = newPublishDate;
   }
+
+  public void softDelete() {
+    super.delete();
+  }
 }
