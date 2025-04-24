@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
@@ -349,5 +350,18 @@ class ReviewServiceTest {
 
         //then
         verify(reviewRepository).delete(review);
+    }
+
+    @DisplayName("리뷰에 좋아요를 추가하거나 취소할 수 있다.")
+    @Test
+    void toggleLike() {
+        //given
+        ReviewLikeDto result = new ReviewLikeDto(reviewId, userId, true);
+
+        //when
+        reviewService.toggleLike(userId, reviewId);
+
+        //then
+        assertThat(result.liked()).isTrue();
     }
 }
