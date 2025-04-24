@@ -218,4 +218,21 @@ class CommentControllerTest {
             .with(csrf())) // 스프링 시큐리티 토큰
         .andExpect(status().isNoContent());
   }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 성공")
+  @WithMockUser
+  void hardDeleteComment() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}/hard", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isNoContent());
+  }
+
 }
