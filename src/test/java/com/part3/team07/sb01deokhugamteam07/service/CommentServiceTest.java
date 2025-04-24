@@ -1,7 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -386,6 +386,38 @@ class CommentServiceTest {
     //when & then
     assertThatThrownBy(() -> commentService.hardDelete(commentId, otherUserId))
         .isInstanceOf(CommentUnauthorizedException.class);
+  }
+
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 성공")
+  void findCommentsByReviewId() {
+    //given
+    int size = 3;
+
+    Comment c1 = Comment.builder().user(testUser).review(testReview).content("1").build();
+    Comment c2 = Comment.builder().user(testUser).review(testReview).content("2").build();
+    Comment c3 = Comment.builder().user(testUser).review(testReview).content("3").build();
+    Comment c4 = Comment.builder().user(testUser).review(testReview).content("4").build();
+
+    ReflectionTestUtils.setField(c1, "createdAt", fixedNow.minusMinutes(1));
+    ReflectionTestUtils.setField(c2, "createdAt", fixedNow.minusMinutes(2));
+    ReflectionTestUtils.setField(c3, "createdAt", fixedNow.minusMinutes(3));
+    ReflectionTestUtils.setField(c4, "createdAt", fixedNow.minusMinutes(4));
+
+    List<Comment> mockResult = List.of(c1, c2, c3, c4);
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
+    given(commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(eq(testReview), any()))
+        .willReturn(mockResult);
+    given(commentMapper.toDto(any())).willReturn(commentDto);
+
+    //when
+    var result = commentService.findCommentsByReviewId(reviewId, null, size);
+
+    //then
+    assertThat(result.content()).hasSize(size);
+    assertThat(result.hasNext()).isTrue();
+    assertThat(result.nextCursor()).isNotNull();
+
   }
 
 }
