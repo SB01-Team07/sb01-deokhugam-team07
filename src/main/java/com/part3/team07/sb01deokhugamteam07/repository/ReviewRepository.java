@@ -22,4 +22,11 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
   List<Review> findAllByBook(Book book);
 
   List<Review> findAllByUser(User user);
+  // 인기 도서에서 이용되는 메서드, 특정 리뷰에 작성된 댓글을 날짜 범위내에서 조회
+  List<Review> findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(
+      UUID bookId,
+      LocalDateTime startDateTime,
+      LocalDateTime endDateTime);
+
+  List<Review> findByIsDeletedFalseOrderByCreatedAtAsc();
 }

@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.logging;
+package com.part3.team07.sb01deokhugamteam07.logging.query;
 
 import static java.util.Arrays.stream;
 

@@ -39,7 +39,7 @@ public class Comment extends BaseSoftDeletableEntity {
     this.content = newContent;
   }
 
-  public void logicalDelete(){
+  public void softDelete(){
     super.delete();
   }
 }
