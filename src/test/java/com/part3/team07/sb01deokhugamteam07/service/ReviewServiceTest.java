@@ -5,9 +5,11 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.Like;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +44,9 @@ class ReviewServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private LikeRepository likeRepository;
+
     @InjectMocks
     private ReviewService reviewService;
 
@@ -51,6 +56,7 @@ class ReviewServiceTest {
     private User user;
     private Book book;
     private Review review;
+    private Like like;
     private ReviewDto reviewDto;
 
     @BeforeEach
@@ -88,6 +94,11 @@ class ReviewServiceTest {
                 .commentCount(0)
                 .build();
         ReflectionTestUtils.setField(review, "id", reviewId);
+
+        like = Like.builder()
+                .userId(userId)
+                .reviewId(reviewId)
+                .build();
 
         reviewDto = new ReviewDto(
                 reviewId,
@@ -352,14 +363,15 @@ class ReviewServiceTest {
         verify(reviewRepository).delete(review);
     }
 
-    @DisplayName("리뷰에 좋아요를 추가하거나 취소할 수 있다.")
+    @DisplayName("좋아요가 존재하지 않으면 추가한다")
     @Test
-    void toggleLike() {
+    void toggleLike_shouldAddLikeWhenNotExists() {
         //given
-        ReviewLikeDto result = new ReviewLikeDto(reviewId, userId, true);
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.empty());
 
         //when
-        reviewService.toggleLike(reviewId, userId);
+        ReviewLikeDto result = reviewService.toggleLike(reviewId, userId);
 
         //then
         assertThat(result.liked()).isTrue();
