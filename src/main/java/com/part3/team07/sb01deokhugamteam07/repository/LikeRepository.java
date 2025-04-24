@@ -23,5 +23,7 @@ public interface LikeRepository extends JpaRepository<Like, UUID> {
       LocalDateTime endDateTime
   );
 
-  Optional<Like> findByReviewIdAndUserId(java.util.UUID reviewId, java.util.UUID userId);
+  Optional<Like> findByReviewIdAndUserId(UUID reviewId, UUID userId);
+
+  List<Like> findAllByReviewId(UUID reviewId);
 }
