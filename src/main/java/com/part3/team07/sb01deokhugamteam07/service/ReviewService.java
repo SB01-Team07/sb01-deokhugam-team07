@@ -135,11 +135,22 @@ public class ReviewService {
 
     @Transactional
     public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다.")); //404 리뷰 정보 없음
 
+        likeRepository.findByReviewIdAndUserId(reviewId, userId);
 
+        return null;
+    }
 
+    private ReviewLikeDto addLike(UUID userId, UUID reviewId){
+        Like like = Like.builder()
+                .userId(userId)
+                .reviewId(reviewId)
+                .build();
+
+        likeRepository.save(like);
+        reviewRepository.incrementLikeCount(reviewId);
         return new ReviewLikeDto(reviewId, userId, true);
     }
 }
