@@ -9,14 +9,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -235,4 +239,33 @@ class CommentControllerTest {
         .andExpect(status().isNoContent());
   }
 
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 API 성공")
+  @WithMockUser
+  void findCommentsByReviewId() throws Exception {
+    //given
+    UUID reviewId = UUID.randomUUID();
+
+    CursorPageResponseCommentDto responseCommentDto = new CursorPageResponseCommentDto(
+        List.of(),
+        null,
+        null,
+        50,
+        0,
+        false
+    );
+
+    given(commentService.findCommentsByReviewId(
+        eq(reviewId), eq("DESC"), isNull(), eq(50)))
+        .willReturn(responseCommentDto);
+
+    //when & then
+    mockMvc.perform(get("/api/comments")
+            .param("reviewId", reviewId.toString())
+            .param("direction", "DESC")
+            .param("limit", "50"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content").exists())
+        .andExpect(jsonPath("$.hasNext").value(false));
+  }
 }
