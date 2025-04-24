@@ -246,26 +246,43 @@ class CommentControllerTest {
     //given
     UUID reviewId = UUID.randomUUID();
 
+    CommentDto dto1 = new CommentDto(
+        UUID.randomUUID(), reviewId, UUID.randomUUID(), "user1", "내용1",
+        LocalDateTime.now(), LocalDateTime.now());
+
+    CommentDto dto2 = new CommentDto(
+        UUID.randomUUID(), reviewId, UUID.randomUUID(), "user2", "내용2",
+        LocalDateTime.now(), LocalDateTime.now());
+
+    List<CommentDto> content = List.of(dto1, dto2);
+
     CursorPageResponseCommentDto responseCommentDto = new CursorPageResponseCommentDto(
-        List.of(),
-        null,
-        null,
-        50,
-        0,
+        content,
+        LocalDateTime.now().toString(),
+        LocalDateTime.now(),
+        2,
+        2,
         false
     );
 
     given(commentService.findCommentsByReviewId(
-        eq(reviewId), eq("DESC"), isNull(), eq(50)))
-        .willReturn(responseCommentDto);
+        eq(reviewId),
+        eq("DESC"),
+        isNull(),
+        isNull(),
+        eq(50)
+    )).willReturn(responseCommentDto);
 
     //when & then
     mockMvc.perform(get("/api/comments")
             .param("reviewId", reviewId.toString())
             .param("direction", "DESC")
-            .param("limit", "50"))
+            .param("limit", "50")
+            .with(csrf())) // 스프링 시큐리티 토큰
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.content").exists())
-        .andExpect(jsonPath("$.hasNext").value(false));
+        .andExpect(jsonPath("$.content").isArray())
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.hasNext").value(false))
+        .andExpect(jsonPath("$.size").value(2));
   }
 }
