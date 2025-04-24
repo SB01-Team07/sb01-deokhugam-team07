@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
@@ -23,7 +24,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -267,6 +267,25 @@ class ReviewControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         verify(reviewService).hardDelete(userId, reviewId);
+    }
+
+    @DisplayName("리뷰에 좋아요 등록, 취소를 할 수 있다.")
+    @Test
+    void toggleLike() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        ReviewLikeDto reviewLikeDto = new ReviewLikeDto(reviewId, userId, true);
+
+        given(reviewService.toggleLike(reviewId, userId)).willReturn(reviewLikeDto);
+
+        //when then
+        mockMvc.perform(post("/api/reviews/{reviewId}/like",reviewId)
+                .header("Deokhugam-Request-User-ID", userId.toString())
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reviewId").value(reviewId.toString()))
+                .andExpect(jsonPath("$.userId").value(userId.toString()));
     }
 
 }
