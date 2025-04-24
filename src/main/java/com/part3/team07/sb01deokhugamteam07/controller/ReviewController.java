@@ -45,10 +45,21 @@ public class ReviewController {
     public ResponseEntity<ReviewDto> update(
             @PathVariable UUID reviewId,
             @RequestHeader("Deokhugam-Request-User-ID") UUID userId,
-            @RequestBody @Valid ReviewUpdateRequest request){
+            @RequestBody @Valid ReviewUpdateRequest request) {
         log.info("리뷰 수정 요청: {}", reviewId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.update(userId, reviewId, request));
+    }
+
+    @DeleteMapping("{reviewId}")
+    public ResponseEntity<Void> softDelete(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        log.info("리뷰 논리 삭제 요청: {}", reviewId);
+        reviewService.softDelete(userId, reviewId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
