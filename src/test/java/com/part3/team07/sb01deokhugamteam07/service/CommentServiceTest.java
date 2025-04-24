@@ -404,11 +404,43 @@ class CommentServiceTest {
     ReflectionTestUtils.setField(c3, "createdAt", fixedNow.minusMinutes(3));
     ReflectionTestUtils.setField(c4, "createdAt", fixedNow.minusMinutes(4));
 
+    CommentDto dto1 = new CommentDto(
+        c1.getId(),
+        reviewId,
+        userId,
+        "dto1",
+        comment.getContent(),
+        fixedNow,
+        fixedNow
+    );
+
+    CommentDto dto2 = new CommentDto(
+        c2.getId(),
+        reviewId,
+        userId,
+        "dto2",
+        comment.getContent(),
+        fixedNow,
+        fixedNow
+    );
+
+    CommentDto dto3 = new CommentDto(
+        c3.getId(),
+        reviewId,
+        userId,
+        "dto3",
+        comment.getContent(),
+        fixedNow,
+        fixedNow
+    );
+
     List<Comment> mockResult = List.of(c1, c2, c3, c4);
     given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
     given(commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(eq(testReview), any()))
         .willReturn(mockResult);
-    given(commentMapper.toDto(any())).willReturn(commentDto);
+    given(commentMapper.toDto(eq(c1))).willReturn(dto1);
+    given(commentMapper.toDto(eq(c2))).willReturn(dto2);
+    given(commentMapper.toDto(eq(c3))).willReturn(dto3);
 
     //when
     var result = commentService.findCommentsByReviewId(reviewId, null, size);
@@ -416,6 +448,7 @@ class CommentServiceTest {
     //then
     assertThat(result.content()).hasSize(size);
     assertThat(result.hasNext()).isTrue();
+    assertThat(result.content()).containsExactly(dto1, dto2, dto3);
     assertThat(result.nextCursor()).isNotNull();
 
   }
