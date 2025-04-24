@@ -9,6 +9,8 @@ import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class UserExceptionHandler {
 
   @ResponseStatus(HttpStatus.CONFLICT)
@@ -60,9 +63,4 @@ public class UserExceptionHandler {
         .createdAt(LocalDateTime.now())
         .build();
   }
-
-//  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//  @ExceptionHandler(Exception.class)
-//  public void internalException(Exception e) {
-//  }
 }
