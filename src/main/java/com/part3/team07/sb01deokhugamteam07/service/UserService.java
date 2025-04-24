@@ -127,12 +127,12 @@ public class UserService {
   * @author : wongil
   * @Description: 유저 논리적 삭제
   **/
-  public void logicalDelete(UUID userId) {
+  public void softDelete(UUID userId) {
     validateUserId(userId);
     isExistsUser(userId);
 
     User user = findUser(userId);
-    user.logiDelete();
+    user.softDelete();
 
     log.info("Logical Delete User: {}", userId);
   }
@@ -151,6 +151,8 @@ public class UserService {
 
     log.info("Delete User: {}", userId);
   }
+
+
 
   private void isDeleted(UUID userId, User findUser) {
     if (findUser.isDeleted()) {

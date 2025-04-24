@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,4 +66,29 @@ public class CommentController {
         .body(findComment);
   }
 
+  @DeleteMapping(value = "/{commentId}")
+  public ResponseEntity<Void> softDelete(
+      @PathVariable UUID commentId,
+      @RequestHeader("Deokhugam-Request-User-ID") UUID userId
+  ) {
+    log.info("soft delete comment request: commentId = {}, userId = {}", commentId, userId);
+    commentService.softDelete(commentId, userId);
+    log.debug("soft delete comment success");
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .build();
+  }
+
+  @DeleteMapping(value = "/{commentId}/hard")
+  public ResponseEntity<Void> hardDelete(
+      @PathVariable UUID commentId,
+      @RequestHeader("Deokhugam-Request-User-ID") UUID userId
+  ) {
+    log.info("hard delete comment request: commentId = {}, userId = {}", commentId, userId);
+    commentService.hardDelete(commentId, userId);
+    log.debug("hard delete comment success");
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .build();
+  }
 }

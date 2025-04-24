@@ -204,17 +204,17 @@ class UserServiceTest {
 
   @Test
   @DisplayName("사용자 논리 삭제")
-  void logicalDelete() {
+  void softDelete() {
     UUID userId = UUID.randomUUID();
     User user = new User("user", "password123", "user@mail.com");
-    user.logiDelete();
+    user.softDelete();
 
     when(userRepository.existsById(any(UUID.class)))
         .thenReturn(true);
     when(userRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(user));
 
-    userService.logicalDelete(userId);
+    userService.softDelete(userId);
 
     assertThatThrownBy(() -> userService.find(userId))
         .isInstanceOf(UserNotFoundException.class);
@@ -222,10 +222,10 @@ class UserServiceTest {
 
   @Test
   @DisplayName("사용자 논리 삭제 - 실패(잘못된 id)")
-  void failLogicalDeleteCauseInvalidId() throws Exception {
+  void failSoftDeleteCauseInvalidId() throws Exception {
     UUID userId = null;
 
-    assertThatThrownBy(() -> userService.logicalDelete(userId))
+    assertThatThrownBy(() -> userService.softDelete(userId))
         .isInstanceOf(IllegalArgumentException.class);
 
     verify(userRepository, never()).findById(any(UUID.class));
@@ -233,10 +233,10 @@ class UserServiceTest {
 
   @Test
   @DisplayName("사용자 논리 삭제 - 실패(사용자 정보 없음)")
-  void failLogicalDeleteCauseNotFoundUser() throws Exception {
+  void failSoftDeleteCauseNotFoundUser() throws Exception {
     UUID userId = UUID.randomUUID();
 
-    assertThatThrownBy(() -> userService.logicalDelete(userId))
+    assertThatThrownBy(() -> userService.softDelete(userId))
         .isInstanceOf(UserNotFoundException.class);
   }
 
@@ -245,7 +245,7 @@ class UserServiceTest {
   void physicalDelete() throws Exception {
     UUID userId = UUID.randomUUID();
     User user = new User("user", "password123", "user@mail.com");
-    user.logiDelete();
+    user.softDelete();
 
     when(userRepository.existsById(any(UUID.class)))
         .thenReturn(true);
