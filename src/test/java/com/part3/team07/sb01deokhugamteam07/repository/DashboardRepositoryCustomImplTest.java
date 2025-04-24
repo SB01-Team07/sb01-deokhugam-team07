@@ -289,10 +289,37 @@ class DashboardRepositoryCustomImplTest {
   @Test
   @DisplayName("잘못된 커서 값이 들어온 경우 기본값 처리 확인")
   public void test_Invalid_Cursor_Value() {
-    // cursor, after 중 after 를 잘못된 커서 값으로 전달
     List<Dashboard> result = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
         Period.DAILY, "asc", "invalid_cursor", null, 10, KeyType.USER);
-
     assertEquals(result.get(0).getRank(), 1);
+  }
+
+  @Test
+  @DisplayName("커서 값이 Cursor 만 전달됐을 경우에도 처리할 수 있음을 확인")
+  public void test_Cursor_Without_After(){
+    List<Dashboard> result = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "asc", "9", null, 10, KeyType.USER);
+
+    assertEquals(result.get(0).getRank(), 10);
+  }
+
+  @Test
+  @DisplayName("오름차순 내림차순 처리 확인")
+  public void test_Asc_Desc() {
+    // 오름차순 테스트
+    List<Dashboard> ascResult = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "asc", "invalid_cursor", null, 10, KeyType.USER);
+
+    for (int i = 0; i < ascResult.size() - 1; i++) {
+      assertTrue(ascResult.get(i).getRank() < ascResult.get(i + 1).getRank());
+    }
+
+    // 내림차순 테스트
+    List<Dashboard> descResult = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "desc", "invalid_cursor", null, 10, KeyType.USER);
+
+    for (int i = 0; i < ascResult.size() - 1; i++) {
+      assertTrue(descResult.get(i).getRank() > ascResult.get(i + 1).getRank());
+    }
   }
 }

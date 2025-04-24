@@ -1,5 +1,7 @@
-package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
+package com.part3.team07.sb01deokhugamteam07.batch.popularbook;
 
+import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
+import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;

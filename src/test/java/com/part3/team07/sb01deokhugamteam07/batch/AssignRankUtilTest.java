@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
+package com.part3.team07.sb01deokhugamteam07.batch;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
