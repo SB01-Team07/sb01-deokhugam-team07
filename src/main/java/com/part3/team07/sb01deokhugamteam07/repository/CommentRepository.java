@@ -34,5 +34,15 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
       Pageable pageable
   );
 
+  List<Comment> findByReviewAndDeletedFalseOrderByCreatedAtAsc(
+      Review review,
+      Pageable pageable
+  );
+
+  List<Comment> findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
+      Review review,
+      LocalDateTime cursorCreatedAt,
+      Pageable pageable
+  );
 
 }

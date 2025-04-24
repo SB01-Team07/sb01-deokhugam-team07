@@ -6,7 +6,7 @@ import java.util.List;
 
 public record CursorPageResponseCommentDto(
     List<CommentDto> content,
-    Object nextCursor,
+    String nextCursor,
     LocalDateTime nextAfter,
     int size,
     long totalElements,

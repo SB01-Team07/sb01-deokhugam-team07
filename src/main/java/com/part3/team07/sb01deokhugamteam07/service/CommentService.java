@@ -106,28 +106,50 @@ public class CommentService {
   }
 
   @Transactional(readOnly = true)
-  public CursorPageResponseCommentDto findCommentsByReviewId(UUID reviewId, LocalDateTime cursorCreatedAt, int size) {
+  public CursorPageResponseCommentDto findCommentsByReviewId(
+      UUID reviewId,
+      String direction,
+      String cursor,
+      LocalDateTime after,
+      int limit
+  ) {
     //리뷰 존재 여부 확인
     Review review = findReview(reviewId);
 
-    //다음 페이지 존재 여부 판단 위해 size+1로 요청
-    Pageable pageable = PageRequest.of(0, size+1);
+    //다음 페이지 존재 여부 판단 위해 limit+1로 요청
+    Pageable pageable = PageRequest.of(0, limit+1);
+
+    //커서를 일단 LocalDateTime으로 변환
+    LocalDateTime cursorCreatedAt = null;
+    if (cursor != null && !cursor.isBlank()) {
+      cursorCreatedAt = LocalDateTime.parse(cursor);
+    }
 
     List<Comment> comments;
-    if (cursorCreatedAt == null) {
-      // 커서 없을 때: 최신 댓글부터 size+1개 조회
-      comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(review, pageable);
-    } else {
-      // 커서 있을 때: cursor 이전 댓글 조회
-      comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
-          review, cursorCreatedAt, pageable
-      );
+
+    // 정렬 방향에 따라 Repository 호출
+    if ("ASC".equalsIgnoreCase(direction)) {
+      if (cursorCreatedAt == null) {
+        comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtAsc(review, pageable);
+      } else {
+        comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
+            review, cursorCreatedAt, pageable
+        );
+      }
+    } else { // DESC
+      if (cursorCreatedAt == null) {
+        comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(review, pageable);
+      } else {
+        comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
+            review, cursorCreatedAt, pageable
+        );
+      }
     }
 
     // 다음 페이지가 있다면 하나 빼서 자름
-    boolean hasNext = comments.size() > size;
+    boolean hasNext = comments.size() > limit;
     if (hasNext) {
-      comments = comments.subList(0, size);
+      comments = comments.subList(0, limit);
     }
 
     List<CommentDto> content = comments.stream()
@@ -138,9 +160,9 @@ public class CommentService {
 
     return new CursorPageResponseCommentDto(
         content,
-        nextCursor,          // 다음 요청을 위한 커서
-        nextCursor,          // nextAfter도 동일하게 세팅
-        size,
+        nextCursor != null ? nextCursor.toString() : null,
+        nextCursor,
+        limit,
         content.size(),
         hasNext
     );
