@@ -103,9 +103,11 @@ public class CommentController {
       @RequestParam(required = false) LocalDateTime after,
       @RequestParam(defaultValue = "50") int limit
   ) {
+    log.info("find comments by review request: cursor = {}", cursor);
     CursorPageResponseCommentDto response = commentService.findCommentsByReviewId(
         reviewId, direction, cursor, after, limit
     );
+    log.debug("find comments by review success");
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(response);
