@@ -135,7 +135,7 @@ class ReviewRepositoryTest {
 
     @DisplayName("리뷰의 좋아요 수가 0이 아닌 경우, 좋아요 수를 1 감소시킬 수 있다.")
     @Test
-    void decrementLikeCount_shouldDecreaseByOne() {
+    void decrementLikeCount() {
         // given
         User user = userRepository.save(createTestUser("user", "user@abc.com"));
         Book book = bookRepository.save(createTestBook("테스트 도서"));
@@ -179,6 +179,29 @@ class ReviewRepositoryTest {
         assertThat(updated.getCommentCount()).isEqualTo(1);
     }
 
+    @DisplayName("리뷰의 댓글 수가 0이 아닌 경우, 댓글 수를 1 감소시킬 수 있다.")
+    @Test
+    void decrementCommentCount() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        // 초기값 1 만들어주기
+        reviewRepository.incrementCommentCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // when
+        reviewRepository.decrementCommentCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        Review updated = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(updated.getCommentCount()).isEqualTo(0);
+    }
 
 
     private User createTestUser(String nickname, String email) {
