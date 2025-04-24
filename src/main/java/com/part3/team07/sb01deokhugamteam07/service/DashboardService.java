@@ -301,7 +301,7 @@ public class DashboardService {
                 bookId,
                 book.getTitle(),
                 book.getAuthor(),
-                book.getThumbnailFileName(),
+                book.getThumbnailFileName(), // TODO URL 가져오기 * 반드시 수정
                 period,
                 d.getRank(),
                 d.getValue(),
