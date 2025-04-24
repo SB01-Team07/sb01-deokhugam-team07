@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -195,5 +196,47 @@ class ReviewServiceTest {
         assertThatThrownBy(() -> reviewService.find(reviewId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("리뷰를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("본인이 작성한 리뷰를 수정할 수 있다.")
+    @Test
+    void update() {
+        //given
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        ReviewDto result = reviewService.update(userId, reviewId, request);
+
+        //then
+        assertThat(result.content()).isEqualTo("수정한 내용");
+        assertThat(result.rating()).isEqualTo(3);
+    }
+
+    @DisplayName("본인이 작성하지 않은 리뷰는 수정할 수 없다.")
+    @Test
+    void updateReview_ShouldFail_WhenUserIsNotAuthor() {
+        //given
+        UUID otherUserId = UUID.randomUUID();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when then
+        assertThatThrownBy(()-> reviewService.update(otherUserId, reviewId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("본인이 작성한 리뷰가 아닙니다.");
+    }
+
+    @DisplayName("존재하지 않은 리뷰는 수정할 수 없다")
+    @Test
+    void updateReview_ShouldFail_WhenReviewDoesNotExist() {
+        //given
+        UUID otherReviewId = UUID.randomUUID();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+
+        //when then
+        assertThatThrownBy(()-> reviewService.update(userId, otherReviewId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("리뷰를 찾을 수 없습니다.");
     }
 }
