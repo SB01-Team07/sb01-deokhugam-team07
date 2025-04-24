@@ -17,11 +17,10 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime endDateTime
   );
 
-  boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
-
   List<Review> findAllByBook(Book book);
 
   List<Review> findAllByUser(User user);
+
   // 인기 도서에서 이용되는 메서드, 특정 리뷰에 작성된 댓글을 날짜 범위내에서 조회
   List<Review> findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(
       UUID bookId,
@@ -29,5 +28,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime endDateTime);
 
   List<Review> findByIsDeletedFalseOrderByCreatedAtAsc();
-
+  
+  boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 }
