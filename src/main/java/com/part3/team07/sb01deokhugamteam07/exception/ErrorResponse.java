@@ -36,9 +36,10 @@ public class ErrorResponse {
 
   private static String resolveErrorCode(Exception ex) {
     return switch (ex.getClass().getSimpleName()) {
-      case "ConstraintViolationException" -> "VALIDATION_FAILED";
+      case "ConstraintViolationException", "MethodArgumentNotValidException" -> "VALIDATION_FAILED";
       case "IllegalArgumentException"      -> "INVALID_ARGUMENT";
-      default                              -> "INTERNAL_ERROR";
+      case "NullPointerException" -> "NULL_POINTER";
+      default -> "INTERNAL_ERROR";
     };
   }
 }
