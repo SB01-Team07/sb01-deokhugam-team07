@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -68,10 +69,61 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
         if(!review.isReviewer(userId)){
-            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다.");
+            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 수정 권한 없음
         }
         review.update(request.content(), request.rating());
         log.info("리뷰 수정 완료: id={}", reviewId);
         return ReviewMapper.toDto(review);
     }
+
+    @Transactional
+    public void softDelete(UUID userId, UUID reviewId){
+        log.debug("리뷰 논리 삭제 시작: id={}", reviewId);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        if(!review.isReviewer(userId)){
+            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
+        }
+
+        // TODO 댓글 논리 삭제 로직 추가
+
+        review.softDelete();
+        log.info("리뷰 논리 삭제 완료: id={}", reviewId);
+    }
+
+    @Transactional
+    public void softDeleteAllByBook(Book book) {
+        List<Review> reviews = reviewRepository.findAllByBook(book);
+        log.info("{}개의 리뷰를 논리 삭제 시작. bookId={}", reviews.size(), book.getId());
+        reviews.forEach(review -> {
+            review.softDelete();
+            // TODO 댓글 논리 삭제 로직 추가
+        });
+        log.info("book 이 가진 모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
+    }
+
+    @Transactional
+    public void softDeleteAllByUser(User user) {
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+        log.info("{}개의 리뷰를 논리 삭제 시작. userId={}", reviews.size(), user.getId());
+        reviews.forEach(review -> {
+            review.softDelete();
+            // TODO 댓글 논리 삭제 로직 추가
+        });
+        log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
+    }
+
+    @Transactional
+    public void hardDelete(UUID userId, UUID reviewId){
+        log.debug("리뷰 물리 삭제 시작: id={}", reviewId);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));//404 리뷰 정보 없음
+        if(!review.isReviewer(userId)){
+            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
+        }
+        reviewRepository.delete(review);
+        log.info("리뷰 물리 삭제 완료: id={}", reviewId);
+    }
+    
 }

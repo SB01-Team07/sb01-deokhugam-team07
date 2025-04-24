@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -238,5 +239,115 @@ class ReviewServiceTest {
         assertThatThrownBy(()-> reviewService.update(userId, otherReviewId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("리뷰를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("리뷰 논리 삭제를 할 수 있다.")
+    @Test
+    void softDelete() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        reviewService.softDelete(userId, reviewId);
+
+        //then
+        assertThat(review.isDeleted()).isTrue();
+    }
+
+    @DisplayName("존재하지 않은 리뷰는 논리 삭제할 수 없다.")
+    @Test
+    void softDelete_fail_whenUserIsNotAuthor() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.softDelete(userId, reviewId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("본인이 작성하지 않은 리뷰는 논리 삭제할 수 없다.")
+    @Test
+    void softDelete_fail_whenReviewNotFound() {
+        //given
+        UUID otherUserId = UUID.randomUUID();
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when then
+        assertThatThrownBy(() -> reviewService.softDelete(otherUserId, reviewId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("book 기준으로 모든 리뷰를 논리 삭제한다.")
+    @Test
+    void softDeleteAllByBook() {
+        // given
+        Review review1 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰1")
+                .rating(4)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        Review review2 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰2")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        given(reviewRepository.findAllByBook(book)).willReturn(List.of(review1, review2));
+
+        // when
+        reviewService.softDeleteAllByBook(book);
+
+        // then
+        assertThat(review1.isDeleted()).isTrue();
+        assertThat(review2.isDeleted()).isTrue();
+    }
+
+    @DisplayName("user 기준으로 모든 리뷰를 논리 삭제한다.")
+    @Test
+    void softDeleteAllByUser() {
+        // given
+        Review review1 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰1")
+                .rating(4)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        Review review2 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰2")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        given(reviewRepository.findAllByUser(user)).willReturn(List.of(review1, review2));
+
+        // when
+        reviewService.softDeleteAllByUser(user);
+
+        // then
+        assertThat(review1.isDeleted()).isTrue();
+        assertThat(review2.isDeleted()).isTrue();
+    }
+
+
+    @DisplayName("리뷰를 물리 삭제할 수 있다.")
+    @Test
+    void hardDelete() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        reviewService.hardDelete(userId, reviewId);
+
+        //then
+        verify(reviewRepository).delete(review);
     }
 }

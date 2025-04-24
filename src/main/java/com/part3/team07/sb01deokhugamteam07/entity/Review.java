@@ -55,4 +55,8 @@ public class Review extends BaseSoftDeletableEntity {
     this.rating = rating;
   }
 
+  public void softDelete(){
+    delete();
+  }
+
 }
