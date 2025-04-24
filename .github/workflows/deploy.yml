@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Gradle 캐시
+        id: cache-gradle
         uses: actions/cache@v3
         with:
           path: |
