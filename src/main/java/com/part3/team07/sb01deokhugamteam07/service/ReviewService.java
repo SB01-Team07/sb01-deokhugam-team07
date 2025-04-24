@@ -153,4 +153,10 @@ public class ReviewService {
         reviewRepository.incrementLikeCount(reviewId);
         return new ReviewLikeDto(reviewId, userId, true);
     }
+
+    private ReviewLikeDto cancelLike(Like like, UUID reviewId, UUID userId){
+        likeRepository.delete(like);
+        reviewRepository.decrementLikeCount(reviewId);
+        return new ReviewLikeDto(reviewId, userId, false);
+    }
 }
