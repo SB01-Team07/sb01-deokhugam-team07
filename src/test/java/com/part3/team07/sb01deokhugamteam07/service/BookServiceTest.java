@@ -12,8 +12,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
-import com.part3.team07.sb01deokhugamteam07.exception.book.DuplicateIsbnException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.time.LocalDate;
@@ -132,10 +132,9 @@ class BookServiceTest {
       given(bookRepository.existsByIsbn(request.isbn())).willReturn(true);
 
       // when & then
-      assertThrows(DuplicateIsbnException.class,
+      assertThrows(BookAlreadyExistsException.class,
           () -> bookService.create(request, null)
       );
-
     }
   }
 
@@ -215,7 +214,6 @@ class BookServiceTest {
     assertThrows(BookNotFoundException.class,
         () -> bookService.update(nonExistentId, request)
     );
-
   }
 
   @Nested
@@ -247,8 +245,34 @@ class BookServiceTest {
           () -> bookService.softDelete(id)
       );
     }
-
-
   }
-  
+
+  @Nested
+  @DisplayName("도서 물리 삭제")
+  class HardDeleteTest {
+    @Test
+    @DisplayName("도서 물리 삭제 성공")
+    void hardDelete_success() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(true);
+
+      // when
+      bookService.hardDelete(id);
+
+      // then
+      verify(bookRepository).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("도서 물리 삭제 실패 - 없는 id")
+    void hardDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(false);
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.hardDelete(id)
+      );
+    }
+  }
 }

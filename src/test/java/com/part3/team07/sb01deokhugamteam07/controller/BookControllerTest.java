@@ -220,4 +220,21 @@ public class BookControllerTest {
     }
   }
 
+  @Nested
+  @DisplayName("도서 물리 삭제")
+  class hardDeleteTest {
+    @Test
+    @DisplayName("도서 물리 삭제 성공")
+    void hardDelete_success() throws Exception {
+      // given
+      willDoNothing().given(bookService).hardDelete(id);
+
+      // when & then
+      mockMvc.perform(delete("/api/books/{id}/hard", id)
+              .contentType(MediaType.APPLICATION_JSON)
+              .with(csrf()))
+          .andExpect(status().isNoContent());
+    }
+  }
+
 }
