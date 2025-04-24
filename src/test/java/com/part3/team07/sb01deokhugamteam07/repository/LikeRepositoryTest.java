@@ -55,4 +55,18 @@ class LikeRepositoryTest {
         assertThat(result.get().getReviewId()).isEqualTo(reviewId);
     }
 
+    @Test
+    @DisplayName("없는 리뷰 ID + 유저 ID 조합으로 조회하면 Optional.empty()")
+    void findByReviewIdAndUserId_notFound() {
+        //given
+        UUID otherReviewId = UUID.randomUUID();
+        UUID otherUserId = UUID.randomUUID();
+
+        //when
+        Optional<Like> result = likeRepository.findByReviewIdAndUserId(otherReviewId, otherUserId);
+
+        //then
+        assertThat(result).isEmpty();
+    }
+
 }
