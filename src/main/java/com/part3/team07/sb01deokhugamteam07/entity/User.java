@@ -36,7 +36,7 @@ public class User extends BaseSoftDeletableEntity {
     this.nickname = nickname;
   }
 
-  public void logiDelete() {
+  public void softDelete() {
     super.delete();
   }
 }

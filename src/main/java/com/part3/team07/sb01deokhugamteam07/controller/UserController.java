@@ -91,7 +91,7 @@ public class UserController {
   @DeleteMapping("/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void logicalDelete(@PathVariable("userId") UUID userId) {
-    userService.logicalDelete(userId);
+    userService.softDelete(userId);
   }
 
   @DeleteMapping("/{userId}/hard")
