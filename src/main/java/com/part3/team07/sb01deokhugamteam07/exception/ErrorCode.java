@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
   // Book 관련 에러 코드
-  DUPLICATE_ISBN("이미 존재하는 ISBN입니다."),
   DUPLICATE_BOOK("이미 존재하는 도서입니다."),
   BOOK_NOT_FOUND("도서를 찾을 수 없습니다."),
 
