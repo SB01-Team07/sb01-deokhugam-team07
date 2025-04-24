@@ -390,4 +390,15 @@ class ReviewServiceTest {
         // then
         assertThat(result.liked()).isFalse();
     }
+
+    @Test
+    @DisplayName("좋아요 추가,해제 시 리뷰가 존재하지 않으면 예외가 발생한다")
+    void toggleLike_shouldThrowIfReviewNotFound() {
+        // given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.toggleLike(reviewId, userId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
