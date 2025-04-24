@@ -138,9 +138,9 @@ public class ReviewService {
         reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다.")); //404 리뷰 정보 없음
 
-        likeRepository.findByReviewIdAndUserId(reviewId, userId);
-
-        return null;
+        return likeRepository.findByReviewIdAndUserId(reviewId, userId)
+                .map(like -> cancelLike(like, reviewId, userId))
+                .orElseGet(() -> addLike(userId, reviewId));
     }
 
     private ReviewLikeDto addLike(UUID userId, UUID reviewId){
@@ -148,7 +148,6 @@ public class ReviewService {
                 .userId(userId)
                 .reviewId(reviewId)
                 .build();
-
         likeRepository.save(like);
         reviewRepository.incrementLikeCount(reviewId);
         return new ReviewLikeDto(reviewId, userId, true);
