@@ -47,6 +47,9 @@ class ReviewServiceTest {
     @Mock
     private LikeRepository likeRepository;
 
+    @Mock
+    private CommentService commentService;
+
     @InjectMocks
     private ReviewService reviewService;
 
