@@ -247,8 +247,34 @@ class BookServiceTest {
           () -> bookService.softDelete(id)
       );
     }
-
-
   }
-  
+
+  @Nested
+  @DisplayName("도서 물리 삭제")
+  class HardDeleteTest {
+    @Test
+    @DisplayName("도서 물리 삭제 성공")
+    void hardDelete_success() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(true);
+
+      // when
+      bookService.hardDelete(id);
+
+      // then
+      verify(bookRepository).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("도서 물리 삭제 실패 - 없는 id")
+    void hardDelete_fail_idNotFound() {
+      // given
+      given(bookRepository.existsById(id)).willReturn(false);
+
+      // when & then
+      assertThrows(BookNotFoundException.class,
+          () -> bookService.hardDelete(id)
+      );
+    }
+  }
 }
