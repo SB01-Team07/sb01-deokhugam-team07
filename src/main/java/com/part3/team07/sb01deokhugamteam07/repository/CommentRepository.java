@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.repository;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -22,4 +23,17 @@ public interface CommentRepository extends JpaRepository<Comment, UUID>, Comment
       LocalDateTime endDateTime);
 
   List<Comment> findAllByReview(Review review);
+
+  List<Comment> findByReviewAndDeletedFalseOrderByCreatedAtDesc(
+      Review review,
+      Pageable pageable
+  );
+
+  List<Comment> findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
+      Review review,
+      LocalDateTime cursorCreatedAt,
+      Pageable pageable
+  );
+
+
 }
