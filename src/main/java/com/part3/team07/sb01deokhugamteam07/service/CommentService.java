@@ -16,14 +16,12 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
-import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,53 +129,16 @@ public class CommentService {
     //리뷰 존재 여부 확인
     Review review = findReview(reviewId);
 
-    //다음 페이지 존재 여부 판단 위해 limit+1로 요청
-    Pageable pageable = PageRequest.of(0, limit+1);
+    //댓글 조회 (limit+1 개 조회)
+    List<Comment> comments = commentRepository.findCommentByCursor(
+        review,
+        direction,
+        cursor,
+        after,
+        limit
+    );
 
-    //커서를 LocalDateTime 으로 변환
-    LocalDateTime cursorCreatedAt = null;
-    if (cursor != null && !cursor.isBlank()) {
-      cursorCreatedAt = LocalDateTime.parse(cursor);
-    }
-
-    List<Comment> comments;
-
-    // 정렬 방향에 따라 Repository 호출
-    // DESC 정렬 (기본)
-    if("DESC".equalsIgnoreCase(direction)) {
-      if (cursorCreatedAt == null) {
-        if (after == null) {
-          comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(review, pageable);
-        } else {
-          comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
-              review, after, pageable);
-        }
-      } else {
-        LocalDateTime condition = cursorCreatedAt.isBefore(after != null ? after : LocalDateTime.MAX)
-            ? cursorCreatedAt : after;
-        comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtLessThanOrderByCreatedAtDesc(
-            review, condition, pageable);
-      }
-    }
-
-    // ASC 정렬
-    else {
-      if (cursorCreatedAt == null) {
-        if (after == null) {
-          comments = commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtAsc(review, pageable);
-        } else {
-          comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
-              review, after, pageable);
-        }
-      } else {
-        LocalDateTime condition = cursorCreatedAt.isAfter(after != null ? after : LocalDateTime.MIN)
-            ? cursorCreatedAt : after;
-        comments = commentRepository.findByReviewAndDeletedFalseAndCreatedAtGreaterThanOrderByCreatedAtAsc(
-            review, condition, pageable);
-      }
-    }
-
-    // 다음 페이지가 있다면 하나 빼서 자름
+    //다음 페이지 판단
     boolean hasNext = comments.size() > limit;
     if (hasNext) {
       comments = comments.subList(0, limit);
@@ -187,7 +148,10 @@ public class CommentService {
         .map(commentMapper::toDto)
         .toList();
 
-    LocalDateTime nextCursor = hasNext ? comments.get(comments.size() - 1).getCreatedAt() : null;
+    //다음 커서 생성
+    LocalDateTime nextCursor = hasNext
+        ? comments.get(comments.size() - 1).getCreatedAt()
+        : null;
 
     return new CursorPageResponseCommentDto(
         content,
