@@ -61,4 +61,12 @@ public class BookService {
 
     return bookMapper.toDto(book);
   }
+
+  public void softDelete(UUID id) {
+    Book book = bookRepository.findById(id)
+        .orElseThrow(() -> new BookNotFoundException());
+
+    book.softDelete();
+    // TODO: 관련 엔티티 논리 삭제
+  }
 }
