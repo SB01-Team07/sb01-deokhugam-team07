@@ -91,7 +91,7 @@ public class ReviewService {
         }
 
         // TODO 댓글 논리 삭제 로직 추가
-        // TODO 리뷰 논리 삭제 로직 추가
+        // TODO 좋아요 논리 삭제 로직 추가
 
         review.softDelete();
         log.info("리뷰 논리 삭제 완료: id={}", reviewId);
@@ -104,7 +104,7 @@ public class ReviewService {
         reviews.forEach(review -> {
             review.softDelete();
             // TODO 댓글 논리 삭제 로직 추가
-            // TODO 리뷰 논리 삭제 로직 추가
+            // TODO 좋아요 논리 삭제 로직 추가
         });
         log.info("book 이 가진 모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
     }
@@ -116,7 +116,7 @@ public class ReviewService {
         reviews.forEach(review -> {
             review.softDelete();
             // TODO 댓글 논리 삭제 로직 추가
-            // TODO 리뷰 논리 삭제 로직 추가
+            // TODO 좋아요 논리 삭제 로직 추가
         });
         log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
     }
