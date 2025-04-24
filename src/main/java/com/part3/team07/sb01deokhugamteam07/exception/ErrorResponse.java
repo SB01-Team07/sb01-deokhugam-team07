@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,9 @@ public class ErrorResponse {
 
   public ErrorResponse(Exception exception, int status) {
     this(LocalDateTime.now(),
-        exception.getErrorCode().name(),
+        exception.getClass().getSimpleName(),
         exception.getMessage(),
-        exception.getDetails(),
+        new HashMap<>(),
         exception.getClass().getSimpleName(),
         status);
   }
