@@ -29,4 +29,5 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime endDateTime);
 
   List<Review> findByIsDeletedFalseOrderByCreatedAtAsc();
+
 }
