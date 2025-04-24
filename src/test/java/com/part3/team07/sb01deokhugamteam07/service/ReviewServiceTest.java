@@ -376,4 +376,18 @@ class ReviewServiceTest {
         //then
         assertThat(result.liked()).isTrue();
     }
+
+    @Test
+    @DisplayName("좋아요가 존재하면 삭제한다")
+    void toggleLike_shouldCancelLikeWhenExists() {
+        // given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.of(like));
+
+        // when
+        ReviewLikeDto result = reviewService.toggleLike(reviewId, userId);
+
+        // then
+        assertThat(result.liked()).isFalse();
+    }
 }
