@@ -144,19 +144,26 @@ public class CommentService {
       comments = comments.subList(0, limit);
     }
 
+    //댓글 DTO 변환
     List<CommentDto> content = comments.stream()
         .map(commentMapper::toDto)
         .toList();
 
     //다음 커서 생성
-    LocalDateTime nextCursor = hasNext
-        ? comments.get(comments.size() - 1).getCreatedAt()
-        : null;
+    String nextCursor = null;
+    LocalDateTime nextAfter = null;
+
+    if (hasNext) {
+      Comment last = comments.get(comments.size() - 1);
+      // 기본이 createdAt 기준이라고 설정
+      nextCursor = last.getCreatedAt().toString();
+      nextAfter = last.getCreatedAt();
+    }
 
     return new CursorPageResponseCommentDto(
         content,
-        nextCursor != null ? nextCursor.toString() : null,
         nextCursor,
+        nextAfter,
         limit,
         content.size(),
         hasNext
