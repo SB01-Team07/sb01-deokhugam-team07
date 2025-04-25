@@ -261,12 +261,14 @@ class ReviewServiceTest {
     void softDelete() {
         //given
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.findAllByReviewId(reviewId)).willReturn(List.of(like));
 
         //when
         reviewService.softDelete(userId, reviewId);
 
         //then
         assertThat(review.isDeleted()).isTrue();
+        verify(likeRepository).findAllByReviewId(reviewId);
     }
 
     @DisplayName("존재하지 않은 리뷰는 논리 삭제할 수 없다.")
