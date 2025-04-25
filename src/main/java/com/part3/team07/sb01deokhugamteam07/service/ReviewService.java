@@ -1,6 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
@@ -33,6 +35,7 @@ public class ReviewService {
     private final LikeRepository likeRepository;
 
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     @Transactional
     public ReviewDto create(ReviewCreateRequest request) {
@@ -146,7 +149,18 @@ public class ReviewService {
                 })
                 .orElseGet(() -> {
                     log.debug("기존 좋아요 없음. 좋아요 추가 시도 - reviewId={}, userId={}", reviewId, userId);
-                    return addLike(userId, reviewId);
+
+                    ReviewLikeDto result = addLike(userId, reviewId);
+
+                    // 알림 생성
+                    NotificationCreateRequest notificationRequest = NotificationCreateRequest.builder()
+                        .type(NotificationType.REVIEW_COMMENTED)
+                        .senderId(userId)
+                        .reviewId(reviewId)
+                        .build();
+                    notificationService.create(notificationRequest);
+
+                    return result;
                 });
     }
 
