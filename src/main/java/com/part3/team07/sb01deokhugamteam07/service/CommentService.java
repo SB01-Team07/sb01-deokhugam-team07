@@ -78,7 +78,7 @@ public class CommentService {
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
-    decreaseCommentCount(comment); // 댓글 논리 삭제가 실제 일어났다고 보장된 상태
+    decreaseCommentCountOnSoftDelete(comment); //리뷰 댓글 카운트 증가 - 댓글 논리 삭제가 실제 일어났다고 보장된 상태
     log.info("softDelete comment complete");
   }
 
@@ -99,6 +99,7 @@ public class CommentService {
     Comment comment = findComment(commentId);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
+    decreaseCommentCountOnHardDelete(comment); //리뷰 댓글 카운트 증가
     commentRepository.delete(comment);
     log.info("hardDelete comment complete");
   }
@@ -131,9 +132,18 @@ public class CommentService {
     }
   }
 
-  private void decreaseCommentCount(Comment comment) {
-    log.debug("리뷰 댓글 카운트 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+  //댓글 카운트 감소 메서드 - 논리삭제
+  private void decreaseCommentCountOnSoftDelete(Comment comment) {
+    log.debug("댓글 논리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
     reviewRepository.decrementCommentCount(comment.getReview().getId());
+  }
+
+  //댓글 카운트 감소 메서드 - 물리삭제
+  private void decreaseCommentCountOnHardDelete(Comment comment) {
+    if (!comment.isDeleted()) {
+      log.debug("댓글 물리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+      reviewRepository.decrementCommentCount(comment.getReview().getId());
+    }
   }
 
 }
