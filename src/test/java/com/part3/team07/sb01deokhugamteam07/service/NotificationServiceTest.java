@@ -22,6 +22,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCus
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -188,8 +189,47 @@ class NotificationServiceTest {
   }
 
   @Test
+  @DisplayName("알림 목록 조회 성공 - 다음 페이지가 있는 경우")
+  void find_Success_With_NextPage() {
+    // given
+    UUID userId = UUID.randomUUID();
+    String direction = "desc";
+    LocalDateTime cursor = LocalDateTime.now();
+    int limit = 20;
+
+    List<Notification> notifications = new ArrayList<>();
+    for (int i = 0; i <= limit; i++) {
+      Notification notification = Notification.builder()
+          .userId(userId)
+          .content("Test content")
+          .build();
+      ReflectionTestUtils.setField(notification, "createdAt", cursor.minusMinutes(i));
+      notifications.add(notification);
+    }
+
+    when(userRepository.existsById(any(UUID.class))).thenReturn(true);
+    when(notificationRepositoryCustom.findByUserIdWithCursor(userId, direction, null, null,
+        limit + 1)).thenReturn(notifications);
+    when(notificationRepository.countAllByUserId(userId)).thenReturn((long) notifications.size());
+
+    // when
+    CursorPageResponseNotificationDto result = notificationService.find(
+        userId,
+        direction,
+        null,
+        null,
+        limit
+    );
+
+    assertThat(result).isNotNull();
+    assertThat(result.nextCursor()).isNotNull();
+    assertTrue(result.hasNext());
+    assertThat(result.content().size()).isEqualTo(limit);
+  }
+
+  @Test
   @DisplayName("userId가 존재하지 않는 userId 의 경우 UserNotFound 에러를 반환한다.")
-  public void find_Fail_With_NullUserId(){
+  public void find_Fail_With_NullUserId() {
     // given
     UUID nonUserId = UUID.randomUUID();
 
