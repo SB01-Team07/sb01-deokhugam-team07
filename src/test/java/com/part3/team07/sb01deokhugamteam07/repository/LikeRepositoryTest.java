@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,4 +70,33 @@ class LikeRepositoryTest {
         assertThat(result).isEmpty();
     }
 
+    @DisplayName("리뷰 id로 모든 좋아요를 조회할 수 있다.")
+    @Test
+    void findAllByReviewId() {
+        //given
+        UUID reviewId = UUID.randomUUID();
+
+        Like like1 = Like.builder()
+                .userId(UUID.randomUUID())
+                .reviewId(reviewId)
+                .build();
+
+        Like like2 = Like.builder()
+                .userId(UUID.randomUUID())
+                .reviewId(reviewId)
+                .build();
+        likeRepository.saveAll(List.of(like1, like2));
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Like> result = likeRepository.findAllByReviewId(reviewId);
+
+        //then
+        assertThat(result).hasSize(2);
+        assertThat(result)
+                .extracting("reviewId")
+                .containsOnly(reviewId);
+    }
 }
