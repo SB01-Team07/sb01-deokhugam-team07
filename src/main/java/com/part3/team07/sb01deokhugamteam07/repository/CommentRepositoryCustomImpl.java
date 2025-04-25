@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentRepositoryImpl implements CommentRepositoryCustom {
+public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
 
