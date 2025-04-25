@@ -380,6 +380,7 @@ class ReviewServiceTest {
 
         //then
         assertThat(result.liked()).isTrue();
+        verify(reviewRepository).incrementLikeCount(reviewId);
     }
 
     @Test
@@ -394,6 +395,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(result.liked()).isFalse();
+        verify(reviewRepository).decrementLikeCount(reviewId);
     }
 
     @Test
