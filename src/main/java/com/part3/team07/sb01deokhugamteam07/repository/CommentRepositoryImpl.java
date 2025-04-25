@@ -34,25 +34,31 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
             comment.isDeleted.isFalse()
         );
 
-    if ("ASC".equalsIgnoreCase(direction)) {
-      if (cursor != null) {
-        LocalDateTime parsedCursor = LocalDateTime.parse(cursor);
-        query = query.where(comment.createdAt.gt(parsedCursor));
-      } else if (after != null) {
-        query = query.where(comment.createdAt.gt(after));
-      }
-    } else {
-      if (cursor != null) {
-        LocalDateTime parsedCursor = LocalDateTime.parse(cursor);
-        query = query.where(comment.createdAt.lt(parsedCursor));
-      } else if (after != null) {
-        query = query.where(comment.createdAt.lt(after));
-      }
-    }
+    // 요구사항 기본 조건 , 추후에 정렬 조건 추가 되면 바로 적용
+    String sortBy = "createdAt";
+    
+    OrderSpecifier<?> order;
+    switch (sortBy) {
+      case "createdAt":
+        order = "ASC".equalsIgnoreCase(direction)
+            ? comment.createdAt.asc()
+            : comment.createdAt.desc();
 
-    OrderSpecifier<LocalDateTime> order = "ASC".equalsIgnoreCase(direction)
-        ? comment.createdAt.asc()
-        : comment.createdAt.desc();
+        if (cursor != null) {
+          LocalDateTime parsedCursor = LocalDateTime.parse(cursor);
+          query = "ASC".equalsIgnoreCase(direction)
+              ? query.where(comment.createdAt.gt(parsedCursor))
+              : query.where(comment.createdAt.lt(parsedCursor));
+        }
+
+        if (after != null) {
+          query = query.where(comment.createdAt.gt(after));
+        }
+        break;
+
+      default:
+        throw new IllegalArgumentException(sortBy);
+    }
 
     return query
         .orderBy(order)
