@@ -111,6 +111,98 @@ class ReviewRepositoryTest {
                 .containsExactlyInAnyOrder("book1", "book2");
     }
 
+    @DisplayName("리뷰의 좋아요 수를 1 증가시킬 수 있다")
+    @Test
+    void incrementLikeCount() {
+        //given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        em.flush();
+        em.clear();
+
+        //when
+        reviewRepository.incrementLikeCount(reviewId);
+        em.flush();
+        em.clear();
+
+        //then
+        Review result = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(result.getLikeCount()).isEqualTo(1);
+    }
+
+    @DisplayName("리뷰의 좋아요 수가 0이 아닌 경우, 좋아요 수를 1 감소시킬 수 있다.")
+    @Test
+    void decrementLikeCount() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        // 0인 상태에서 시작하면 에러~, 1증가
+        reviewRepository.incrementLikeCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // when
+        reviewRepository.decrementLikeCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        Review updated = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(updated.getLikeCount()).isEqualTo(0);
+    }
+
+    @DisplayName("리뷰의 댓글 수를 1 증가시킬 수 있다")
+    @Test
+    void incrementCommentCount() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        em.flush();
+        em.clear();
+
+        // when
+        reviewRepository.incrementCommentCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        Review updated = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(updated.getCommentCount()).isEqualTo(1);
+    }
+
+    @DisplayName("리뷰의 댓글 수가 0이 아닌 경우, 댓글 수를 1 감소시킬 수 있다.")
+    @Test
+    void decrementCommentCount() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        // 초기값 1 만들어주기
+        reviewRepository.incrementCommentCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // when
+        reviewRepository.decrementCommentCount(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        Review updated = reviewRepository.findById(reviewId).orElseThrow();
+        assertThat(updated.getCommentCount()).isEqualTo(0);
+    }
+
 
     private User createTestUser(String nickname, String email) {
         return User.builder()

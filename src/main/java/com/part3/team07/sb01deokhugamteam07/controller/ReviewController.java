@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
@@ -72,6 +73,15 @@ public class ReviewController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @PostMapping("{reviewId}/like")
+    public ResponseEntity<ReviewLikeDto> toggleLike(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(reviewService.toggleLike(reviewId, userId));
     }
 
 }
