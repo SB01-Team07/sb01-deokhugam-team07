@@ -458,4 +458,69 @@ class CommentServiceTest {
     assertThat(result.nextAfter()).isEqualTo(c3.getCreatedAt());
   }
 
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 성공 - hasNext: False")
+  void findCommentsByReviewId_hasNextFalse() {
+    //given
+    LocalDateTime time = LocalDateTime.of(2025, 4, 25, 12, 0);
+    int limit = 3;
+
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
+
+    Comment c1 = new Comment(testUser, testReview, "c1"); // 가장 최신 댓글
+    Comment c2 = new Comment(testUser, testReview, "c2");
+    Comment c3 = new Comment(testUser, testReview, "c3"); // 가장 오래된 댓글
+
+    LocalDateTime t1 = time.minusMinutes(1);
+    LocalDateTime t2 = time.minusMinutes(2);
+    LocalDateTime t3 = time.minusMinutes(3);
+
+    ReflectionTestUtils.setField(c1, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c2, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c3, "id", UUID.randomUUID());
+
+    ReflectionTestUtils.setField(c1, "createdAt", t1);
+    ReflectionTestUtils.setField(c2, "createdAt", t2);
+    ReflectionTestUtils.setField(c3, "createdAt", t3);
+
+    List<Comment> mockComments = List.of(c1, c2, c3);
+
+    //limit 3이기 때문에 최신 댓글에서 3번째 댓글(t3)의 값이 커서에 들어가야한다.
+    given(commentRepository.findCommentByCursor(
+        eq(testReview),
+        eq("DESC"),
+        eq(t3.toString()),
+        eq(t3),
+        eq(limit),
+        eq("createdAt")
+    )).willReturn(mockComments);
+
+    CommentDto dto1 = new CommentDto(c1.getId(), reviewId, userId, testUser.getNickname(),
+        c1.getContent(), c1.getCreatedAt(), c1.getCreatedAt());
+    CommentDto dto2 = new CommentDto(c2.getId(), reviewId, userId, testUser.getNickname(),
+        c2.getContent(), c2.getCreatedAt(), c2.getCreatedAt());
+    CommentDto dto3 = new CommentDto(c3.getId(), reviewId, userId, testUser.getNickname(),
+        c3.getContent(), c3.getCreatedAt(), c3.getCreatedAt());
+
+    given(commentMapper.toDto(c1)).willReturn(dto1);
+    given(commentMapper.toDto(c2)).willReturn(dto2);
+    given(commentMapper.toDto(c3)).willReturn(dto3);
+
+    //when
+    CursorPageResponseCommentDto result = commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        t3.toString(),
+        t3,
+        limit
+    );
+
+    //then
+    assertThat(result.content()).containsExactly(dto1, dto2, dto3);
+    assertThat(result.size()).isEqualTo(3);
+    assertThat(result.hasNext()).isFalse();
+    assertThat(result.nextCursor()).isNull();
+    assertThat(result.nextAfter()).isNull();
+  }
+
 }
