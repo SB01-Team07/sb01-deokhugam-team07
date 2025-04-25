@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
+package com.part3.team07.sb01deokhugamteam07.batch;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;

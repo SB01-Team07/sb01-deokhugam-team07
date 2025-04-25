@@ -1,5 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
 
+import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
+import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
@@ -19,14 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PowerUserDashboardBatchService {
 
   private final UserRepository userRepository;
   private final ReviewRepository reviewRepository;
+  private final AssignRankUtil assignRank;
   private final DateRangeUtil dateRangeUtil;
   private final LikeRepository likeRepository;
   private final CommentRepository commentRepository;
@@ -35,9 +40,12 @@ public class PowerUserDashboardBatchService {
   /**
    * TODO 다른 도메인 엮여있어서 통합 테스트는 이후에 진행해보겠습니다
    * 파워 유저 관련 데이터를 dashboard 테이블에 저장합니다.
+   *
    * @param period 기간 정보 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
    **/
   public void savePowerUserDashboardData(Period period) {
+    log.info("savePowerUserDashboardData 호출: period={}", period);
+
     // 1. 전체 유저 조회 (is_deleted = false)
     List<User> users = userRepository.findByIsDeletedFalse();
 
@@ -65,11 +73,12 @@ public class PowerUserDashboardBatchService {
           .sum();
 
       // 2-3. 해당 기간 동안 좋아요한 수
-      int likeCount = (int)likeRepository.countByUserIdAndCreatedAtBetween(userId, startDateTime,
+      long likeCount = likeRepository.countByUserIdAndCreatedAtBetween(userId, startDateTime,
           endDateTime);
 
       // 2-4. 해당 기간 동안 댓글 단 수
-      int commentCount = (int)commentRepository.countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(userId, startDateTime,
+      long commentCount = commentRepository.countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
+          userId, startDateTime,
           endDateTime);
 
       // 3. 활동 점수 계산
@@ -78,16 +87,21 @@ public class PowerUserDashboardBatchService {
       userScoreMap.put(userId, score);
 
       // 4. REVIEW_SCORE_SUM, LIKE_COUNT, COMMENT_COUNT 지표의 대시보드 데이터 구성
-      dashboards.add(new Dashboard(userId, KeyType.USER, period, reviewScoreSum, ValueType.REVIEW_SCORE_SUM, null));
-      dashboards.add(new Dashboard(userId, KeyType.USER, period, likeCount, ValueType.LIKE_COUNT, null));
-      dashboards.add(new Dashboard(userId, KeyType.USER, period, commentCount, ValueType.COMMENT_COUNT, null));
+      dashboards.add(
+          new Dashboard(userId, KeyType.USER, period, reviewScoreSum, ValueType.REVIEW_SCORE_SUM,
+              null));
+      dashboards.add(
+          new Dashboard(userId, KeyType.USER, period, likeCount, ValueType.LIKE_COUNT, null));
+      dashboards.add(
+          new Dashboard(userId, KeyType.USER, period, commentCount, ValueType.COMMENT_COUNT, null));
     }
 
-    // 5. SCORE 기준으로 전체 유저 순위 매기기 -> 메모리에서 정렬 후 rank 지정
-    dashboards = assignUserRank(userScoreMap, period, KeyType.USER, dashboards);
+    // 5. SCORE 기준으로 전체 유저 순위 매기기 -> 정렬 후 rank 지정
+    dashboards = assignRank.assignRank(userScoreMap, period, KeyType.USER, dashboards);
 
     // 6. 데이터베이스에 저장
     dashboardRepository.saveAll(dashboards);
+    log.info("대시보드에 파워 유저 데이터가 저장됐습니다.: period={}, 저장된 대시보드 개수={}", period, dashboards.size());
   }
 
   /**
@@ -98,48 +112,7 @@ public class PowerUserDashboardBatchService {
    * @param commentCount 유저가 작성한 댓글 수
    * @return 계산된 활동 점수
    **/
-  private double calculateScore(double reviewScore, int likeCount, int commentCount) {
+  private double calculateScore(double reviewScore, long likeCount, long commentCount) {
     return (reviewScore * 0.5) + (likeCount * 0.2) + (commentCount * 0.3);
-  }
-
-
-  /**
-   * 유저의 점수를 기준으로 활동 순위를 계산하여 Dashboard 목록에 저장하는 메서드
-   *
-   * @param userScoreMap 유저별 점수 정보(UUID, Score)
-   * @param period       기간 정보 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
-   * @param keyType      대시보드 키 유형 (e.g. USER, BOOK, REVEIW 이나 여기선 USER)
-   * @param dashboards   결과가 저장될 Dashboard 리스트
-   * @return 순위가 할당된 Dashboard 리스트
-   **/
-  public List<Dashboard> assignUserRank(Map<UUID, Double> userScoreMap, Period period,
-      KeyType keyType, List<Dashboard> dashboards) {
-
-    List<Map.Entry<UUID, Double>> userScoreList = new ArrayList<>(userScoreMap.entrySet());
-
-    // Score 기준 내림차순으로 정렬
-    userScoreList.sort((user1, user2) -> user2.getValue().compareTo(user1.getValue()));
-
-    // 정렬된 점수를 기반으로 순위 할당
-    int rank = 1;
-    double prevScore = 0.0;
-    for (int i = 0; i < userScoreList.size(); i++) {
-      Map.Entry<UUID, Double> entry = userScoreList.get(i);
-      UUID userId = entry.getKey();
-      double score = entry.getValue();
-
-      if (Double.compare(score, prevScore) != 0) {
-        rank = i + 1; // 새로운 점수일시 rank 증가, 동점자 처리
-      }
-
-      // ValueType : SCORE 인 Dashboard 객체에 rank 정보 추가하여 저장
-      dashboards.add(
-          new Dashboard(userId, keyType, period, score, ValueType.SCORE, rank)
-      );
-
-      prevScore = score;
-    }
-
-    return dashboards;
   }
 }

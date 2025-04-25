@@ -14,6 +14,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
@@ -62,12 +63,13 @@ public class DashboardService {
         period, direction, cursor, after, limit);
 
     // 1. 커스텀 레포지토리에서 Power User 대시보드 조회
-    List<Dashboard> dashboards = dashboardRepositoryCustom.findPowerUsersByPeriod(
+    List<Dashboard> dashboards = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
         period,
         direction,
         cursor,
         after,
-        limit + 1); // + 1 다음 페이지 존재 여부 확인
+        limit + 1,
+        KeyType.USER); // + 1 다음 페이지 존재 여부 확인
 
     // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
     boolean hasNext = dashboards.size() > limit;
@@ -111,7 +113,7 @@ public class DashboardService {
                 d.getKey(),
                 user.getNickname(),
                 period,
-                user.getCreatedAt(), // TODO 나중에 수정 createdAt 이 user의 생성 시각이 아니라 집계 정보 제작 시간임
+                d.getCreatedAt(),
                 d.getRank(),
                 d.getValue(),
                 reviewScoreSum,
@@ -154,20 +156,23 @@ public class DashboardService {
    * @return 커서 기반 페이지 응답 DTO ( content(PopularReviewDto), nextCursor, nextAfter, size,
    * totalElement, hasNext )
    **/
-  public CursorPageResponsePopularReviewDto getPopularReview( // TODO 메서드 이름 -s 추가
+  public CursorPageResponsePopularReviewDto getPopularReviews(
       Period period,
       String direction,
       String cursor,
       String after,
       int limit) {
+    log.info("getPopularReviews 호출: period={}, direction={}, cursor={}, after={}, limit={}",
+        period, direction, cursor, after, limit);
 
     // 1. 커스텀 레포지토리에서 Popular Review 대시보드 조회
-    List<Dashboard> dashboards = dashboardRepositoryCustom.findPopularReviewByPeriod(
+    List<Dashboard> dashboards = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
         period,
         direction,
         cursor,
         after,
-        limit + 1); // + 1 다음 페이지 존재 여부 확인
+        limit + 1,
+        KeyType.REVIEW); // + 1 다음 페이지 존재 여부 확인
 
     // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
     boolean hasNext = dashboards.size() > limit;
@@ -256,12 +261,13 @@ public class DashboardService {
         period, direction, cursor, after, limit);
 
     // 1. 커스텀 레포지토리에서 Popular Book 대시보드 조회
-    List<Dashboard> dashboards = dashboardRepositoryCustom.findPopularBookByPeriod(
+    List<Dashboard> dashboards = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
         period,
         direction,
         cursor,
         after,
-        limit + 1
+        limit + 1,
+        KeyType.BOOK
     );
 
     // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
@@ -274,8 +280,10 @@ public class DashboardService {
     List<UUID> bookIds = dashboards.stream()
         .map(Dashboard::getKey)
         .toList();
-    // TODO 추후 리팩토링할 떄 "없을 때" 예외 추가
     List<Book> books = bookRepository.findAllById(bookIds);
+    if(books.isEmpty()){
+      throw new BookNotFoundException();
+    }
 
     // 4. 도서 ID -> Book 객체 매핑 (빠른 접근을 위해 Map 으로 변환)
     Map<UUID, Book> bookMap = books.stream()
@@ -293,7 +301,7 @@ public class DashboardService {
                 bookId,
                 book.getTitle(),
                 book.getAuthor(),
-                book.getThumbnailFileName(),
+                book.getThumbnailFileName(), // TODO URL 가져오기 * 반드시 수정
                 period,
                 d.getRank(),
                 d.getValue(),
