@@ -45,6 +45,7 @@ public class CommentService {
 
     commentRepository.save(comment);
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
+    //
     return commentMapper.toDto(comment);
   }
 
@@ -77,6 +78,7 @@ public class CommentService {
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
+    decreaseCommentCount(comment); // 댓글 논리 삭제가 실제 일어났다고 보장된 상태
     log.info("softDelete comment complete");
   }
 
@@ -127,6 +129,11 @@ public class CommentService {
     if (!comment.getUser().equals(user)) {
       throw new CommentUnauthorizedException();
     }
+  }
+
+  private void decreaseCommentCount(Comment comment) {
+    log.debug("리뷰 댓글 카운트 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+    reviewRepository.decrementCommentCount(comment.getReview().getId());
   }
 
 }
