@@ -114,13 +114,17 @@ public class CommentService {
     //리뷰 존재 여부 확인
     Review review = findReview(reviewId);
 
+    //기본 정렬 조건 생성시간으로 지정
+    String sortBy = "createdAt";
+
     //댓글 조회 (limit+1 개 조회)
     List<Comment> comments = commentRepository.findCommentByCursor(
         review,
         direction,
         cursor,
         after,
-        limit
+        limit,
+        sortBy
     );
 
     //다음 페이지 판단

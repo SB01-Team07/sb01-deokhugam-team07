@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
@@ -389,71 +390,72 @@ class CommentServiceTest {
   }
 
   @Test
-  @DisplayName("리뷰에 달린 댓글 목록 조회 성공")
-  void findCommentsByReviewId() {
+  @DisplayName("리뷰에 달린 댓글 목록 조회 성공 - hasNext: true")
+  void findCommentsByReviewId_hasNextTrue() {
     //given
+    LocalDateTime time = LocalDateTime.of(2025, 4, 25, 12, 0);
     int limit = 3;
-    String direction = "DESC";
-    String cursor = null;
-    LocalDateTime after = null;
 
-    Comment c1 = Comment.builder().user(testUser).review(testReview).content("1").build();
-    Comment c2 = Comment.builder().user(testUser).review(testReview).content("2").build();
-    Comment c3 = Comment.builder().user(testUser).review(testReview).content("3").build();
-    Comment c4 = Comment.builder().user(testUser).review(testReview).content("4").build();
-
-    ReflectionTestUtils.setField(c1, "createdAt", fixedNow.minusMinutes(1));
-    ReflectionTestUtils.setField(c2, "createdAt", fixedNow.minusMinutes(2));
-    ReflectionTestUtils.setField(c3, "createdAt", fixedNow.minusMinutes(3));
-    ReflectionTestUtils.setField(c4, "createdAt", fixedNow.minusMinutes(4));
-
-    CommentDto dto1 = new CommentDto(
-        c1.getId(),
-        reviewId,
-        userId,
-        "dto1",
-        comment.getContent(),
-        fixedNow,
-        fixedNow
-    );
-
-    CommentDto dto2 = new CommentDto(
-        c2.getId(),
-        reviewId,
-        userId,
-        "dto2",
-        comment.getContent(),
-        fixedNow,
-        fixedNow
-    );
-
-    CommentDto dto3 = new CommentDto(
-        c3.getId(),
-        reviewId,
-        userId,
-        "dto3",
-        comment.getContent(),
-        fixedNow,
-        fixedNow
-    );
-
-    List<Comment> mockResult = List.of(c1, c2, c3, c4);
     given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
-    given(commentRepository.findByReviewAndDeletedFalseOrderByCreatedAtDesc(eq(testReview), any()))
-        .willReturn(mockResult);
-    given(commentMapper.toDto(eq(c1))).willReturn(dto1);
-    given(commentMapper.toDto(eq(c2))).willReturn(dto2);
-    given(commentMapper.toDto(eq(c3))).willReturn(dto3);
+
+    Comment c1 = new Comment(testUser, testReview, "c1"); // 가장 최신 댓글
+    Comment c2 = new Comment(testUser, testReview, "c2");
+    Comment c3 = new Comment(testUser, testReview, "c3");
+    Comment c4 = new Comment(testUser, testReview, "c4"); // 가장 오래된 댓글
+
+    LocalDateTime t1 = time.minusMinutes(1);
+    LocalDateTime t2 = time.minusMinutes(2);
+    LocalDateTime t3 = time.minusMinutes(3);
+    LocalDateTime t4 = time.minusMinutes(4);
+
+    ReflectionTestUtils.setField(c1, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c2, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c3, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c4, "id", UUID.randomUUID());
+
+    ReflectionTestUtils.setField(c1, "createdAt", t1);
+    ReflectionTestUtils.setField(c2, "createdAt", t2);
+    ReflectionTestUtils.setField(c3, "createdAt", t3);
+    ReflectionTestUtils.setField(c4, "createdAt", t4);
+
+    List<Comment> mockComments = List.of(c1, c2, c3, c4);
+
+    //limit 3이기 때문에 최신 댓글에서 3번째 댓글(t3)의 값이 커서에 들어가야한다.
+    given(commentRepository.findCommentByCursor(
+        eq(testReview),
+        eq("DESC"),
+        eq(t3.toString()),
+        eq(t3),
+        eq(limit),
+        eq("createdAt")
+    )).willReturn(mockComments);
+
+    CommentDto dto1 = new CommentDto(c1.getId(), reviewId, userId, testUser.getNickname(),
+        c1.getContent(), c1.getCreatedAt(), c1.getCreatedAt());
+    CommentDto dto2 = new CommentDto(c2.getId(), reviewId, userId, testUser.getNickname(),
+        c2.getContent(), c2.getCreatedAt(), c2.getCreatedAt());
+    CommentDto dto3 = new CommentDto(c3.getId(), reviewId, userId, testUser.getNickname(),
+        c3.getContent(), c3.getCreatedAt(), c3.getCreatedAt());
+
+    given(commentMapper.toDto(c1)).willReturn(dto1);
+    given(commentMapper.toDto(c2)).willReturn(dto2);
+    given(commentMapper.toDto(c3)).willReturn(dto3);
 
     //when
-    var result = commentService.findCommentsByReviewId(reviewId, direction, cursor, after, limit);
+    CursorPageResponseCommentDto result = commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        t3.toString(),
+        t3,
+        limit
+    );
 
     //then
-    assertThat(result.content()).hasSize(limit);
-    assertThat(result.hasNext()).isTrue();
     assertThat(result.content()).containsExactly(dto1, dto2, dto3);
-    assertThat(result.nextCursor()).isNotNull();
-
+    assertThat(result.size()).isEqualTo(3);
+    assertThat(result.hasNext()).isTrue();
+    assertThat(result.nextCursor()).isEqualTo(c3.getCreatedAt().toString());
+    assertThat(result.nextAfter()).isEqualTo(c3.getCreatedAt());
   }
 
 }
