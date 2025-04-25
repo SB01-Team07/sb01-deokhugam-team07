@@ -548,4 +548,18 @@ class CommentServiceTest {
     assertThat(result.nextAfter()).isNull();
   }
 
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 실패 - 리뷰 존재X")
+  void findCommentsByReviewId_fail_reviewNotFound() {
+    //given
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.empty());
+    //when & then
+    assertThatThrownBy(() -> commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        null,
+        null,
+        3
+    )).isInstanceOf(NoSuchElementException.class);
+  }
 }
