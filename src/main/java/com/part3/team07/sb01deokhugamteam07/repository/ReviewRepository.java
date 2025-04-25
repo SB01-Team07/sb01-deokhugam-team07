@@ -20,8 +20,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
       LocalDateTime endDateTime
   );
 
-  boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
-
   List<Review> findAllByBook(Book book);
 
   List<Review> findAllByUser(User user);
@@ -50,4 +48,5 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
   List<Review> findByIsDeletedFalseOrderByCreatedAtAsc();
 
+  boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 }
