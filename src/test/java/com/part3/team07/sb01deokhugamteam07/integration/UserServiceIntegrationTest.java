@@ -10,6 +10,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,8 @@ public class UserServiceIntegrationTest {
 
     mockMvc.perform(post("/api/users/login")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestJson))
+            .content(requestJson)
+            .header("Deokhugam-Request-User-ID", registered.id().toString()))
         .andExpect(status().isOk())
         .andExpect(content().json(userJson))
         .andExpect(header().string("Deokhugam-Request-User-ID", registered.id().toString()));

@@ -18,6 +18,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,7 +69,7 @@ class PopularBookDashboardBatchServiceTest {
         .publisher("publisher1")
         .publishDate(LocalDate.now())
         .reviewCount(5)
-        .rating(4)
+        .rating(BigDecimal.valueOf(4))
         .build();
     ReflectionTestUtils.setField(book1, "id", bookId1);
     UUID bookId2 = UUID.randomUUID();
@@ -79,7 +80,7 @@ class PopularBookDashboardBatchServiceTest {
         .publisher("publisher2")
         .publishDate(LocalDate.now())
         .reviewCount(10)
-        .rating(5)
+        .rating(BigDecimal.valueOf(5))
         .build();
     ReflectionTestUtils.setField(book2, "id", bookId2);
     List<Book> books = List.of(book1, book2);
@@ -114,7 +115,7 @@ class PopularBookDashboardBatchServiceTest {
             .key(bookId2)
             .keyType(KeyType.BOOK)
             .period(period)
-            .value(1 * 0.4 + 5 / 1 * 0.6)
+            .value(BigDecimal.valueOf(1 * 0.4 + 5 / 1 * 0.6))
             .valueType(ValueType.SCORE)
             .rank(1)
             .build(),
@@ -122,7 +123,7 @@ class PopularBookDashboardBatchServiceTest {
             .key(bookId1)
             .keyType(KeyType.BOOK)
             .period(period)
-            .value(1 * 0.4 + 3 / 1 * 0.6)
+            .value(BigDecimal.valueOf(1 * 0.4 + 3 / 1 * 0.6))
             .valueType(ValueType.SCORE)
             .rank(2)
             .build()

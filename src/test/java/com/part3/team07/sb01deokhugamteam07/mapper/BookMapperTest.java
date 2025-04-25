@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.storage.ThumbnailImageStorage;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -49,7 +50,7 @@ class BookMapperTest {
     publishedDate = LocalDate.of(1618, 1, 1);
 
     book = new Book(title, author, description, publisher, publishedDate,
-        isbn, thumbnailFileName, 0, 0);
+        isbn, thumbnailFileName, 0, BigDecimal.ZERO);
     ReflectionTestUtils.setField(book, "id", id);
     ReflectionTestUtils.setField(book, "createdAt", LocalDateTime.now());
     ReflectionTestUtils.setField(book, "updatedAt", LocalDateTime.now());
