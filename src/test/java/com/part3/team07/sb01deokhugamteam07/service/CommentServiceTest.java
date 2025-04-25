@@ -289,7 +289,7 @@ class CommentServiceTest {
     //then
     assertThatThrownBy(() -> commentService.find(commentId))
         .isInstanceOf(CommentNotFoundException.class);
-    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //좋아요 증가 메서드 호출 확인
+    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
@@ -362,6 +362,7 @@ class CommentServiceTest {
 
     //then
     verify(commentRepository).delete(comment);
+    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test

@@ -78,7 +78,7 @@ public class CommentService {
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
-    decreaseCommentCountOnSoftDelete(comment); //리뷰 댓글 카운트 증가 - 댓글 논리 삭제가 실제 일어났다고 보장된 상태
+    decreaseCommentCountOnSoftDelete(comment); //리뷰 댓글 카운트 감소 - 댓글 논리 삭제가 실제 일어났다고 보장된 상태
     log.info("softDelete comment complete");
   }
 
@@ -99,7 +99,7 @@ public class CommentService {
     Comment comment = findComment(commentId);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
-    decreaseCommentCountOnHardDelete(comment); //리뷰 댓글 카운트 증가
+    decreaseCommentCountOnHardDelete(comment); //리뷰 댓글 카운트 감소
     commentRepository.delete(comment);
     log.info("hardDelete comment complete");
   }
