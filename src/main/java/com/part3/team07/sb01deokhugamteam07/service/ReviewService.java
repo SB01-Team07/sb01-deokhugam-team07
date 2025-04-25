@@ -32,6 +32,8 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
+    private final CommentService commentService;
+
     @Transactional
     public ReviewDto create(ReviewCreateRequest request) {
         log.debug("리뷰 생성 시작: {}", request);
@@ -89,10 +91,8 @@ public class ReviewService {
         if(!review.isReviewer(userId)){
             throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
         }
-
-        // TODO 댓글 논리 삭제 로직 추가
-        // TODO 좋아요 논리 삭제 로직 추가
-
+        commentService.softDeleteAllByReview(review);
+        softDeleteAllLikesByReview(review);
         review.softDelete();
         log.info("리뷰 논리 삭제 완료: id={}", reviewId);
     }
@@ -103,8 +103,8 @@ public class ReviewService {
         log.info("{}개의 리뷰를 논리 삭제 시작. bookId={}", reviews.size(), book.getId());
         reviews.forEach(review -> {
             review.softDelete();
-            // TODO 댓글 논리 삭제 로직 추가
-            // TODO 좋아요 논리 삭제 로직 추가
+            commentService.softDeleteAllByReview(review);
+            softDeleteAllLikesByReview(review);
         });
         log.info("book 이 가진 모든 리뷰 논리 삭제 완료. bookId={}", book.getId());
     }
@@ -115,8 +115,8 @@ public class ReviewService {
         log.info("{}개의 리뷰를 논리 삭제 시작. userId={}", reviews.size(), user.getId());
         reviews.forEach(review -> {
             review.softDelete();
-            // TODO 댓글 논리 삭제 로직 추가
-            // TODO 좋아요 논리 삭제 로직 추가
+            commentService.softDeleteAllByReview(review);
+            softDeleteAllLikesByReview(review);
         });
         log.info("사용자가 작성한 모든 리뷰 논리 삭제 완료. userId={}", user.getId());
     }
@@ -135,27 +135,45 @@ public class ReviewService {
 
     @Transactional
     public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
+        log.debug("좋아요 토글 요청. reviewId={}, userId={}", reviewId, userId);
         reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다.")); //404 리뷰 정보 없음
 
         return likeRepository.findByReviewIdAndUserId(reviewId, userId)
-                .map(like -> cancelLike(like, reviewId, userId))
-                .orElseGet(() -> addLike(userId, reviewId));
+                .map(like -> {
+                    log.debug("기존 좋아요 존재. 좋아요 취소 시도 - reviewId={}, userId={}", reviewId, userId);
+                    return cancelLike(like, reviewId, userId);
+                })
+                .orElseGet(() -> {
+                    log.debug("기존 좋아요 없음. 좋아요 추가 시도 - reviewId={}, userId={}", reviewId, userId);
+                    return addLike(userId, reviewId);
+                });
     }
 
     private ReviewLikeDto addLike(UUID userId, UUID reviewId){
+        log.debug("좋아요 추가 시작. userId={}, reviewId={}", userId, reviewId);
         Like like = Like.builder()
                 .userId(userId)
                 .reviewId(reviewId)
                 .build();
         likeRepository.save(like);
         reviewRepository.incrementLikeCount(reviewId);
+        log.info("좋아요 추가 완료. userId={}, reviewId={}", userId, reviewId);
         return new ReviewLikeDto(reviewId, userId, true);
     }
 
     private ReviewLikeDto cancelLike(Like like, UUID reviewId, UUID userId){
+        log.debug("좋아요 취소 시작. userId={}, reviewId={}", userId, reviewId);
         likeRepository.delete(like);
         reviewRepository.decrementLikeCount(reviewId);
+        log.info("좋아요 취소 완료. userId={}, reviewId={}", userId, reviewId);
         return new ReviewLikeDto(reviewId, userId, false);
+    }
+
+    private void softDeleteAllLikesByReview(Review review) {
+        List<Like> likes = likeRepository.findAllByReviewId(review.getId());
+        log.debug("리뷰 연관 좋아요 논리 삭제 시작. reviewId={}, 총 {}건", review.getId(), likes.size());
+        likes.forEach(Like::softDelete);
+        log.info("리뷰 연관 좋아요 논리 삭제 완료. reviewId={}, 총 {}건", review.getId(), likes.size());
     }
 }
