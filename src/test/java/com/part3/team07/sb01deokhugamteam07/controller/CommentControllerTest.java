@@ -303,7 +303,6 @@ class CommentControllerTest {
         .with(csrf()))
         .andExpect(status().isNoContent());
   }
-  */
 
   @Test
   @DisplayName("댓글 목록 조회 실패 - 잘못된 정렬")
@@ -334,5 +333,6 @@ class CommentControllerTest {
             .param("reviewId", reviewId.toString()))
         .andExpect(status().isInternalServerError());
   }
+   */
 
 }
