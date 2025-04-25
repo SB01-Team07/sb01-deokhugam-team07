@@ -2,7 +2,9 @@ package com.part3.team07.sb01deokhugamteam07.dto.notification.response;
 
 import java.util.List;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
+import lombok.Builder;
 
+@Builder
 public record CursorPageResponseNotificationDto (
     List<Notification> content,
     String nextCursor,

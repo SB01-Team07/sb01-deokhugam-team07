@@ -7,6 +7,7 @@ import static com.part3.team07.sb01deokhugamteam07.dto.notification.request.Noti
 import com.part3.team07.sb01deokhugamteam07.dto.notification.NotificationDto;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPageResponseNotificationDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -14,7 +15,9 @@ import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,5 +66,9 @@ public class NotificationService {
     }catch (Exception e){
       log.warn("알림 생성 실패: {}", e.getMessage(), e);
     }
+  }
+
+  public CursorPageResponseNotificationDto find(UUID userId, String direction, String cursor, String after, int limit) {
+    return CursorPageResponseNotificationDto.builder().build();
   }
 }
