@@ -35,7 +35,7 @@ class NotificationControllerTest {
 
   @Test
   @DisplayName("알림 조회 성공")
-  void find_Notification() throws Exception {
+  void find_Notification_Success() throws Exception {
     UUID userId = UUID.randomUUID();
     String direction = "desc";
     String cursor = "2025-04-25T00:00:00";
@@ -58,5 +58,25 @@ class NotificationControllerTest {
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.hasNext").value(false));
+  }
+
+  @Test
+  @DisplayName("잘못된 요청 - direction 값 오류 시 400 반환")
+  void find_Notification_IllegalArgument_Fail() throws Exception{
+    UUID userId = UUID.randomUUID();
+    String direction = "IllegalArgument"; // 잘못된 값
+    String cursor = "2025-04-25T00:00:00";
+    String after = "2025-04-25T00:00:00";
+    int limit = 20;
+
+    mockMvc.perform(get("/api/notifications")
+            .param("userId", userId.toString())
+            .param("direction", direction)
+            .param("cursor", cursor)
+            .param("after", after)
+            .param("limit", String.valueOf(limit))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
   }
 }
