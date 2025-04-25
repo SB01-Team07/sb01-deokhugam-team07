@@ -126,6 +126,7 @@ public class CommentService {
       LocalDateTime after,
       int limit
   ) {
+    log.debug("find comment list: reviewId = {}", reviewId);
     //리뷰 존재 여부 확인
     Review review = findReview(reviewId);
 
@@ -164,6 +165,7 @@ public class CommentService {
       nextAfter = last.getCreatedAt();
     }
 
+    log.info("find comment list: size = {}", content.size());
     return new CursorPageResponseCommentDto(
         content,
         nextCursor,
