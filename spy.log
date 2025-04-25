@@ -1,0 +1,7 @@
+1745547991525|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists books cascade |drop table if exists books cascade 
+1745547991526|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists comments cascade |drop table if exists comments cascade 
+1745547991526|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists dashboards cascade |drop table if exists dashboards cascade 
+1745547991526|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists likes cascade |drop table if exists likes cascade 
+1745547991526|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists notifications cascade |drop table if exists notifications cascade 
+1745547991527|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists reviews cascade |drop table if exists reviews cascade 
+1745547991527|0|statement|connection 23|url jdbc:h2:mem:testdb|drop table if exists users cascade |drop table if exists users cascade 
