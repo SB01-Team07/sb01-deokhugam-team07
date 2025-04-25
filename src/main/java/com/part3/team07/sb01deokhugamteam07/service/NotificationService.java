@@ -1,12 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
-import static com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType.REVIEW_COMMENTED;
-import static com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType.REVIEW_LIKED;
-import static com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType.REVIEW_RANKED;
 
 import com.part3.team07.sb01deokhugamteam07.dto.notification.NotificationDto;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
-import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPageResponseNotificationDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
@@ -16,14 +12,10 @@ import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
