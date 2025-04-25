@@ -131,6 +131,8 @@ class CommentServiceTest {
             savedComment.getUser().equals(testUser) &&
             savedComment.getReview().equals(testReview)
     ));
+    verify(reviewRepository).incrementCommentCount(comment.getReview().getId()); //댓글 증가 메서드 호출 확인
+
   }
 
   @Test
