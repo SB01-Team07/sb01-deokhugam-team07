@@ -12,6 +12,7 @@ public interface CommentRepositoryCustom {
       String direction,
       String cursor,
       LocalDateTime after,
-      int limit
+      int limit,
+      String sortBy
   );
 }

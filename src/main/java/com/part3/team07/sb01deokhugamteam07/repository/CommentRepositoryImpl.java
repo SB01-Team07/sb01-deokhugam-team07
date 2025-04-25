@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.QComment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,11 +23,12 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
       String direction,
       String cursor,
       LocalDateTime after,
-      int limit
+      int limit,
+      String sortBy
   ) {
     QComment comment = QComment.comment;
 
-    // 일치하는 리뷰의 댓글 중에 논리삭제 되지 않은 댓글을 가져온다.
+    //일치하는 리뷰의 댓글 중에 논리삭제 되지 않은 댓글을 가져온다.
     var query = queryFactory
         .selectFrom(comment)
         .where(
@@ -34,35 +36,63 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
             comment.isDeleted.isFalse()
         );
 
-    // 요구사항 기본 조건 , 추후에 정렬 조건 추가 되면 바로 적용
-    String sortBy = "createdAt";
-    
-    OrderSpecifier<?> order;
+    //커서 조건
+    BooleanExpression cursorCondition = getCursorCondition(sortBy, direction, cursor, after);
+    if (cursorCondition != null) {
+      query = query.where(cursorCondition);
+    }
+
+    //정렬 조건
+    OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(sortBy, direction);
+    query = query
+        .orderBy(orderSpecifiers)
+        .limit(limit + 1);
+
+    return query.fetch();
+  }
+
+  //커서 조건
+  private OrderSpecifier<?>[] getOrderSpecifiers(String sortBy, String direction) {
+    QComment comment = QComment.comment;
+    boolean isDesc = "DESC".equalsIgnoreCase(direction);
+
     switch (sortBy) {
       case "createdAt":
-        order = "ASC".equalsIgnoreCase(direction)
-            ? comment.createdAt.asc()
-            : comment.createdAt.desc();
-
-        if (cursor != null) {
-          LocalDateTime parsedCursor = LocalDateTime.parse(cursor);
-          query = "ASC".equalsIgnoreCase(direction)
-              ? query.where(comment.createdAt.gt(parsedCursor))
-              : query.where(comment.createdAt.lt(parsedCursor));
-        }
-
-        if (after != null) {
-          query = query.where(comment.createdAt.gt(after));
-        }
-        break;
+        return new OrderSpecifier[]{
+            isDesc ? comment.createdAt.desc() : comment.createdAt.asc()
+        };
 
       default:
         throw new IllegalArgumentException(sortBy);
     }
-
-    return query
-        .orderBy(order)
-        .limit(limit + 1)
-        .fetch();
   }
+
+  //정렬 조건
+  private BooleanExpression getCursorCondition(
+      String sortBy,
+      String direction,
+      String cursor,
+      LocalDateTime after
+  ) {
+    QComment comment = QComment.comment;
+    boolean isDesc = "DESC".equalsIgnoreCase(direction);
+
+    if (cursor == null && after == null) {
+      return null;
+    }
+
+    switch (sortBy) {
+      case "createdAt":
+        if (cursor != null) {
+          LocalDateTime parsed = LocalDateTime.parse(cursor);
+          return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
+        } else if (after != null) {
+          return comment.createdAt.gt(after);
+        }
+        break;
+    }
+
+    return comment.createdAt.gt(after);
+  }
+
 }
