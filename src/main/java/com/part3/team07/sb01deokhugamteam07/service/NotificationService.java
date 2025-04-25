@@ -91,6 +91,11 @@ public class NotificationService {
         "NotificationService.find() 호출 : userId={}, direction={}, cursor={}, after={}, limit={}",
         userId, direction, cursor, after, limit);
 
+    // 사용자 정보 없음
+    if(!userRepository.existsById(userId)){
+      throw new UserNotFoundException(userId);
+    }
+
     // 1. 커스텀 레포지토리에서 조회
     List<Notification> notifications = notificationRepositoryCustom.findByUserIdWithCursor(
         userId,

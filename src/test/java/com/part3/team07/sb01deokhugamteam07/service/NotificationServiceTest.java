@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -15,6 +16,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPage
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
@@ -165,6 +167,7 @@ class NotificationServiceTest {
     ReflectionTestUtils.setField(notification, "createdAt", cursor);
     List<Notification> notifications = List.of(notification);
 
+    when(userRepository.existsById(any(UUID.class))).thenReturn(true);
     when(notificationRepositoryCustom.findByUserIdWithCursor(userId, direction, null, null,
         limit + 1)).thenReturn(notifications);
 
@@ -182,5 +185,18 @@ class NotificationServiceTest {
     assertThat(result.nextCursor()).isEqualTo(null);
     assertFalse(result.hasNext());
     assertThat(result.content().get(0).userId()).isEqualTo(userId);
+  }
+
+  @Test
+  @DisplayName("userId가 존재하지 않는 userId 의 경우 UserNotFound 에러를 반환한다.")
+  public void find_Fail_With_NullUserId(){
+    // given
+    UUID nonUserId = UUID.randomUUID();
+
+    when(userRepository.existsById(nonUserId)).thenReturn(false);
+
+    assertThrows(UserNotFoundException.class, () -> {
+      notificationService.find(nonUserId, "desc", null, null, 20);
+    });
   }
 }
