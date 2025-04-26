@@ -43,6 +43,9 @@ class NotificationControllerTest {
   @MockitoBean
   private CustomUserDetailsService customUserDetailsService; //시큐리티
 
+  /**
+   * 알림 조회 관련 테스트
+   * **/
   @Test
   @DisplayName("알림 조회 성공")
   void find_Notification_Success() throws Exception {
@@ -90,6 +93,9 @@ class NotificationControllerTest {
         .andExpect(status().isBadRequest());
   }
 
+  /**
+   * 알림 읽음 상태 처리 관련 테스트
+   * **/
   @Test
   @DisplayName("알림 업데이트 성공")
   void update_Notification_Success() throws Exception {
@@ -136,5 +142,20 @@ class NotificationControllerTest {
             .content(objectMapper.writeValueAsString(notificationUpdateRequest))
             .with(csrf()))
         .andExpect(status().isBadRequest());
+  }
+
+  /**
+   * 모든 알림 상태 읽음 처리 관련 테스트
+   * **/
+  @Test
+  @DisplayName("모든 알림 업데이트 성공")
+  void update_All_Notification_Success() throws Exception {
+    UUID userId = UUID.randomUUID();
+    String requestHeader = "Deokhugam-Request-User-ID";
+
+    mockMvc.perform(patch("/api/notifications/read-all")
+            .header(requestHeader, userId.toString())
+            .with(csrf()))
+        .andExpect(status().isNoContent());
   }
 }

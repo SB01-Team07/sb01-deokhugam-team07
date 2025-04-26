@@ -45,6 +45,15 @@ public class NotificationController {
         .body(notificationService.update(notificationId, userId, request));
   }
 
+  @PatchMapping("/read-all")
+  public ResponseEntity<Void> updateAll(
+      @RequestHeader("Deokhugam-Request-User-ID") @NotNull UUID userId
+  ){
+    log.info("모든 알림 상태 읽음 처리: userId={}", userId);
+    notificationService.updateAll(userId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
   /**
    * 알림 목록을 커서 기반 페이지네이션으로 조회합니다.
    **/
