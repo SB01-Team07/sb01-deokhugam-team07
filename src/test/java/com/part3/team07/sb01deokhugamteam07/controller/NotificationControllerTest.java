@@ -119,20 +119,22 @@ class NotificationControllerTest {
         .content(objectMapper.writeValueAsString(notificationUpdateRequest))
         .with(csrf()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(notificationId))
-        .andExpect(jsonPath("$.userId").value(userId))
+        .andExpect(jsonPath("$.id").value(notificationId.toString()))
+        .andExpect(jsonPath("$.userId").value(userId.toString()))
         .andExpect(jsonPath("$.confirmed").value(true));
   }
 
   @Test
-  @DisplayName("잘못된 요창 - 요청자의 ID 누락")
+  @DisplayName("잘못된 요청 - 요청자의 ID 누락")
   void update_Notification_IllegalArgument_Fail() throws Exception {
+    UUID notificationId = UUID.randomUUID();
 
-  }
+    NotificationUpdateRequest notificationUpdateRequest = new NotificationUpdateRequest(true);
 
-  @Test
-  @DisplayName("알림 수정 권한이 없다")
-  void update_Notification_Forbidden_Fail() throws Exception {
-
+    mockMvc.perform(patch("/api/notifications/{notificationId}", notificationId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(notificationUpdateRequest))
+            .with(csrf()))
+        .andExpect(status().isBadRequest());
   }
 }
