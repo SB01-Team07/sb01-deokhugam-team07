@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.notification.NotificationDto;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPageResponseNotificationDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
@@ -12,6 +13,8 @@ import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -136,5 +139,9 @@ public class NotificationService {
         .size(content.size())
         .hasNext(hasNext)
         .build();
+  }
+
+  public NotificationDto update(UUID notificationId, UUID userId, NotificationUpdateRequest request) {
+    return NotificationDto.builder().build();
   }
 }
