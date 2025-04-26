@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +81,9 @@ class NotificationServiceTest {
     review = Review.builder().user(receiver).build();
   }
 
+  /**
+   * 알림 생성 관련 테스트
+   **/
   @Test
   @DisplayName("알림 생성 성공 : 좋아요")
   void create_Success_When_Review_is_Liked() {
@@ -158,6 +162,9 @@ class NotificationServiceTest {
     assertDoesNotThrow(() -> notificationService.create(request));
   }
 
+  /**
+   * 알림 조회 관련 테스트
+   * **/
   @Test
   @DisplayName("알림 목록 조회 성공")
   void find_Success() {
@@ -245,6 +252,9 @@ class NotificationServiceTest {
     });
   }
 
+  /**
+   * 알림 읽음 상태 처리 관련 테스트
+   * **/
   @Test
   @DisplayName("알림 업데이트 성공")
   public void update_Success(){
@@ -289,5 +299,55 @@ class NotificationServiceTest {
     assertThrows(NotificationNotFoundException.class, () -> {
       notificationService.update(NonNotificationId, userId, request);
     });
+  }
+
+  /**
+   * 모든 알림 상태 읽음 처리 관련 테스트
+   * **/
+  @Test
+  @DisplayName("모든 알림을 읽음 상태로 업데이트 성공")
+  public void update_All_Success(){
+    UUID userId = UUID.randomUUID();
+    Notification notification1 = Notification.builder()
+        .confirmed(false)
+        .build();
+    Notification notification2 = Notification.builder()
+        .confirmed(false)
+        .build();
+    List<Notification> notifications = List.of(notification1, notification2);
+
+    when(notificationRepository.findAllByUserId(userId)).thenReturn(notifications);
+    notificationService.updateAll(userId);
+
+    verify(notificationRepository).findAllByUserId(userId);
+    verify(userRepository, never()).existsById(any());
+    assertTrue(notification1.isConfirmed());
+    assertTrue(notification2.isConfirmed());
+  }
+
+  @Test
+  @DisplayName("빈 리스트가 반환된 경우 user 의 유무를 확인하고, 없을시 UserNotFoundException 를 반환한다.")
+  public void update_All_Fail_With_NonNotificationId(){
+    UUID userId = UUID.randomUUID();
+
+    when(notificationRepository.findAllByUserId(userId)).thenReturn(List.of());
+
+    assertThrows(UserNotFoundException.class, () -> {
+      notificationService.updateAll(userId);
+    });
+
+    verify(notificationRepository).findAllByUserId(userId);
+    verify(userRepository).existsById(userId);
+  }
+
+  /**
+   * 알림 삭제 관련 테스트
+   * **/
+  @Test
+  @DisplayName("알림 삭제 성공")
+  public void delete_Success(){
+    notificationService.delete();
+
+    verify(notificationRepository).deleteAllByConfirmedTrueAndCreatedAtBefore(any(LocalDateTime.class));
   }
 }
