@@ -158,4 +158,12 @@ class NotificationControllerTest {
             .with(csrf()))
         .andExpect(status().isNoContent());
   }
+
+  @Test
+  @DisplayName("잘못된 요청 - 요청자의 ID 누락")
+  void update_All_Notification_IllegalArgument_Fail() throws Exception {
+    mockMvc.perform(patch("/api/notifications/read-all")
+            .with(csrf()))
+        .andExpect(status().isBadRequest());
+  }
 }
