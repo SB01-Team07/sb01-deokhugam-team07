@@ -46,17 +46,13 @@ class LocalStorageTest {
   void put() throws IOException {
     // given
     Path filePath = storage.resolvePath(type, fileName);
-    System.out.println(filePath);
 
     // when
     storage.put(type, fileName, content);
 
-//    // then
-//    Path filePath = storage.resolvePath(type, fileName);
-//    System.out.println("************************ path: " + filePath);
-//    assertThat(Files.exists(filePath)).isTrue();
-//
-//    byte[] fileContent = Files.readAllBytes(filePath);
-//    assertThat(fileContent).isEqualTo(content);
+    // then
+    assertThat(Files.exists(filePath)).isTrue();
+    byte[] fileContent = Files.readAllBytes(filePath);
+    assertThat(fileContent).isEqualTo(content);
   }
 }

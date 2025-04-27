@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.file.StorageAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.file.StorageInitException;
 import com.part3.team07.sb01deokhugamteam07.exception.file.StorageSaveFailedException;
+import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,9 +45,11 @@ public class LocalStorage implements Storage {
   public void put(FileType type, String fileName, byte[] bytes) {
     Path filePath = resolvePath(type, fileName);
 
-    try (OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW)) {
+    try {
       Files.createDirectories(filePath.getParent());
-      outputStream.write(bytes);
+      try (OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW)) {
+        outputStream.write(bytes);
+      }
     } catch (FileAlreadyExistsException e) {
       throw StorageAlreadyExistsException.withFileName(fileName);
     } catch (IOException e) {
