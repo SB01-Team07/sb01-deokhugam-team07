@@ -8,6 +8,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -232,8 +233,8 @@ class CommentRepositoryCustomImplTest {
         10,
         "createdAt"
     ))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining(invalidCursor);
+        .isInstanceOf(InvalidCommentQueryException.class)
+        .hasMessageContaining("잘못된 커서 포맷입니다.");
   }
 
   @Test
@@ -251,9 +252,8 @@ class CommentRepositoryCustomImplTest {
         10,
         invalidSortBy
     ))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining(invalidSortBy);
-
+        .isInstanceOf(InvalidCommentQueryException.class)
+        .hasMessageContaining("지원하지 않는 정렬 필드입니다.");
   }
 
   @Test
@@ -271,7 +271,7 @@ class CommentRepositoryCustomImplTest {
         10,
         "CreatedAt"
     ))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(InvalidCommentQueryException.class)
         .hasMessageContaining("정렬 방향은 ASC 또는 DESC만 가능합니다.");
   }
 

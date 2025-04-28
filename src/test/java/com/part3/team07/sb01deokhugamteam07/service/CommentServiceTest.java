@@ -560,6 +560,6 @@ class CommentServiceTest {
         null,
         null,
         3
-    )).isInstanceOf(NoSuchElementException.class);
+    )).isInstanceOf(NoSuchElementException.class); //todo 예외 추가 시 변경 예정
   }
 }
