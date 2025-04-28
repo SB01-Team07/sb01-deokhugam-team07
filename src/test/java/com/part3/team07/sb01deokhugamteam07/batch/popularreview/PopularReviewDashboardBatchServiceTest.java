@@ -48,8 +48,6 @@ class PopularReviewDashboardBatchServiceTest {
   private LikeRepository likeRepository;
   @Mock
   private DashboardRepository dashboardRepository;
-  @Mock
-  private NotificationService notificationService;
 
   @InjectMocks
   private PopularReviewDashboardBatchService popularReviewDashboardBatchService;

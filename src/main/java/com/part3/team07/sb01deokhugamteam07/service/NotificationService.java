@@ -170,4 +170,20 @@ public class NotificationService {
         .updatedAt(notification.getUpdatedAt())
         .build();
   }
+
+  @Transactional
+  public void updateAll(UUID userId) {
+    List<Notification> notifications = notificationRepository.findAllByUserId(userId);
+
+    if(notifications.isEmpty()){
+      // 사용자 정보 없음
+      if(!userRepository.existsById(userId)){
+        throw new UserNotFoundException(userId);
+      }
+    }
+
+    for(Notification n : notifications){
+      n.updateConfirmed(true);
+    }
+  }
 }
