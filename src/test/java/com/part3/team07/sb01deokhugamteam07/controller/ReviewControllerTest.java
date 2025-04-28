@@ -479,20 +479,37 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.userId").value(userId.toString()));
     }
 
-    // TODO: 커스텀 예외 추가시 변경 예정
-/*    @Test
-    @DisplayName("존재하지 않는 리뷰 ID일 경우 404 예외 발생")
-    void toggleLike_reviewNotFound_shouldReturn404() throws Exception {
-        // given
+    @DisplayName("리뷰 좋아요 토글 - 요청자 ID 헤더 누락 시 400 반환")
+    @Test
+    void toggleLike_Failure_MissingUserIdHeader() throws Exception {
+        //given
+        UUID reviewId = UUID.randomUUID();
+
+        //when then
+        mockMvc.perform(post("/api/reviews/{reviewId}/like", reviewId)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
+                .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
+    }
+
+    @DisplayName("리뷰 좋아요 토글 - 리뷰가 존재하지 않을 경우 404 반환")
+    @Test
+    void toggleLike_Failure_ReviewNotFound() throws Exception {
+        //given
         UUID userId = UUID.randomUUID();
         UUID reviewId = UUID.randomUUID();
-        given(reviewService.toggleLike(reviewId, userId))
-                .willThrow(new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
-        // when & then
+        willThrow(new ReviewNotFoundException()).given(reviewService)
+                .toggleLike(reviewId, userId);
+
+        //when then
         mockMvc.perform(post("/api/reviews/{reviewId}/like", reviewId)
-                        .header("Deokhugam-Request-User-ID", userId))
-                .andExpect(status().isNotFound()); //404 에러
-    }*/
+                        .header("Deokhugam-Request-User-ID", userId.toString())
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("REVIEW_NOT_FOUND"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewNotFoundException"));
+    }
 
 }
