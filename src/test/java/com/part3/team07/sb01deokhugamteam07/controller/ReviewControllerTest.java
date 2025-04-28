@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
@@ -280,27 +281,44 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.rating").value(reviewDto.rating()));
     }
 
-    // TODO: 커스텀 예외 추가시 변경 예정
-/*    @DisplayName("작성자가 아닌 사용자가 리뷰를 작성하는 경우 400 에러가 발생한다.")
+    @DisplayName("리뷰 수정 - 요청자 ID 헤더 누락 시 400 반환")
     @Test
-    void test() throws Exception {
+    void updateReview_Failure_MissingUserIdHeader() throws Exception {
         //given
-        UUID userId = UUID.randomUUID();
         UUID reviewId = UUID.randomUUID();
-        ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
+        ReviewUpdateRequest request = new ReviewUpdateRequest("변경 내용", 3);
 
-        //when
-        given(reviewService.update(userId, reviewId, request))
-                .willThrow(new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."));
-
-        //then
+        //when then
         mockMvc.perform(patch("/api/reviews/{reviewId}", reviewId)
-                .header("Deokhugam-Request-User-ID", userId.toString())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-                .with(csrf()))
-                .andExpect(status().isBadRequest());
-    }*/
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
+                .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
+    }
+
+    @DisplayName("리뷰 수정 - 리뷰가 존재하지 않을 경우 404 반환")
+    @Test
+    void updateReview_Failure_ReviewNotFound() throws Exception {
+        //given
+        UUID reviewId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        ReviewUpdateRequest request = new ReviewUpdateRequest("변경 내용", 3);
+
+        given(reviewService.update(userId, reviewId, request))
+                .willThrow(new ReviewNotFoundException());
+
+        //when then
+        mockMvc.perform(patch("/api/reviews/{reviewId}", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("REVIEW_NOT_FOUND"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewNotFoundException"));
+    }
 
     @DisplayName("리뷰를 논리 삭제할 수 있다.")
     @Test
@@ -319,6 +337,10 @@ class ReviewControllerTest {
                     .andExpect(status().isNoContent());
         verify(reviewService).softDelete(userId, reviewId);
     }
+
+
+
+
 
     @DisplayName("리뷰를 물리 삭제할 수 있다.")
     @Test
