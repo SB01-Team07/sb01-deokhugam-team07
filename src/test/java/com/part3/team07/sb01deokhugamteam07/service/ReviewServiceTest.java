@@ -1,14 +1,18 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.Like;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +45,12 @@ class ReviewServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private LikeRepository likeRepository;
+
+    @Mock
+    private CommentService commentService;
+
     @InjectMocks
     private ReviewService reviewService;
 
@@ -49,6 +60,7 @@ class ReviewServiceTest {
     private User user;
     private Book book;
     private Review review;
+    private Like like;
     private ReviewDto reviewDto;
 
     @BeforeEach
@@ -73,7 +85,7 @@ class ReviewServiceTest {
                 .isbn(UUID.randomUUID().toString())
                 .thumbnailUrl("url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         ReflectionTestUtils.setField(book, "id", bookId);
 
@@ -86,6 +98,11 @@ class ReviewServiceTest {
                 .commentCount(0)
                 .build();
         ReflectionTestUtils.setField(review, "id", reviewId);
+
+        like = Like.builder()
+                .userId(userId)
+                .reviewId(reviewId)
+                .build();
 
         reviewDto = new ReviewDto(
                 reviewId,
@@ -238,5 +255,156 @@ class ReviewServiceTest {
         assertThatThrownBy(()-> reviewService.update(userId, otherReviewId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("리뷰를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("리뷰 논리 삭제를 할 수 있다.")
+    @Test
+    void softDelete() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.findAllByReviewId(reviewId)).willReturn(List.of(like));
+
+        //when
+        reviewService.softDelete(userId, reviewId);
+
+        //then
+        assertThat(review.isDeleted()).isTrue();
+        verify(likeRepository).findAllByReviewId(reviewId);
+    }
+
+    @DisplayName("존재하지 않은 리뷰는 논리 삭제할 수 없다.")
+    @Test
+    void softDelete_fail_whenUserIsNotAuthor() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> reviewService.softDelete(userId, reviewId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("본인이 작성하지 않은 리뷰는 논리 삭제할 수 없다.")
+    @Test
+    void softDelete_fail_whenReviewNotFound() {
+        //given
+        UUID otherUserId = UUID.randomUUID();
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when then
+        assertThatThrownBy(() -> reviewService.softDelete(otherUserId, reviewId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("book 기준으로 모든 리뷰를 논리 삭제한다.")
+    @Test
+    void softDeleteAllByBook() {
+        // given
+        Review review1 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰1")
+                .rating(4)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        Review review2 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰2")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        given(reviewRepository.findAllByBook(book)).willReturn(List.of(review1, review2));
+
+        // when
+        reviewService.softDeleteAllByBook(book);
+
+        // then
+        assertThat(review1.isDeleted()).isTrue();
+        assertThat(review2.isDeleted()).isTrue();
+    }
+
+    @DisplayName("user 기준으로 모든 리뷰를 논리 삭제한다.")
+    @Test
+    void softDeleteAllByUser() {
+        // given
+        Review review1 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰1")
+                .rating(4)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        Review review2 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("리뷰2")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        given(reviewRepository.findAllByUser(user)).willReturn(List.of(review1, review2));
+
+        // when
+        reviewService.softDeleteAllByUser(user);
+
+        // then
+        assertThat(review1.isDeleted()).isTrue();
+        assertThat(review2.isDeleted()).isTrue();
+    }
+
+
+    @DisplayName("리뷰를 물리 삭제할 수 있다.")
+    @Test
+    void hardDelete() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when
+        reviewService.hardDelete(userId, reviewId);
+
+        //then
+        verify(reviewRepository).delete(review);
+    }
+
+    @DisplayName("좋아요가 존재하지 않으면 추가한다")
+    @Test
+    void toggleLike_shouldAddLikeWhenNotExists() {
+        //given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.empty());
+
+        //when
+        ReviewLikeDto result = reviewService.toggleLike(reviewId, userId);
+
+        //then
+        assertThat(result.liked()).isTrue();
+    }
+
+    @Test
+    @DisplayName("좋아요가 존재하면 삭제한다")
+    void toggleLike_shouldCancelLikeWhenExists() {
+        // given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.of(like));
+
+        // when
+        ReviewLikeDto result = reviewService.toggleLike(reviewId, userId);
+
+        // then
+        assertThat(result.liked()).isFalse();
+    }
+
+    @Test
+    @DisplayName("좋아요 추가,해제 시 리뷰가 존재하지 않으면 예외가 발생한다")
+    void toggleLike_shouldThrowIfReviewNotFound() {
+        // given
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.toggleLike(reviewId, userId))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

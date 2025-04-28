@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,6 +11,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,10 +21,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
 
 @DataJpaTest
+@EnableJpaAuditing
 @ActiveProfiles("test")
 class DashboardRepositoryCustomImplTest {
 
@@ -45,156 +49,132 @@ class DashboardRepositoryCustomImplTest {
     dashboardRepositoryCustom = new DashboardRepositoryCustomImpl(queryFactory);
 
     // 테스트용 데이터 삽입
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-  }
-
-  /**
-   * findPowerUsersByPeriod 메서드
-   * 파워 유저 데이터를 담고 있는 대시보드 테이블을 조회해 페이지네이션을 지원하여 반환하는 메서드에 대한 테스트입니다.
-   *
-   * limit 이 11 인 이유는 서비스 단에서 hasNext 를 위해 limit + 1 값을 전달하기 때문입니다.
-   **/
-
-  @Test
-  @DisplayName("Daily 기간에 대해 데이터 조회")
-  public void testfindPowerUsersByDailyWithCursor() {
-
-    for (int i = 1; i <= 40; i++) {
+    for (int i = 1; i <= 20; i++) {
       Dashboard dashboard = Dashboard.builder()
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.DAILY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
 
       testEntityManager.persist(dashboard);
     }
+    for (int i = 1; i <= 20; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.REVIEW)
+          .period(Period.DAILY)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
 
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
-        "asc", null, null, 11);
-
-    assertEquals(11, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
+      testEntityManager.persist(dashboard);
     }
+    for (int i = 1; i <= 20; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.BOOK)
+          .period(Period.DAILY)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
 
-
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
-        "asc", cursor, after, 11);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("Weekly 기간에 대해 데이터 조회")
-  public void testfindPowerUsersByWeekly() {
-
-    for (int i = 1; i <= 30; i++) {
+      testEntityManager.persist(dashboard);
+    }
+    for (int i = 1; i <= 20; i++) {
       Dashboard dashboard = Dashboard.builder()
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.WEEKLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
 
       testEntityManager.persist(dashboard);
     }
+    for (int i = 1; i <= 20; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.REVIEW)
+          .period(Period.WEEKLY)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
 
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.WEEKLY,
-        "asc", null, null, 11);
-
-    assertEquals(11, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
+      testEntityManager.persist(dashboard);
     }
-
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.WEEKLY,
-        "asc", cursor, after, 11);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-
-  }
-
-  @Test
-  @DisplayName("Monthly 기간에 대해 데이터 조회")
-  public void testfindPowerUsersByMonthly() {
-
-    for (int i = 1; i <= 30; i++) {
+    for (int i = 1; i <= 20; i++) {
       Dashboard dashboard = Dashboard.builder()
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.MONTHLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
 
       testEntityManager.persist(dashboard);
     }
+    for (int i = 1; i <= 10; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.REVIEW)
+          .period(Period.MONTHLY)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
 
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // Monthly 기간에 대해 데이터 조회
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.MONTHLY,
-        "asc", null, null, 11);
-
-    assertEquals(11, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
+      testEntityManager.persist(dashboard);
     }
+    for (int i = 1; i <= 10; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.BOOK)
+          .period(Period.WEEKLY)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
 
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.MONTHLY,
-        "asc", cursor, after, 11);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() > firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("AllTime 기간에 대해 데이터 조회")
-  public void testfindPowerUsersByAllTime() {
-
-    for (int i = 1; i <= 30; i++) {
+      testEntityManager.persist(dashboard);
+    }
+    for (int i = 1; i <= 10; i++) {
       Dashboard dashboard = Dashboard.builder()
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.ALL_TIME)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+    }
+    for (int i = 1; i <= 10; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.REVIEW)
+          .period(Period.ALL_TIME)
+          .value(BigDecimal.valueOf(90 - i))
+          .rank(i)
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+    }
+    for (int i = 1; i <= 10; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.BOOK)
+          .period(Period.ALL_TIME)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -205,10 +185,36 @@ class DashboardRepositoryCustomImplTest {
     // 영속성 컨텍스트 초기화
     entityManager.flush();
     entityManager.clear();
+  }
 
-    // Monthly 기간에 대해 데이터 조회
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.ALL_TIME,
-        "asc", null, null, 11);
+  @Test
+  @DisplayName("KeyType 의 조건에 따라 대시보드를 조회해오는지 확인")
+  public void find_Dashboards_By_KeyType() {
+    for (KeyType keyType : KeyType.values()) {
+      List<Dashboard> page = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+          Period.DAILY,
+          "asc", null, null, 11, keyType);
+      assertThat(page).allMatch(dashboard -> dashboard.getKeyType() == keyType);
+    }
+  }
+
+  @Test
+  @DisplayName("Period 의 조건에 따라 대시보드를 조회해오는지 확인")
+  public void find_Dashboards_By_Period() {
+    for (Period period : Period.values()) {
+      List<Dashboard> page = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(period,
+          "asc", null, null, 11, KeyType.BOOK);
+      assertThat(page).allMatch(dashboard -> dashboard.getPeriod() == period);
+    }
+  }
+
+  @Test
+  @DisplayName("페이지네이션 동작 여부 확인")
+  public void test_Pagination_Limit() {
+
+    // 첫 번째 페이지
+    List<Dashboard> firstPage = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(Period.DAILY,
+        "asc", null, null, 11, KeyType.USER);
 
     assertEquals(11, firstPage.size());
     for (int i = 0; i < firstPage.size() - 1; i++) {
@@ -219,486 +225,104 @@ class DashboardRepositoryCustomImplTest {
     // 두 번째 페이지
     String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
     String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.ALL_TIME,
-        "asc", cursor, after, 11);
+    List<Dashboard> secondPage = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(Period.DAILY,
+        "asc", cursor, after, 11, KeyType.USER);
 
     // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() > firstPage.get(firstPage.size() - 1).getRank(),
+    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
         "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
   }
 
   @Test
   @DisplayName("동점자(rank 중복) 존재 시에도 페이지네이션 동작")
   public void test_Find_PowerUser_with_Tied_Ranks() {
-
-    for (int i = 1; i <= 40; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.USER)
-          .period(Period.DAILY)
-          .value(90 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-
-      testEntityManager.persist(dashboard);
-    }
     Dashboard tiedDashboard = Dashboard.builder() // 동점자 처리 테스트 용
         .key(UUID.randomUUID())
         .keyType(KeyType.USER)
         .period(Period.DAILY)
-        .value(60)
-        .rank(30)
+        .value(BigDecimal.valueOf(70))
+        .rank(20)
         .valueType(ValueType.SCORE)
         .build();
+
     testEntityManager.persist(tiedDashboard);
+
+    for (int i = 1; i <= 10; i++) {
+      Dashboard dashboard = Dashboard.builder()
+          .key(UUID.randomUUID())
+          .keyType(KeyType.USER)
+          .period(Period.DAILY)
+          .value(BigDecimal.valueOf(70 - i))
+          .rank(21 + i) // 20 등이 2명 일시, 그 다음 사람은 22 -> 20 20 22
+          .valueType(ValueType.SCORE)
+          .build();
+
+      testEntityManager.persist(dashboard);
+
+    }
 
     // 영속성 컨텍스트 초기화
     entityManager.flush();
     entityManager.clear();
 
     // 첫 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
-        "asc", null, null, 31); // 동점자 포함해서 rank=30이 2개이므로 31까지 조회
+    List<Dashboard> firstPage = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY,
+        "asc", null, null, 21, KeyType.USER); // 동점자 포함해서 rank=20이 2개이므로 21까지 조회
 
-    assertEquals(31, firstPage.size(), "동점자 포함 31개 조회되어야 함");
+    assertEquals(21, firstPage.size(), "동점자 포함 21개 조회되어야 함");
 
-    List<Dashboard> rank30DashBoards = firstPage.stream().filter(d -> d.getRank() == 30).toList();
+    List<Dashboard> rank30DashBoards = firstPage.stream().filter(d -> d.getRank() == 20).toList();
     assertEquals(2, rank30DashBoards.size(), "rank=30 인 Dashboard 가 2개 있어야 함 (동점자)");
     assertTrue(
         rank30DashBoards.get(0).getCreatedAt().isBefore(rank30DashBoards.get(1).getCreatedAt()),
         "먼저 만든 rank=30이 먼저 나와야 함 (createdAt 기준)");
 
-    // 두 번째 페이지 조회 : cursor 를 rank = 30 으로 하면 동점자 이후로 넘어가는지 확인
-    String cursor = String.valueOf(30);
+    // 두 번째 페이지 조회 : cursor 를 rank = 20 으로 하면 동점자 이후로 넘어가는지 확인
+    String cursor = String.valueOf(20);
     String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPowerUsersByPeriod(Period.DAILY,
-        "asc", cursor, after, 10);
+    List<Dashboard> secondPage = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY,
+        "asc", cursor, after, 10, KeyType.USER);
 
-    assertTrue(secondPage.stream().allMatch(d -> d.getRank() > 30),
-        "두 번째 페이지에는 rank=30보다 큰 값만 있어야 함");
-  }
-
-  /**
-   * findPopularReviewByPeriod 메서드
-   * 인기 리뷰 데이터를 담고 있는 대시보드 테이블을 조회해 페이지네이션을 지원하여 반환하는 메서드에 대한 테스트입니다.
-   *
-   * limit 이 51 인 이유는 서비스 단에서 hasNext 를 위해 limit + 1 값을 전달하고, limit 의 default가 50이기 때문입니다.
-   **/
-
-  @Test
-  @DisplayName("Daily 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Review_By_Daily_With_Cursor() {
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.REVIEW)
-          .period(Period.DAILY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.DAILY,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.DAILY,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
+    assertTrue(secondPage.stream().allMatch(d -> d.getRank() > 20),
+        "두 번째 페이지에는 rank=20보다 큰 값만 있어야 함");
   }
 
   @Test
-  @DisplayName("Weekly 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Review_By_Weekly_With_Cursor() {
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.REVIEW)
-          .period(Period.WEEKLY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.WEEKLY,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.WEEKLY,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
+  @DisplayName("잘못된 커서 값이 들어온 경우 기본값 처리 확인")
+  public void test_Invalid_Cursor_Value() {
+    List<Dashboard> result = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "asc", "invalid_cursor", null, 10, KeyType.USER);
+    assertEquals(result.get(0).getRank(), 1);
   }
 
   @Test
-  @DisplayName("Monthly 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Review_By_Monthly_With_Cursor() {
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.REVIEW)
-          .period(Period.MONTHLY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
+  @DisplayName("커서 값이 Cursor 만 전달됐을 경우에도 처리할 수 있음을 확인")
+  public void test_Cursor_Without_After(){
+    List<Dashboard> result = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "asc", "9", null, 10, KeyType.USER);
 
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.MONTHLY,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.MONTHLY,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
+    assertEquals(result.get(0).getRank(), 10);
   }
 
   @Test
-  @DisplayName("All Time 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Review_By_All_Time_With_Cursor() {
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.REVIEW)
-          .period(Period.ALL_TIME)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
+  @DisplayName("오름차순 내림차순 처리 확인")
+  public void test_Asc_Desc() {
+    // 오름차순 테스트
+    List<Dashboard> ascResult = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "asc", "invalid_cursor", null, 10, KeyType.USER);
+
+    for (int i = 0; i < ascResult.size() - 1; i++) {
+      assertTrue(ascResult.get(i).getRank() < ascResult.get(i + 1).getRank());
     }
 
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
+    // 내림차순 테스트
+    List<Dashboard> descResult = dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        Period.DAILY, "desc", "invalid_cursor", null, 10, KeyType.USER);
 
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.ALL_TIME,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
+    for (int i = 0; i < ascResult.size() - 1; i++) {
+      assertTrue(descResult.get(i).getRank() > ascResult.get(i + 1).getRank());
     }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.ALL_TIME,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("전달한 Period 대로 데이터를 조회하고 있는지 확인")
-  public void should_Find_Popular_Reviews_By_Monthly_Period_With_Cursor() {
-    for (int i = 1; i <= 2; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.REVIEW)
-          .period(Period.WEEKLY)
-          .value(100 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.REVIEW)
-          .period(Period.MONTHLY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.MONTHLY,
-        "asc", null, null, 51);
-
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularReviewByPeriod(Period.MONTHLY,
-        "asc", cursor, after, 51);
-
-    // Period 가 Monthly 로 전달되고 있는지 확인
-    assertEquals(Period.MONTHLY, firstPage.get(0).getPeriod());
-    assertEquals(Period.MONTHLY, secondPage.get(0).getPeriod());
-  }
-
-  /**
-   * findPopularBookByPeriod 메서드
-   * 인기 도서 데이터를 담고 있는 대시보드 테이블을 조회해 페이지네이션을 지원하여 반환하는 메서드에 대한 테스트입니다.
-   *
-   * limit 이 51 인 이유는 서비스 단에서 hasNext 를 위해 limit + 1 값을 전달하고, limit 의 default가 50이기 때문입니다.
-   **/
-  @Test
-  @DisplayName("Daily 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Book_By_Daily_With_Cursor() {
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.BOOK)
-          .period(Period.DAILY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.DAILY,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.DAILY,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("Weekly 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Book_By_Weekly_With_Cursor() {
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.BOOK)
-          .period(Period.WEEKLY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.WEEKLY,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.WEEKLY,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("Monthly 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Book_By_Monthly_With_Cursor() {
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.BOOK)
-          .period(Period.MONTHLY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.MONTHLY,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.MONTHLY,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("All Time 기간에 대해 데이터 조회")
-  public void test_Find_Popular_Book_By_All_Time_With_Cursor() {
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.BOOK)
-          .period(Period.ALL_TIME)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.ALL_TIME,
-        "asc", null, null, 51);
-
-    assertEquals(51, firstPage.size());
-    for (int i = 0; i < firstPage.size() - 1; i++) {
-      assertTrue(firstPage.get(i).getRank() < firstPage.get(i + 1).getRank(),
-          "랭킹 오름차순 정렬");
-    }
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.ALL_TIME,
-        "asc", cursor, after, 51);
-
-    // cursor 이후의 데이터가 반환되는지 확인
-    assertTrue(secondPage.get(0).getRank() >= firstPage.get(firstPage.size() - 1).getRank(),
-        "두 번째 페이지의 첫 번째 항목은 첫 페이지의 마지막 항목보다 rank가 커야 함");
-  }
-
-  @Test
-  @DisplayName("전달한 Period 대로 데이터를 조회하고 있는지 확인")
-  public void should_Find_Popular_Books_By_Monthly_Period_With_Cursor() {
-    for (int i = 1; i <= 2; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.BOOK)
-          .period(Period.WEEKLY)
-          .value(100 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    for (int i = 1; i <= 100; i++) {
-      Dashboard dashboard = Dashboard.builder()
-          .key(UUID.randomUUID())
-          .keyType(KeyType.BOOK)
-          .period(Period.MONTHLY)
-          .value(150 - i)
-          .rank(i)
-          .valueType(ValueType.SCORE)
-          .build();
-      testEntityManager.persist(dashboard);
-    }
-
-    // 영속성 컨텍스트 초기화
-    entityManager.flush();
-    entityManager.clear();
-
-    // 첫 번째 페이지
-    List<Dashboard> firstPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.MONTHLY,
-        "asc", null, null, 51);
-
-    // 두 번째 페이지
-    String cursor = String.valueOf(firstPage.get(firstPage.size() - 1).getRank());
-    String after = String.valueOf(firstPage.get(firstPage.size() - 1).getCreatedAt());
-    List<Dashboard> secondPage = dashboardRepositoryCustom.findPopularBookByPeriod(Period.MONTHLY,
-        "asc", cursor, after, 51);
-
-    // Period 가 Monthly 로 전달되고 있는지 확인
-    assertEquals(Period.MONTHLY, firstPage.get(0).getPeriod());
-    assertEquals(Period.MONTHLY, secondPage.get(0).getPeriod());
   }
 }

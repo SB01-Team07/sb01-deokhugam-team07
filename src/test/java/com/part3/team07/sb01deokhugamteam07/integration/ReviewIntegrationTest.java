@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,7 @@ public class ReviewIntegrationTest {
                 .isbn("1234567890123")
                 .thumbnailUrl("url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -120,7 +121,7 @@ public class ReviewIntegrationTest {
                 .isbn("1234567890123")
                 .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -170,7 +171,7 @@ public class ReviewIntegrationTest {
                 .isbn("1234567890123")
                 .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -194,5 +195,128 @@ public class ReviewIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value(request.content()))
                 .andExpect(jsonPath("$.rating").value(request.rating()));
+    }
+
+    @DisplayName("리뷰 논리 삭제 api 통합 테스트")
+    @Test
+    void softDelete() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("user")
+                .email("user@abc.com")
+                .password("user1234")
+                .build();
+        userRepository.save(user);
+
+        Book book = Book.builder()
+                .title("Book")
+                .author("Author")
+                .description("Description")
+                .publisher("Publisher")
+                .publishDate(LocalDate.now())
+                .isbn("1234567890123")
+                .thumbnailFileName("Url")
+                .reviewCount(0)
+                .rating(BigDecimal.ZERO)
+                .build();
+        bookRepository.save(book);
+
+        Review review = Review.builder()
+                .user(user)
+                .book(book)
+                .content("정말 좋은 책입니다.")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        reviewRepository.save(review);
+
+        //when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}", review.getId())
+                .header("Deokhugam-Request-User-ID", user.getId().toString()))
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("리뷰 물리 삭제 api 통합 테스트")
+    @Test
+    void hardDelete() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("user")
+                .email("user@abc.com")
+                .password("user1234")
+                .build();
+        userRepository.save(user);
+
+        Book book = Book.builder()
+                .title("Book")
+                .author("Author")
+                .description("Description")
+                .publisher("Publisher")
+                .publishDate(LocalDate.now())
+                .isbn("1234567890123")
+                .thumbnailFileName("Url")
+                .reviewCount(0)
+                .rating(BigDecimal.ZERO)
+                .build();
+        bookRepository.save(book);
+
+        Review review = Review.builder()
+                .user(user)
+                .book(book)
+                .content("정말 좋은 책입니다.")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        reviewRepository.save(review);
+
+        //when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}/hard", review.getId())
+                .header("Deokhugam-Request-User-ID", user.getId().toString()))
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("리뷰 좋아요 api 통합 테스트")
+    @Test
+    void test() throws Exception {
+        //given
+        User user = User.builder()
+                .nickname("user")
+                .email("user@abc.com")
+                .password("user1234")
+                .build();
+        userRepository.save(user);
+
+        Book book = Book.builder()
+                .title("Book")
+                .author("Author")
+                .description("Description")
+                .publisher("Publisher")
+                .publishDate(LocalDate.now())
+                .isbn("1234567890123")
+                .thumbnailFileName("Url")
+                .reviewCount(0)
+                .rating(BigDecimal.ZERO)
+                .build();
+        bookRepository.save(book);
+
+        Review review = Review.builder()
+                .user(user)
+                .book(book)
+                .content("정말 좋은 책입니다.")
+                .rating(5)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+        reviewRepository.save(review);
+
+        //when then
+        mockMvc.perform(post("/api/reviews/{reviewId}/like", review.getId())
+                .header("Deokhugam-Request-User-ID", user.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reviewId").value(review.getId().toString()))
+                .andExpect(jsonPath("$.userId").value(user.getId().toString()))
+                .andExpect(jsonPath("$.liked").value(true));
     }
 }

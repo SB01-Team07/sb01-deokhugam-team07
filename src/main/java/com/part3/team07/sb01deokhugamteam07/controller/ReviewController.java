@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/reviews")
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -45,10 +46,43 @@ public class ReviewController {
     public ResponseEntity<ReviewDto> update(
             @PathVariable UUID reviewId,
             @RequestHeader("Deokhugam-Request-User-ID") UUID userId,
-            @RequestBody @Valid ReviewUpdateRequest request){
+            @RequestBody @Valid ReviewUpdateRequest request) {
         log.info("리뷰 수정 요청: {}", reviewId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.update(userId, reviewId, request));
     }
+
+    @DeleteMapping("{reviewId}")
+    public ResponseEntity<Void> softDelete(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        log.info("리뷰 논리 삭제 요청: {}", reviewId);
+        reviewService.softDelete(userId, reviewId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @DeleteMapping({"/{reviewId}/hard"})
+    public ResponseEntity<Void> hardDelete(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        log.info("리뷰 물리 삭제 요청: {}", reviewId);
+        reviewService.hardDelete(userId, reviewId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @PostMapping("{reviewId}/like")
+    public ResponseEntity<ReviewLikeDto> toggleLike(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
+        log.info("좋아요 등록, 취소 요청: {}", reviewId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(reviewService.toggleLike(reviewId, userId));
+    }
+
 }

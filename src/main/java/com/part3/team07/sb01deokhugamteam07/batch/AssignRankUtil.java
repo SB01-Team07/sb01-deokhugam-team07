@@ -1,9 +1,10 @@
-package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
+package com.part3.team07.sb01deokhugamteam07.batch;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,11 @@ public class AssignRankUtil {
         rank = i + 1; // 새로운 점수일시 rank 증가, 동점자 처리
       }
 
+      BigDecimal scoreBigDecimal = BigDecimal.valueOf(score);
+
       // ValueType : SCORE 인 Dashboard 객체에 rank 정보 추가하여 저장
       dashboards.add(
-          new Dashboard(id, keyType, period, score, ValueType.SCORE, rank)
+          new Dashboard(id, keyType, period, scoreBigDecimal, ValueType.SCORE, rank)
       );
 
       prevScore = score;

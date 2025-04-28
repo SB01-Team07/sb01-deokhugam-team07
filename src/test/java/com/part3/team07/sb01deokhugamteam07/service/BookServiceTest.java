@@ -16,6 +16,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsExce
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -64,7 +65,7 @@ class BookServiceTest {
     publishedDate = LocalDate.of(1618, 1, 1);
 
     book = new Book(title, author, description, publisher, publishedDate,
-        isbn, "", 0, 0);
+        isbn, "", 0, BigDecimal.ZERO);
   }
 
   @Nested
@@ -93,7 +94,7 @@ class BookServiceTest {
           "",
           "",
           0,
-          0,
+          BigDecimal.ZERO,
           LocalDateTime.now(),
           LocalDateTime.now()
       );
@@ -167,7 +168,7 @@ class BookServiceTest {
           "",
           "",
           0,
-          0,
+          BigDecimal.ZERO,
           LocalDateTime.now(),
           LocalDateTime.now()
       );

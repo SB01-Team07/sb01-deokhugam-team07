@@ -1,13 +1,14 @@
 package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
+import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
@@ -20,10 +21,10 @@ import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -39,11 +40,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 class PowerUserDashboardBatchServiceTest {
 
   @Mock
+  private DateRangeUtil dateRangeUtil;
+  @Mock
+  private AssignRankUtil assignRank;
+  @Mock
   private UserRepository userRepository;
   @Mock
   private ReviewRepository reviewRepository;
-  @Mock
-  private DateRangeUtil dateRangeUtil;
   @Mock
   private LikeRepository likeRepository;
   @Mock
@@ -67,81 +70,9 @@ class PowerUserDashboardBatchServiceTest {
 //  }
 
   @Test
-  @DisplayName("score 정렬 후 rank 지정하기")
-  void AssignRank_BasedOnScore() {
-    UUID userId1 = UUID.randomUUID();
-    UUID userId2 = UUID.randomUUID();
-    UUID userId3 = UUID.randomUUID();
-    UUID userId4 = UUID.randomUUID();
-
-    Map<UUID, Double> userScoreMap = new HashMap<>();
-
-    userScoreMap.put(userId1, 70.0);
-    userScoreMap.put(userId2, 90.0);
-    userScoreMap.put(userId3, 80.0);
-    userScoreMap.put(userId4, 80.0);
-
-    Period period = Period.WEEKLY;
-    KeyType keyType = KeyType.USER;
-
-    List<Dashboard> dashboards = new ArrayList<>();
-
-    List<Dashboard> assignUserRank = powerUserDashboardBatchService.assignUserRank(userScoreMap,
-        period, keyType, dashboards);
-
-    assertThat(assignUserRank).hasSize(4);
-
-    ReflectionTestUtils.setField(assignUserRank.get(0), "id", userId2);
-    ReflectionTestUtils.setField(assignUserRank.get(1), "id", userId3);
-    ReflectionTestUtils.setField(assignUserRank.get(2), "id", userId4);
-    ReflectionTestUtils.setField(assignUserRank.get(3), "id", userId1);
-
-    // 확인 용 Map
-    Map<UUID, Integer> expectedRanks = Map.of(
-        userId2, 1,
-        userId3, 2,
-        userId4, 2,
-        userId1, 4
-    );
-
-    assertThat(
-        assignUserRank.stream().filter(d -> d.getId().equals(userId3)).findFirst().get().getRank()
-    ).isEqualTo(
-        assignUserRank.stream().filter(d -> d.getId().equals(userId4)).findFirst().get().getRank()
-    );
-
-    for (Dashboard d : assignUserRank) {
-      UUID id = d.getId();
-      assertThat(d.getRank()).isEqualTo(expectedRanks.get(id));
-      assertThat(d.getValue()).isEqualTo(userScoreMap.get(id));
-      assertThat(d.getValueType()).isEqualTo(ValueType.SCORE);
-    }
-  }
-
-  @Test
   @DisplayName("파워 유저 대시보드 데이터 저장 성공")
-  void savePowerUserDashboardData_success() {
+  void save_Power_User_Dashboard_Data_Success() {
     Period period = Period.WEEKLY;
-
-    // 사용자 설정
-    UUID userId1 = UUID.randomUUID();
-    UUID userId2 = UUID.randomUUID();
-
-    User user1 = User.builder()
-        .nickname("testUser1")
-        .password("password12")
-        .email("test1@domain.com")
-        .build();
-    ReflectionTestUtils.setField(user1, "id", userId1);
-
-    User user2 = User.builder()
-        .nickname("testUser2")
-        .password("password34")
-        .email("test2@domain.com")
-        .build();
-    ReflectionTestUtils.setField(user2, "id", userId2);
-
-    List<User> users = List.of(user1, user2);
 
     // Period 설정
     LocalDate[] dateRange = new LocalDate[]{
@@ -149,8 +80,22 @@ class PowerUserDashboardBatchServiceTest {
         LocalDate.of(2025, 4, 21),
     };
 
-    when(dateRangeUtil.getDateRange(period)).thenReturn(dateRange);
-    when(userRepository.findByIsDeletedFalse()).thenReturn(users);
+    // 사용자 설정
+    UUID userId1 = UUID.randomUUID();
+    User user1 = User.builder()
+        .nickname("testUser1")
+        .password("password12")
+        .email("test1@domain.com")
+        .build();
+    ReflectionTestUtils.setField(user1, "id", userId1);
+    UUID userId2 = UUID.randomUUID();
+    User user2 = User.builder()
+        .nickname("testUser2")
+        .password("password34")
+        .email("test2@domain.com")
+        .build();
+    ReflectionTestUtils.setField(user2, "id", userId2);
+    List<User> users = List.of(user1, user2);
 
     // 각 사용자 별 리뷰 설정
     List<Review> user1Reviews = new ArrayList<>();
@@ -164,7 +109,6 @@ class PowerUserDashboardBatchServiceTest {
         .commentCount(10)
         .build();
     user1Reviews.add(review1);
-
     List<Review> user2Reviews = new ArrayList<>();
     Book book2 = Book.builder().build();
     Review review2 = Review.builder()
@@ -177,25 +121,43 @@ class PowerUserDashboardBatchServiceTest {
         .build();
     user1Reviews.add(review2);
 
+    // 대시보드 설정
+    List<Dashboard> dashboards = List.of(
+        Dashboard.builder()
+            .key(userId1)
+            .keyType(KeyType.USER)
+            .period(period)
+            .value(BigDecimal.valueOf(1 * 0.5 + 5 * 0.2 + 10 * 0.3))
+            .valueType(ValueType.SCORE)
+            .rank(2)
+            .build(),
+        Dashboard.builder()
+            .key(userId2)
+            .keyType(KeyType.USER)
+            .period(period)
+            .value(BigDecimal.valueOf(1 * 0.5 + 7 * 0.2 + 15 * 0.3))
+            .valueType(ValueType.SCORE)
+            .rank(1)
+            .build()
+    );
+
+    when(dateRangeUtil.getDateRange(period)).thenReturn(dateRange);
+    when(userRepository.findByIsDeletedFalse()).thenReturn(users);
     when(reviewRepository.findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
         eq(userId1), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(user1Reviews);
-
     when(reviewRepository.findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
         eq(userId2), any(LocalDateTime.class), any(LocalDateTime.class)))
         .thenReturn(user2Reviews);
-
-    // 좋아요, 댓글 카운트 설정
     when(likeRepository.countByUserIdAndCreatedAtBetween(eq(userId1), any(LocalDateTime.class),
         any(LocalDateTime.class))).thenReturn(15L);
-
     when(likeRepository.countByUserIdAndCreatedAtBetween(eq(userId2), any(LocalDateTime.class),
         any(LocalDateTime.class))).thenReturn(5L);
-
     when(commentRepository.countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(eq(userId1),
         any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(20L);
-
     when(commentRepository.countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(eq(userId2),
         any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(3L);
+    when(assignRank.assignRank(any(Map.class), eq(period), eq(KeyType.USER),
+        any(List.class))).thenReturn(dashboards);
 
     // when
     powerUserDashboardBatchService.savePowerUserDashboardData(period);

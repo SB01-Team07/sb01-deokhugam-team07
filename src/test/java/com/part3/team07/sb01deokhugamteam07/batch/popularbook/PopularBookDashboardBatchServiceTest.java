@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
+package com.part3.team07.sb01deokhugamteam07.batch.popularbook;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
+import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
@@ -16,6 +18,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,7 +51,7 @@ class PopularBookDashboardBatchServiceTest {
 
   @Test
   @DisplayName("인기 도서 대시보드 데이터 저장 성공")
-  void save_Popular_Book_Dashboard_Data_success() {
+  void save_Popular_Book_Dashboard_Data_Success() {
     Period period = Period.WEEKLY;
 
     // Period 설정
@@ -66,7 +69,7 @@ class PopularBookDashboardBatchServiceTest {
         .publisher("publisher1")
         .publishDate(LocalDate.now())
         .reviewCount(5)
-        .rating(4)
+        .rating(BigDecimal.valueOf(4))
         .build();
     ReflectionTestUtils.setField(book1, "id", bookId1);
     UUID bookId2 = UUID.randomUUID();
@@ -77,11 +80,12 @@ class PopularBookDashboardBatchServiceTest {
         .publisher("publisher2")
         .publishDate(LocalDate.now())
         .reviewCount(10)
-        .rating(5)
+        .rating(BigDecimal.valueOf(5))
         .build();
     ReflectionTestUtils.setField(book2, "id", bookId2);
     List<Book> books = List.of(book1, book2);
 
+    // 점수 계산을 위한 Review
     UUID reviewId1 = UUID.randomUUID();
     Review review1 = Review.builder()
         .content("test Content1")
@@ -111,7 +115,7 @@ class PopularBookDashboardBatchServiceTest {
             .key(bookId2)
             .keyType(KeyType.BOOK)
             .period(period)
-            .value( 1*0.4 + 5/1*0.6 )
+            .value(BigDecimal.valueOf(1 * 0.4 + 5 / 1 * 0.6))
             .valueType(ValueType.SCORE)
             .rank(1)
             .build(),
@@ -119,7 +123,7 @@ class PopularBookDashboardBatchServiceTest {
             .key(bookId1)
             .keyType(KeyType.BOOK)
             .period(period)
-            .value( 1*0.4 + 3/1*0.6 )
+            .value(BigDecimal.valueOf(1 * 0.4 + 3 / 1 * 0.6))
             .valueType(ValueType.SCORE)
             .rank(2)
             .build()
@@ -127,28 +131,19 @@ class PopularBookDashboardBatchServiceTest {
 
     when(bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(books);
     when(dataRangeUtil.getDateRange(period)).thenReturn(dateRange);
-    when(reviewRepository.findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(
-        eq(bookId1),
-        any(LocalDateTime.class),
-        any(LocalDateTime.class)
-    )).thenReturn(reviews1);
-    when(reviewRepository.findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(
-        eq(bookId2),
-        any(LocalDateTime.class),
-        any(LocalDateTime.class)
-    )).thenReturn(reviews2);
-    when(assignRank.assignRank(
-        any(Map.class),
-        eq(period),
-        eq(KeyType.BOOK),
-        any(List.class)
-    )).thenReturn(dashboards);
+    when(reviewRepository.findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(eq(bookId1),
+        any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(reviews1);
+    when(reviewRepository.findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(eq(bookId2),
+        any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(reviews2);
+    when(assignRank.assignRank(any(Map.class), eq(period), eq(KeyType.BOOK),
+        any(List.class))).thenReturn(dashboards);
 
     // when
     popularBookDashboardBatchService.savePopularBookDashboardData(period);
 
     verify(bookRepository).findByIsDeletedFalseOrderByCreatedAtAsc();
-    verify(reviewRepository, times(2)).findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(any(), any(), any());
+    verify(reviewRepository, times(2)).findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(any(),
+        any(), any());
     verify(dashboardRepository).saveAll(any());
   }
 

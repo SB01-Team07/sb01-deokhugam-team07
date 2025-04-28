@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.dto.review;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,11 +14,11 @@ public record PopularReviewDto (
     UUID userId,
     String userNickname,
     String reviewContent,
-    double reviewRating,
+    BigDecimal reviewRating,
     Period period,
     LocalDateTime createdAt,
     int rank,
-    double score,
+    BigDecimal score,
     int likeCount,
     int commentCount
 ){

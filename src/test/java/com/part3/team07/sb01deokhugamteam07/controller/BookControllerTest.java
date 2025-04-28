@@ -17,6 +17,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -105,7 +106,7 @@ public class BookControllerTest {
         "",
         "",
         0,
-        0,
+        BigDecimal.ZERO,
         LocalDateTime.now(),
         LocalDateTime.now()
     );
@@ -169,7 +170,7 @@ public class BookControllerTest {
           "",
           "",
           0,
-          0,
+          BigDecimal.ZERO,
           LocalDateTime.now(),
           LocalDateTime.now()
       );

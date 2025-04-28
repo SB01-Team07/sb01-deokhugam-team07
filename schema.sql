@@ -10,7 +10,7 @@ CREATE TABLE users
     is_deleted BOOLEAN             NOT NULL DEFAULT FALSE,
     email      VARCHAR(255) UNIQUE NOT NULL,
     nickname   VARCHAR(20)         NOT NULL,
-    password   VARCHAR(20)         NOT NULL
+    password   VARCHAR(255)         NOT NULL
 );
 
 CREATE TABLE books
@@ -79,7 +79,9 @@ CREATE TABLE likes
     id         UUID PRIMARY KEY,
     user_id    UUID NOT NULL,
     review_id  UUID NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_DATE,
+    is_deleted BOOLEAN             NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP     NOT NULL,
+    updated_at TIMESTAMP,
     CONSTRAINT unique_review_like UNIQUE (user_id, review_id)
 );
 

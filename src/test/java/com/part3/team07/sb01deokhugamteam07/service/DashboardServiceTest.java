@@ -24,6 +24,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,7 +70,7 @@ class DashboardServiceTest {
 
     // dashboardRepositoryCustom 반환 목 객체
     List<Dashboard> mockDashboards = List.of(
-        new Dashboard(userId, KeyType.USER, period, 78.69999999999999,
+        new Dashboard(userId, KeyType.USER, period, BigDecimal.valueOf(78.69999999999999),
             ValueType.SCORE, 1)
     );
     // userRepository 반환 목 객체
@@ -86,9 +87,9 @@ class DashboardServiceTest {
 
     // dashboardRepository 반환 목 객체
     List<UserMetricsDTO> mockUserMetrics = List.of(new UserMetricsDTO(userId,
-        94.19999999999999,
-        38.0,
-        80.0));
+        BigDecimal.valueOf(94.19999999999999),
+        BigDecimal.valueOf(38.0),
+        BigDecimal.valueOf(80.0)));
     // content 으로 쓰이는 PowerUserDto 객체
     List<PowerUserDto> mockPowerUsers = List.of(
         new PowerUserDto(
@@ -97,12 +98,11 @@ class DashboardServiceTest {
             period,
             LocalDateTime.now(),
             1,
-            78.69999999999999,
-            94.19999999999999,
+            BigDecimal.valueOf(78.69999999999999),
+            BigDecimal.valueOf(94.19999999999999),
             38,
             80
-        )
-    );
+        ));
 
     // dashboardService 반환
     CursorPageResponsePowerUserDto cursorPageResponsePowerUserDto = new CursorPageResponsePowerUserDto(
@@ -115,8 +115,8 @@ class DashboardServiceTest {
     );
 
     when(userRepository.findAllById(List.of(userId))).thenReturn(mockUsers);
-    when(dashboardRepositoryCustom.findPowerUsersByPeriod(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1))
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), eq(KeyType.USER))
     ).thenReturn(mockDashboards);
 
     when(dashboardRepository.getUserMetrics(eq(period))).thenReturn(mockUserMetrics);
@@ -150,7 +150,7 @@ class DashboardServiceTest {
     UUID dashboardId = UUID.randomUUID();
 
     // dashboardRepositoryCustom 반환 목 객체
-    Dashboard reviewDashboard = new Dashboard(reviewId, KeyType.REVIEW, period, 12.1,
+    Dashboard reviewDashboard = new Dashboard(reviewId, KeyType.REVIEW, period, BigDecimal.valueOf(12.1),
         ValueType.SCORE, 1);
     ReflectionTestUtils.setField(reviewDashboard, "id", dashboardId);
     List<Dashboard> mockDashboards = List.of(reviewDashboard);
@@ -193,25 +193,25 @@ class DashboardServiceTest {
             user.getId(),
             user.getNickname(),
             review.getContent(),
-            review.getRating(),
+            BigDecimal.valueOf(review.getRating()),
             period,
             LocalDateTime.now(),
             1,
-            12.1,
+            BigDecimal.valueOf(12.1),
             review.getLikeCount(),
             review.getCommentCount()
         )
     );
 
-    when(dashboardRepositoryCustom.findPopularReviewByPeriod(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1)
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), eq(KeyType.REVIEW)
     )).thenReturn(mockDashboards);
     when(reviewRepository.findAllById(any(List.class))).thenReturn(reviews);
     when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.REVIEW),
         eq(Period.WEEKLY))).thenReturn(1L);
 
     // when
-    CursorPageResponsePopularReviewDto result = dashboardService.getPopularReview(
+    CursorPageResponsePopularReviewDto result = dashboardService.getPopularReviews(
         period, // 랭킹 기간
         "ASC", // direction
         null, // cursor
@@ -235,7 +235,7 @@ class DashboardServiceTest {
     UUID bookId = UUID.randomUUID();
     UUID dashboardId = UUID.randomUUID();
 
-    Dashboard bookDashboard = new Dashboard(bookId, KeyType.REVIEW, period, 12.1,
+    Dashboard bookDashboard = new Dashboard(bookId, KeyType.REVIEW, period, BigDecimal.valueOf(12.1),
         ValueType.SCORE, 1);
     ReflectionTestUtils.setField(bookDashboard, "id", dashboardId);
     List<Dashboard> dashboards = List.of(bookDashboard);
@@ -246,14 +246,14 @@ class DashboardServiceTest {
         .description("test decription")
         .publishDate(LocalDate.now())
         .reviewCount(5)
-        .rating(5)
+        .rating(BigDecimal.valueOf(5))
         .thumbnailUrl("dummyUrl")
         .build();
     ReflectionTestUtils.setField(book, "id", bookId);
     List<Book> books = List.of(book);
 
-    when(dashboardRepositoryCustom.findPopularBookByPeriod(
-        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1)
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(period), eq("ASC"), eq(null), eq(null), eq(limit + 1), eq(KeyType.BOOK)
     )).thenReturn(dashboards);
     when(bookRepository.findAllById(any(List.class))).thenReturn(books);
     when(dashboardRepository.countByKeyTypeAndPeriod(eq(KeyType.BOOK), eq(period))).thenReturn(1L);

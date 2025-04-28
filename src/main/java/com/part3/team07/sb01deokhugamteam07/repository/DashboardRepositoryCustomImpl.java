@@ -12,9 +12,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -27,62 +25,20 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
   private final JPAQueryFactory queryFactory;
 
   /**
-   * 파워 유저 대시보드를 조회합니다. 커서 기반의 페이지네이션을 지원하며, 주어진 기간에 대한 유저의 랭킹과 그에 해당하는 데이터를 반환합니다.
+   * 대시보드를 조회합니다.
+   * 커서 기반의 페이지네이션을 지원하며, 주어진 기간에 대한 랭킹과 그에 해당하는 데이터를 반환합니다.
    *
    * @param period    조회할 기간 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
    * @param direction 정렬 뱡향 (e.g. asc(default), desc)
    * @param cursor    기준이 되는 rank
    * @param after     createAt 기반 보조 커서
    * @param limit     가져올 개수
-   * @return (KeyType : User, ValueType : SCORE)인 커서 페이지네이션 기반 Dashboard 리스트
-   **/
-  @Override
-  public List<Dashboard> findPowerUsersByPeriod(Period period, String direction, String cursor,
-      String after, int limit) {
-
-    QDashboard dashboard = QDashboard.dashboard;
-
-    // 정렬 방향 설정
-    boolean isAsc = "asc".equalsIgnoreCase(direction);
-    Order orderDirection = isAsc ? Order.ASC : Order.DESC;
-
-    // 기본 조건 : 기간, 키타입, 값타입 설정
-    BooleanBuilder builder = new BooleanBuilder()
-        .and(dashboard.period.eq(period))
-        .and(dashboard.keyType.eq(KeyType.USER))
-        .and(dashboard.valueType.eq(ValueType.SCORE));
-
-    // 커서 기반 페이지네이션 처리
-    builder = addCursorCondition(builder, dashboard, cursor, after, isAsc);
-
-    // 랭킹 기준으로 정렬
-    OrderSpecifier<?> orderByRank = new OrderSpecifier<>(orderDirection, dashboard.rank);
-    OrderSpecifier<?> orderByCreatedAt = new OrderSpecifier<>(orderDirection, dashboard.createdAt);
-
-    // 결과 조회
-    return queryFactory
-        .selectFrom(dashboard)
-        .where(builder)
-        .orderBy(orderByRank, orderByCreatedAt)
-        .limit(limit)
-        .fetch();
-  }
-
-
-  /**
-   * 인기 리뷰 대시보드를 조회합니다. 커서 기반의 페이지네이션을 지원하며, 주어진 기간에 대한 리뷰의 랭킹과 그에 해당하는 데이터를 반환합니다. 유저와 다르게
-   * VALUE_TYPE:SCORE 만 존재합니다.
-   *
-   * @param period    조회할 기간 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
-   * @param direction 정렬 뱡향 (e.g. asc(default), desc)
-   * @param cursor    기준이 되는 rank
-   * @param after     createAt 기반 보조 커서
-   * @param limit     가져올 개수
+   * @param keyType   조호하는 대시보드의 종류 (e.g. USER, BOOK, REVIEW)
    * @return (KeyType : Review, ValueType : SCORE)인 커서 페이지네이션 기반 Dashboard 리스트
    **/
   @Override
-  public List<Dashboard> findPopularReviewByPeriod(Period period, String direction, String cursor,
-      String after, int limit) {
+  public List<Dashboard> findDashboardsByPeriodWithCursor(Period period, String direction, String cursor,
+      String after, int limit, KeyType keyType) {
 
     QDashboard dashboard = QDashboard.dashboard;
 
@@ -93,50 +49,7 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
     // 기본 조건 : 기간, 키타입, 값타입 설정
     BooleanBuilder builder = new BooleanBuilder()
         .and(dashboard.period.eq(period))
-        .and(dashboard.keyType.eq(KeyType.REVIEW))
-        .and(dashboard.valueType.eq(ValueType.SCORE));
-
-    // 커서 기반 페이지네이션 처리
-    builder = addCursorCondition(builder, dashboard, cursor, after, isAsc);
-
-    // 랭킹 기준으로 정렬
-    OrderSpecifier<?> orderByRank = new OrderSpecifier<>(orderDirection, dashboard.rank);
-    OrderSpecifier<?> orderByCreatedAt = new OrderSpecifier<>(orderDirection, dashboard.createdAt);
-
-    // 결과 조회
-    return queryFactory
-        .selectFrom(dashboard)
-        .where(builder)
-        .orderBy(orderByRank, orderByCreatedAt)
-        .limit(limit)
-        .fetch();
-  }
-
-  /**
-   * 인기 도서 대시보드를 조회합니다. 커서 기반의 페이지네이션을 지원하며, 주어진 기간에 대한 도서의 랭킹과 그에 해당하는 데이터를 반환합니다. 유저와 다르게
-   * VALUE_TYPE:SCORE 만 존재합니다.
-   *
-   * @param period    조회할 기간 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
-   * @param direction 정렬 뱡향 (e.g. asc(default), desc)
-   * @param cursor    기준이 되는 rank
-   * @param after     createAt 기반 보조 커서
-   * @param limit     가져올 개수
-   * @return (KeyType : Review, ValueType : SCORE)인 커서 페이지네이션 기반 Dashboard 리스트
-   **/
-  @Override
-  public List<Dashboard> findPopularBookByPeriod(Period period, String direction, String cursor,
-      String after, int limit) {
-
-    QDashboard dashboard = QDashboard.dashboard;
-
-    // 정렬 방향 설정
-    boolean isAsc = "asc".equalsIgnoreCase(direction);
-    Order orderDirection = isAsc ? Order.ASC : Order.DESC;
-
-    // 기본 조건 : 기간, 키타입, 값타입 설정
-    BooleanBuilder builder = new BooleanBuilder()
-        .and(dashboard.period.eq(period))
-        .and(dashboard.keyType.eq(KeyType.BOOK))
+        .and(dashboard.keyType.eq(keyType))
         .and(dashboard.valueType.eq(ValueType.SCORE));
 
     // 커서 기반 페이지네이션 처리

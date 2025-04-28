@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.entity;
 
 
 import com.part3.team07.sb01deokhugamteam07.entity.base.BaseEntity;
+import com.part3.team07.sb01deokhugamteam07.entity.base.BaseSoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.util.UUID;
@@ -18,11 +19,15 @@ import jakarta.persistence.Table;
 @AllArgsConstructor
 @Table(name ="likes")
 @Entity
-public class Like extends BaseEntity {
+public class Like extends BaseSoftDeletableEntity {
 
   @Column(nullable = false)
   private UUID userId;
 
   @Column(nullable = false)
   private UUID reviewId;
+
+  public void softDelete(){
+    delete();
+  }
 }

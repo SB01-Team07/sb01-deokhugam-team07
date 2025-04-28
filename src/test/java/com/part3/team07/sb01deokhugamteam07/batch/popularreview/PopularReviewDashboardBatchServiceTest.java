@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
+package com.part3.team07.sb01deokhugamteam07.batch.popularreview;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
+import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
@@ -17,6 +19,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,7 +39,7 @@ class PopularReviewDashboardBatchServiceTest {
   @Mock
   private DateRangeUtil dataRangeUtil;
   @Mock
-  private AssignRankUtil assignReviewRank;
+  private AssignRankUtil assignRank;
   @Mock
   private ReviewRepository reviewRepository;
   @Mock
@@ -51,7 +54,7 @@ class PopularReviewDashboardBatchServiceTest {
 
   @Test
   @DisplayName("인기 리뷰 대시보드 데이터 저장 성공")
-  void save_Popular_Review_Dashboard_Data_success() {
+  void save_Popular_Review_Dashboard_Data_Success() {
     Period period = Period.WEEKLY;
 
     // Period 설정
@@ -60,10 +63,7 @@ class PopularReviewDashboardBatchServiceTest {
         LocalDate.of(2025, 4, 21),
     };
 
-    // 리뷰 설정
-    UUID reviewId1 = UUID.randomUUID();
-    UUID reviewId2 = UUID.randomUUID();
-
+    // 리뷰 설정에 필요한 Book, User
     Book book = Book.builder()
         .title("testBook")
         .thumbnailUrl("dummyUrl")
@@ -82,6 +82,8 @@ class PopularReviewDashboardBatchServiceTest {
     UUID userId2 = UUID.randomUUID();
     ReflectionTestUtils.setField(user1, "id", userId2);
 
+    // 리뷰 설정
+    UUID reviewId1 = UUID.randomUUID();
     Review review1 = Review.builder()
         .content("test Content1")
         .book(book)
@@ -91,7 +93,7 @@ class PopularReviewDashboardBatchServiceTest {
         .commentCount(5)
         .build();
     ReflectionTestUtils.setField(review1, "id", reviewId1);
-
+    UUID reviewId2 = UUID.randomUUID();
     Review review2 = Review.builder()
         .content("test Content2")
         .book(book)
@@ -101,7 +103,6 @@ class PopularReviewDashboardBatchServiceTest {
         .commentCount(10)
         .build();
     ReflectionTestUtils.setField(review2, "id", reviewId2);
-
     List<Review> reviews = List.of(review1, review2);
 
     // 대시보드 설정
@@ -110,7 +111,7 @@ class PopularReviewDashboardBatchServiceTest {
             .key(reviewId1)
             .keyType(KeyType.REVIEW)
             .period(period)
-            .value(80.0)
+            .value(BigDecimal.valueOf(80))
             .valueType(ValueType.SCORE)
             .rank(2)
             .build(),
@@ -118,39 +119,24 @@ class PopularReviewDashboardBatchServiceTest {
             .key(reviewId2)
             .keyType(KeyType.REVIEW)
             .period(period)
-            .value(90.0)
+            .value(BigDecimal.valueOf(90))
             .valueType(ValueType.SCORE)
             .rank(1)
             .build()
-
     );
 
     when(reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(reviews);
     when(dataRangeUtil.getDateRange(period)).thenReturn(dateRange);
-
-    // 좋아요, 댓글 카운트 설정
-    when(likeRepository.countByReviewIdAndCreatedAtBetween(
-        eq(reviewId1),
-        any(LocalDateTime.class),
+    when(likeRepository.countByReviewIdAndCreatedAtBetween(eq(reviewId1), any(LocalDateTime.class),
         any(LocalDateTime.class))).thenReturn(5L);
-    when(likeRepository.countByReviewIdAndCreatedAtBetween(
-        eq(reviewId2),
-        any(LocalDateTime.class),
+    when(likeRepository.countByReviewIdAndCreatedAtBetween(eq(reviewId2), any(LocalDateTime.class),
         any(LocalDateTime.class))).thenReturn(20L);
-    when(commentRepository.countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(
-        eq(reviewId1),
-        any(LocalDateTime.class),
-        any(LocalDateTime.class))).thenReturn(3L);
-    when(commentRepository.countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(
-        eq(reviewId2),
-        any(LocalDateTime.class),
-        any(LocalDateTime.class))).thenReturn(5L);
-    when(assignReviewRank.assignRank(
-        any(Map.class),
-        eq(period),
-        eq(KeyType.REVIEW),
-        any(List.class)
-    )).thenReturn(dashboards);
+    when(commentRepository.countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(eq(reviewId1),
+        any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(3L);
+    when(commentRepository.countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(eq(reviewId2),
+        any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(5L);
+    when(assignRank.assignRank(any(Map.class), eq(period), eq(KeyType.REVIEW),
+        any(List.class))).thenReturn(dashboards);
 
     // when
     popularReviewDashboardBatchService.savePopularReviewDashboardData(period);
