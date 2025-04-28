@@ -196,23 +196,37 @@ class ReviewServiceTest {
     @Test
     void find() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when
-        ReviewDto result = reviewService.find(reviewId);
+        ReviewDto result = reviewService.find(reviewId, userId);
 
         //then
         assertThat(result).isEqualTo(reviewDto);
+    }
+
+    @DisplayName("리뷰 조회 시, 사용자가 좋아요를 눌렀으면 likeByMe가 true로 설정된다.")
+    @Test
+    void find_likeByMe_true() {
+        // given
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.existsByReviewIdAndUserId(reviewId, userId)).willReturn(true);
+
+        // when
+        ReviewDto result = reviewService.find(reviewId, userId);
+
+        // then
+        assertThat(result.likeByMe()).isTrue();
     }
 
     @DisplayName("리뷰 Id로 조회 시 존재하지 않으면 예외가 발생한다.")
     @Test
     void find_ReviewNotFound() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.empty());
 
         //when then
-        assertThatThrownBy(() -> reviewService.find(reviewId))
+        assertThatThrownBy(() -> reviewService.find(reviewId, userId))
                 .isInstanceOf(ReviewNotFoundException.class);
     }
 
