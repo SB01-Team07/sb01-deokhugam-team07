@@ -1,6 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
+import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -53,5 +55,13 @@ public class UserExceptionHandler {
         BadCredentialsException.class.getTypeName(),
         HttpStatus.FORBIDDEN.value()
     );
+  }
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler(IllegalUserPasswordException.class)
+  public UserLoginRequest duplicatedEmail(IllegalUserPasswordException e) {
+    log.error("Invalid Password: {}", e.getUserLoginRequest().password());
+
+    return e.getUserLoginRequest();
   }
 }
