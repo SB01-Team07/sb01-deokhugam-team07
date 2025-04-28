@@ -67,6 +67,10 @@ public class Book extends BaseSoftDeletableEntity {
     this.publishDate = newPublishDate;
   }
 
+  public void updateThumbnailUrl(String newThumbnailUrl) {
+    this.thumbnailUrl = newThumbnailUrl;
+  }
+
   public void softDelete() {
     super.delete();
   }

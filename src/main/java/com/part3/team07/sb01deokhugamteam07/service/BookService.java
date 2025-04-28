@@ -26,8 +26,7 @@ public class BookService {
 
   private final StorageService storageService;
 
-  public BookDto create(BookCreateRequest request,
-      MultipartFile thumbnailImage) {
+  public BookDto create(BookCreateRequest request, MultipartFile thumbnailImage) {
     if (bookRepository.existsByIsbn(request.isbn())) {
       throw BookAlreadyExistsException.withIsbn(request.isbn());
     }
@@ -49,15 +48,19 @@ public class BookService {
     return bookMapper.toDto(savedBook);
   }
 
-  public BookDto update(UUID id, BookUpdateRequest request) {
+  public BookDto update(UUID id, BookUpdateRequest request, MultipartFile thumbnailImage) {
     Book book = bookRepository.findById(id)
         .orElseThrow(() -> BookNotFoundException.withId(id));
+    String thumbnailUrl = Optional.ofNullable(thumbnailImage)
+        .map(image -> storageService.save(image, FileType.THUMBNAIL_IMAGE))
+        .orElse(null);
 
     Optional.ofNullable(request.title()).ifPresent(book::updateTitle);
     Optional.ofNullable(request.author()).ifPresent(book::updateAuthor);
     Optional.ofNullable(request.description()).ifPresent(book::updateDescription);
     Optional.ofNullable(request.publisher()).ifPresent(book::updatePublisher);
     Optional.ofNullable(request.publishedDate()).ifPresent(book::updatePublishDate);
+    Optional.ofNullable(thumbnailUrl).ifPresent(book::updateThumbnailUrl);
 
     return bookMapper.toDto(book);
   }
