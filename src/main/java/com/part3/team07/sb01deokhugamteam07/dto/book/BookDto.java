@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.dto.book;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public record BookDto(
     String isbn,
     String thumbnailUrl,
     int reviewCount,
-    double rating,
+    BigDecimal rating,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 ) {

@@ -162,9 +162,6 @@ class NotificationServiceTest {
     assertDoesNotThrow(() -> notificationService.create(request));
   }
 
-  /**
-   * 알림 조회 관련 테스트
-   * **/
   @Test
   @DisplayName("알림 목록 조회 성공")
   void find_Success() {

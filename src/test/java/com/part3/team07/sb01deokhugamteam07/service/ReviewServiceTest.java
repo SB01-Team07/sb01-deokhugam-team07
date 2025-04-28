@@ -12,6 +12,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,7 @@ class ReviewServiceTest {
                 .isbn(UUID.randomUUID().toString())
                 .thumbnailFileName("url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         ReflectionTestUtils.setField(book, "id", bookId);
 
