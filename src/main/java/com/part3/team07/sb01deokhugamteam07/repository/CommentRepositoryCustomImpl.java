@@ -6,7 +6,9 @@ import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -86,10 +88,13 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     switch (sortBy) {
       case "createdAt":
         if (cursor != null && !cursor.isBlank()) {
-          LocalDateTime parsed = LocalDateTime.parse(cursor);
-          return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
+          try {
+            LocalDateTime parsed = LocalDateTime.parse(cursor);
+            return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
+          } catch (DateTimeParseException e){
+            throw new IllegalArgumentException(cursor);
+          }
         }
-        break;
     }
 
     return null;

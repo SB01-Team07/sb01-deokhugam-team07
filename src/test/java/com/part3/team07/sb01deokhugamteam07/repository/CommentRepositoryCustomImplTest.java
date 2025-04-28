@@ -232,7 +232,8 @@ class CommentRepositoryCustomImplTest {
         10,
         "createdAt"
     ))
-        .isInstanceOf(DateTimeParseException.class);
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining(invalidCursor);
   }
 
   @Test
