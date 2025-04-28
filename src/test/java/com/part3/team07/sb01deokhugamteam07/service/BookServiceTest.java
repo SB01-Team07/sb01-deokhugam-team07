@@ -12,6 +12,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
@@ -29,7 +30,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -148,6 +151,7 @@ class BookServiceTest {
       String newAuthor = "new author";
       String newDescription = "new description";
       String newPublisher = "new publisher";
+      String newThumbnailUrl = "new-thumbnail.png";
       LocalDate newPublishedDate = LocalDate.of(2025, 4, 22);
 
       BookUpdateRequest request = new BookUpdateRequest(
@@ -158,6 +162,10 @@ class BookServiceTest {
           newPublishedDate
       );
 
+      MultipartFile thumbnailImage = new MockMultipartFile(
+          "thumbnail", "new-thumbnail.png", "image/png", "dummy".getBytes()
+      );
+
       BookDto newBookDto = new BookDto(
           id,
           newTitle,
@@ -166,7 +174,7 @@ class BookServiceTest {
           newPublisher,
           newPublishedDate,
           "",
-          "",
+          newThumbnailUrl,
           0,
           BigDecimal.ZERO,
           LocalDateTime.now(),
@@ -174,10 +182,11 @@ class BookServiceTest {
       );
 
       given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE)).willReturn(newThumbnailUrl);
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
       // when
-      BookDto result = bookService.update(id, request, null);
+      BookDto result = bookService.update(id, request, thumbnailImage);
 
       // then
       assertThat(result.title()).isEqualTo(newTitle);
@@ -185,6 +194,7 @@ class BookServiceTest {
       assertThat(result.description()).isEqualTo(newDescription);
       assertThat(result.publisher()).isEqualTo(newPublisher);
       assertThat(result.publishedDate()).isEqualTo(newPublishedDate);
+      assertThat(result.thumbnailUrl()).isEqualTo(newThumbnailUrl);
     }
   }
 
