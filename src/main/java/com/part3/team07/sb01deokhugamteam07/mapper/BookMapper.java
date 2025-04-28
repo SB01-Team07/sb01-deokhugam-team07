@@ -18,8 +18,7 @@ public class BookMapper {
         .publisher(book.getPublisher())
         .publishedDate(book.getPublishDate())
         .isbn(book.getIsbn())
-        .thumbnailUrl(book.getThumbnailUrl() != null ?
-            book.getThumbnailUrl() : null)
+        .thumbnailUrl(book.getThumbnailUrl())
         .reviewCount(book.getReviewCount())
         .rating(book.getRating())
         .createdAt(book.getCreatedAt())
