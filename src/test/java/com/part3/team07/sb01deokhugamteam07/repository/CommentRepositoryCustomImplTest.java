@@ -58,7 +58,7 @@ class CommentRepositoryCustomImplTest {
 
   @BeforeEach
   void setUp() {
-    fixedNow = LocalDateTime.now();
+    fixedNow = LocalDateTime.of(2024, 1, 1, 0, 0, 0, 0);
 
     testBook = new Book("testBook", "testAuthor", "testDescription",
         "testPublisher", LocalDate.now(), "978-89-123-4567-0",
@@ -97,6 +97,8 @@ class CommentRepositoryCustomImplTest {
     ReflectionTestUtils.setField(comment2, "createdAt", fixedNow.minusSeconds(1));
     ReflectionTestUtils.setField(comment3, "createdAt", fixedNow.minusSeconds(2)); //가장 오래전 댓글
 
+    em.flush();
+    em.clear();
   }
 
   @Test
