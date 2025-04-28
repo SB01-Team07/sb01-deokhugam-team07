@@ -29,7 +29,7 @@ public class BookController {
   private final BookService bookService;
 
   @PostMapping
-  public ResponseEntity<BookDto> create(@RequestPart("bookData") BookCreateRequest request,
+  public ResponseEntity<BookDto> create(@RequestPart("bookData") @Valid BookCreateRequest request,
       @RequestPart(value = "thumbnailImage", required = false) MultipartFile thumbnailImage) {
     BookDto bookDto = bookService.create(request, thumbnailImage);
 

@@ -2,9 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageSaveFailedException;
-import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
 import com.part3.team07.sb01deokhugamteam07.storage.Storage;
-import com.part3.team07.sb01deokhugamteam07.storage.ThumbnailImageStorage;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

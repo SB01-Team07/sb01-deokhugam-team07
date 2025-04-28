@@ -9,7 +9,6 @@ import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsExce
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
-import com.part3.team07.sb01deokhugamteam07.storage.Storage;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,9 @@ public class BookService {
     if (bookRepository.existsByIsbn(request.isbn())) {
       throw BookAlreadyExistsException.withIsbn(request.isbn());
     }
-    String thumbnailUrl = storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE);
+    String thumbnailUrl = Optional.ofNullable(thumbnailImage)
+        .map(image -> storageService.save(image, FileType.THUMBNAIL_IMAGE))
+        .orElse(null);
 
     Book book = Book.builder()
         .title(request.title())
