@@ -4,8 +4,13 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Period;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +38,7 @@ public class UserController {
 
   private final UserService userService;
   private final AuthenticationManager authenticationManager;
+  private final DashboardService dashboardService;
 
   /**
   * @methodName : join
@@ -99,4 +106,17 @@ public class UserController {
   public void physicalDelete(@PathVariable("userId") UUID userId) {
     userService.physicalDelete(userId);
   }
+
+  @GetMapping("/power")
+  @ResponseStatus(HttpStatus.OK)
+  public CursorPageResponsePowerUserDto findPowerUsers(
+      @RequestParam Period period,
+      @RequestParam(required = false, defaultValue = "asc") @Pattern(regexp = "(?i)ASC|DESC", message = "direction은 ASC 또는 DESC만 가능합니다.") String direction,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) String after,
+      @RequestParam(required = false, defaultValue = "50") @Min(1) int limit
+  ){
+    return dashboardService.getPowerUsers(period, direction, cursor, after, limit);
+  }
+
 }
