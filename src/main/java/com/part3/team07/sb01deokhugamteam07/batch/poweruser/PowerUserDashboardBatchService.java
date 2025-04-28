@@ -13,6 +13,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -72,14 +73,20 @@ public class PowerUserDashboardBatchService {
           .mapToDouble(review -> (review.getLikeCount() * 0.3) + (review.getCommentCount() * 0.7))
           .sum();
 
+      BigDecimal reviewScoreSumBigDecimal = BigDecimal.valueOf(reviewScoreSum);
+
       // 2-3. 해당 기간 동안 좋아요한 수
       long likeCount = likeRepository.countByUserIdAndCreatedAtBetween(userId, startDateTime,
           endDateTime);
+
+      BigDecimal likeCountBigDecimal = BigDecimal.valueOf(likeCount);
 
       // 2-4. 해당 기간 동안 댓글 단 수
       long commentCount = commentRepository.countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
           userId, startDateTime,
           endDateTime);
+
+      BigDecimal commentCountBigDecimal = BigDecimal.valueOf(commentCount);
 
       // 3. 활동 점수 계산
       double score = calculateScore(reviewScoreSum, likeCount, commentCount);
@@ -88,12 +95,13 @@ public class PowerUserDashboardBatchService {
 
       // 4. REVIEW_SCORE_SUM, LIKE_COUNT, COMMENT_COUNT 지표의 대시보드 데이터 구성
       dashboards.add(
-          new Dashboard(userId, KeyType.USER, period, reviewScoreSum, ValueType.REVIEW_SCORE_SUM,
+
+          new Dashboard(userId, KeyType.USER, period, reviewScoreSumBigDecimal, ValueType.REVIEW_SCORE_SUM,
               null));
       dashboards.add(
-          new Dashboard(userId, KeyType.USER, period, likeCount, ValueType.LIKE_COUNT, null));
+          new Dashboard(userId, KeyType.USER, period, likeCountBigDecimal, ValueType.LIKE_COUNT, null));
       dashboards.add(
-          new Dashboard(userId, KeyType.USER, period, commentCount, ValueType.COMMENT_COUNT, null));
+          new Dashboard(userId, KeyType.USER, period, commentCountBigDecimal, ValueType.COMMENT_COUNT, null));
     }
 
     // 5. SCORE 기준으로 전체 유저 순위 매기기 -> 정렬 후 rank 지정

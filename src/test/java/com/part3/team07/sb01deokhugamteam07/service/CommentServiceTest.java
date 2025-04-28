@@ -24,6 +24,7 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,7 +82,7 @@ class CommentServiceTest {
 
     testBook = new Book("testBook", "testAuthor", "testDescription",
         "testPublisher", LocalDate.now(), "978-89-123-4567-0",
-        "http://example.com/thumbnail.jpg", 0, 0);
+        "http://example.com/thumbnail.jpg", 0,  BigDecimal.ZERO);
     ReflectionTestUtils.setField(testBook, "id", bookId);
 
     testUser = new User("testUser", "1234", "test@test.com");
