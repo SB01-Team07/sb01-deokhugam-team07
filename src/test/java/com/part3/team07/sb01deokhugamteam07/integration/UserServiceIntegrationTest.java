@@ -10,18 +10,22 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class UserServiceIntegrationTest {
 
   @Autowired
@@ -36,9 +40,9 @@ public class UserServiceIntegrationTest {
   @Test
   @DisplayName("POST /api/users/login - Deokhugam-Request-User-ID 응답 헤더 확인")
   void checkUserLoginWithResponseHeader() throws Exception {
-    UserRegisterRequest regReq = new UserRegisterRequest("test33@mail.com", "user", "password1234");
+    UserRegisterRequest regReq = new UserRegisterRequest("test33@mail.com", "user", "password");
     UserDto registered = userService.register(regReq);
-    UserLoginRequest request = new UserLoginRequest("test33@mail.com", "password1234");
+    UserLoginRequest request = new UserLoginRequest("test33@mail.com", "password");
 
     String requestJson = objectMapper.writeValueAsString(request);
     String userJson = objectMapper.writeValueAsString(registered);

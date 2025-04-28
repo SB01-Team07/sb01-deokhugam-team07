@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.repository;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,7 +223,7 @@ class ReviewRepositoryTest {
                 .isbn(UUID.randomUUID().toString())
                 .thumbnailFileName("test-thumbnail-url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
     }
 
