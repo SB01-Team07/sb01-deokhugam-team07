@@ -86,8 +86,6 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         if (cursor != null && !cursor.isBlank()) {
           LocalDateTime parsed = LocalDateTime.parse(cursor);
           return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
-        } else if (after != null ) {
-          return comment.createdAt.gt(after);
         }
         break;
     }
