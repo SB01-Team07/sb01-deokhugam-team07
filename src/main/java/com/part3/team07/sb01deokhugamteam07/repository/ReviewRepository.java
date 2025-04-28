@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -49,4 +50,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
   List<Review> findByIsDeletedFalseOrderByCreatedAtAsc();
 
   boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
+
+  Optional<Review> findByIdAndIsDeletedFalse(UUID reviewId);
 }
