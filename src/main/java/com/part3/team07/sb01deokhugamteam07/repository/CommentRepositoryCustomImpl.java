@@ -26,6 +26,8 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
       int limit,
       String sortBy
   ) {
+    validateDirection(direction);
+
     QComment comment = QComment.comment;
 
     //일치하는 리뷰의 댓글 중에 논리삭제 되지 않은 댓글을 가져온다.
@@ -91,6 +93,13 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     }
 
     return null;
+  }
+
+  //정렬 방향 검증
+  private void validateDirection(String direction) {
+    if (!"ASC".equalsIgnoreCase(direction) && !"DESC".equalsIgnoreCase(direction)) {
+      throw new IllegalArgumentException("정렬 방향은 ASC 또는 DESC만 가능합니다.");
+    }
   }
 
 }
