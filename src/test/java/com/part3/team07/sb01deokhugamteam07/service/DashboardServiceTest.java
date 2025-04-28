@@ -158,7 +158,7 @@ class DashboardServiceTest {
     // bookRepository 반환 목 객체
     Book book = Book.builder()
         .title("testBook")
-        .thumbnailFileName("dummyUrl")
+        .thumbnailUrl("dummyUrl")
         .build();
     UUID bookId = UUID.randomUUID();
     ReflectionTestUtils.setField(book, "id", bookId);
@@ -189,7 +189,7 @@ class DashboardServiceTest {
             reviewId,
             bookId,
             book.getTitle(),
-            book.getThumbnailFileName(),
+            book.getThumbnailUrl(),
             user.getId(),
             user.getNickname(),
             review.getContent(),
@@ -247,7 +247,7 @@ class DashboardServiceTest {
         .publishDate(LocalDate.now())
         .reviewCount(5)
         .rating(5)
-        .thumbnailFileName("dummyUrl")
+        .thumbnailUrl("dummyUrl")
         .build();
     ReflectionTestUtils.setField(book, "id", bookId);
     List<Book> books = List.of(book);

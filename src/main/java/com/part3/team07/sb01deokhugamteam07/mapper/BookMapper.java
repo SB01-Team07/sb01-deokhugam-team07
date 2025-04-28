@@ -2,15 +2,12 @@ package com.part3.team07.sb01deokhugamteam07.mapper;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
-import com.part3.team07.sb01deokhugamteam07.storage.ThumbnailImageStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class BookMapper {
-
-  private final ThumbnailImageStorage thumbnailImageStorage;
 
   public BookDto toDto(Book book) {
     return BookDto.builder()
@@ -21,8 +18,8 @@ public class BookMapper {
         .publisher(book.getPublisher())
         .publishedDate(book.getPublishDate())
         .isbn(book.getIsbn())
-        .thumbnailUrl(book.getThumbnailFileName() != null ?
-            thumbnailImageStorage.get(book.getThumbnailFileName()) : null)
+        .thumbnailUrl(book.getThumbnailUrl() != null ?
+            book.getThumbnailUrl() : null)
         .reviewCount(book.getReviewCount())
         .rating(book.getRating())
         .createdAt(book.getCreatedAt())

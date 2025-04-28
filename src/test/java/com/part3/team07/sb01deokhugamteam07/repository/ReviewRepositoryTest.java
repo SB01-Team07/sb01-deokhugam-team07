@@ -87,7 +87,7 @@ class ReviewRepositoryTest {
                 .publisher("test-publisher")
                 .publishDate(LocalDate.of(2024, 4, 20))
                 .isbn(UUID.randomUUID().toString())
-                .thumbnailFileName("test-thumbnail-url")
+                .thumbnailUrl("test-thumbnail-url")
                 .reviewCount(0)
                 .rating(0.0)
                 .build();

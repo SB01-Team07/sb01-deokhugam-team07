@@ -71,7 +71,7 @@ class ReviewServiceTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn(UUID.randomUUID().toString())
-                .thumbnailFileName("url")
+                .thumbnailUrl("url")
                 .reviewCount(0)
                 .rating(0.0)
                 .build();
@@ -91,7 +91,7 @@ class ReviewServiceTest {
                 reviewId,
                 bookId,
                 book.getTitle(),
-                book.getThumbnailFileName(),
+                book.getThumbnailUrl(),
                 userId,
                 user.getNickname(),
                 review.getContent(),

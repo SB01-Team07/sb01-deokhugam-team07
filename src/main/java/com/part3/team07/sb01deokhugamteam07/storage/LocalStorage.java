@@ -41,13 +41,14 @@ public class LocalStorage implements Storage {
   }
 
   @Override
-  public void put(FileType type, String fileName, byte[] bytes) {
+  public String put(FileType type, String fileName, byte[] bytes) {
     Path filePath = resolvePath(type, fileName);
 
     try {
       Files.createDirectories(filePath.getParent());
       try (OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW)) {
         outputStream.write(bytes);
+        return filePath.toString();
       }
     } catch (FileAlreadyExistsException e) {
       throw StorageAlreadyExistsException.withFileName(fileName);

@@ -4,10 +4,12 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.storage.Storage;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +25,14 @@ public class BookService {
   private final BookRepository bookRepository;
   private final BookMapper bookMapper;
 
-  private final ThumbnailImageService thumbnailImageService;
+  private final StorageService storageService;
 
   public BookDto create(BookCreateRequest request,
       MultipartFile thumbnailImage) {
     if (bookRepository.existsByIsbn(request.isbn())) {
       throw BookAlreadyExistsException.withIsbn(request.isbn());
     }
-    String thumbnailFileName = thumbnailImageService.save(thumbnailImage);
+    String thumbnailUrl = storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE);
 
     Book book = Book.builder()
         .title(request.title())
@@ -39,7 +41,7 @@ public class BookService {
         .publisher(request.publisher())
         .publishDate(request.publishedDate())
         .isbn(request.isbn())
-        .thumbnailFileName(thumbnailFileName)
+        .thumbnailUrl(thumbnailUrl)
         .build();
     Book savedBook = bookRepository.save(book);
 

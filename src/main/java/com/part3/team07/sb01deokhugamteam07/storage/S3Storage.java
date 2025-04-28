@@ -3,7 +3,6 @@ package com.part3.team07.sb01deokhugamteam07.storage;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageSaveFailedException;
-import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +26,11 @@ public class S3Storage implements Storage {
   @Value("${deokhugam.storage.s3.bucket}")
   private String bucketName;
 
+  @Value("${deokhugam.storage.s3.region}")
+  private String region;
+
   @Override
-  public void put(FileType type, String fileName, byte[] bytes) {
+  public String put(FileType type, String fileName, byte[] bytes) {
     String key = resolvePath(type, fileName);
 
     if (exists(key)) {
@@ -42,6 +44,12 @@ public class S3Storage implements Storage {
           .build();
 
       s3Client.putObject(request, RequestBody.fromBytes(bytes));
+
+
+      if (type == FileType.THUMBNAIL_IMAGE) {
+        return getObjectUrl(key);
+      }
+      return null;
     } catch (AwsServiceException e) {
       throw StorageSaveFailedException.withFileName(fileName);
     }
@@ -59,7 +67,7 @@ public class S3Storage implements Storage {
     } catch (NoSuchKeyException e) {
       return false;
     } catch (AwsServiceException e) {
-      throw new ThumbnailImageStorageException();
+      throw StorageSaveFailedException.withFileName(key);
     }
   }
 
@@ -72,5 +80,9 @@ public class S3Storage implements Storage {
       case THUMBNAIL_IMAGE -> "thumbnail";
       case LOG -> "logs";
     };
+  }
+
+  private String getObjectUrl(String key) {
+    return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
   }
 }

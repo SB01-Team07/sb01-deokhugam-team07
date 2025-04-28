@@ -40,7 +40,7 @@ class BookServiceTest {
   private BookMapper bookMapper;
 
   @Mock
-  private ThumbnailImageService thumbnailImageService;
+  private StorageService storageService;
 
   @InjectMocks
   private BookService bookService;
@@ -99,7 +99,7 @@ class BookServiceTest {
       );
 
       given(bookRepository.existsByIsbn(request.isbn())).willReturn(false);
-      given(thumbnailImageService.save(any())).willReturn("");
+      given(storageService.save(any(), any())).willReturn("");
       given(bookRepository.save(any(Book.class))).will(invocation -> {
         Book book = invocation.getArgument(0);
         ReflectionTestUtils.setField(book, "id", id);
@@ -112,7 +112,7 @@ class BookServiceTest {
 
       // then
       assertThat(result).isEqualTo(bookDto);
-      verify(thumbnailImageService).save(any());
+      verify(storageService).save(any(), any());
       verify(bookRepository).save(any(Book.class));
     }
 

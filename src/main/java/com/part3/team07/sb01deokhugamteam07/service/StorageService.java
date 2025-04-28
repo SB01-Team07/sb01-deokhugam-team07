@@ -1,6 +1,9 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
+import com.part3.team07.sb01deokhugamteam07.entity.FileType;
+import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageSaveFailedException;
 import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
+import com.part3.team07.sb01deokhugamteam07.storage.Storage;
 import com.part3.team07.sb01deokhugamteam07.storage.ThumbnailImageStorage;
 import java.io.IOException;
 import java.util.UUID;
@@ -13,14 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class StorageService {
-  private final ThumbnailImageStorage thumbnailImageStorage;
 
-  public String save(MultipartFile thumbnailImage) {
+  private final Storage storage;
+
+  public String save(MultipartFile thumbnailImage, FileType fileType) {
     String fileName = generateFileName(thumbnailImage);
     try {
-      thumbnailImageStorage.put(fileName, thumbnailImage.getBytes());
+      storage.put(fileType, fileName, thumbnailImage.getBytes());
     } catch (IOException e) {
-      throw new ThumbnailImageStorageException();
+      throw StorageSaveFailedException.withFileName(fileName);
     }
 
     return fileName;

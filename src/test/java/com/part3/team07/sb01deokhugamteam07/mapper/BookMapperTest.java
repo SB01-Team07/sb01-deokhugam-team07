@@ -1,11 +1,11 @@
 package com.part3.team07.sb01deokhugamteam07.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.*;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
-import com.part3.team07.sb01deokhugamteam07.storage.ThumbnailImageStorage;
+import com.part3.team07.sb01deokhugamteam07.storage.Storage;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,7 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class BookMapperTest {
 
   @Mock
-  private ThumbnailImageStorage thumbnailImageStorage;
+  private Storage storage;
 
   @InjectMocks
   private BookMapper bookMapper;
@@ -35,7 +35,7 @@ class BookMapperTest {
   private String publisher;
   private LocalDate publishedDate;
   private String isbn;
-  private String thumbnailFileName;
+  private String thumbnailUrl;
   private Book book;
 
   @BeforeEach
@@ -45,11 +45,11 @@ class BookMapperTest {
     author = "author";
     description = "description";
     publisher = "publisher";
-    thumbnailFileName = "thumbnail.jpg";
+    thumbnailUrl = "thumbnail.jpg";
     publishedDate = LocalDate.of(1618, 1, 1);
 
     book = new Book(title, author, description, publisher, publishedDate,
-        isbn, thumbnailFileName, 0, 0);
+        isbn, thumbnailUrl, 0, 0);
     ReflectionTestUtils.setField(book, "id", id);
     ReflectionTestUtils.setField(book, "createdAt", LocalDateTime.now());
     ReflectionTestUtils.setField(book, "updatedAt", LocalDateTime.now());
@@ -59,10 +59,10 @@ class BookMapperTest {
   @DisplayName("toDto")
   class ToDtoTest {
     @Test
-    @DisplayName("Book에 thumbnailFileName이 있을 경우 DTO에 썸네일 URL 포함")
+    @DisplayName("Book에 thumbnailUrl이 있을 경우 DTO에 썸네일 URL 포함")
     void toDto_WithThumbnail() {
       // given
-      when(thumbnailImageStorage.get(thumbnailFileName)).thenReturn("http://thumbnail.com/thumbnail.jpg");
+      when(book.getThumbnailUrl()).thenReturn("http://thumbnail.com/thumbnail.jpg");
 
       // When: toDto 메서드를 호출하면
       BookDto bookDto = bookMapper.toDto(book);
@@ -74,10 +74,10 @@ class BookMapperTest {
     }
 
     @Test
-    @DisplayName("Book에 thumbnailFileName이 있을 경우 DTO에 썸네일 URL null")
+    @DisplayName("Book에 thumbnailUrl이 없을 경우 DTO에 썸네일 URL null")
     void toDto_WithoutThumbnail() {
       // given
-      ReflectionTestUtils.setField(book, "thumbnailFileName", null);
+      ReflectionTestUtils.setField(book, "thumbnailUrl", null);
 
       // when
       BookDto bookDto = bookMapper.toDto(book);

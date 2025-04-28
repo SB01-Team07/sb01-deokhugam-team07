@@ -70,7 +70,7 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("url")
+                .thumbnailUrl("url")
                 .reviewCount(0)
                 .rating(0.0)
                 .build();
@@ -118,7 +118,7 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
                 .rating(0.0)
                 .build();
@@ -168,7 +168,7 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
                 .rating(0.0)
                 .build();

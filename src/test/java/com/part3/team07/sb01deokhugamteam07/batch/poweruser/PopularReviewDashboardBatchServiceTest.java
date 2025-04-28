@@ -66,7 +66,7 @@ class PopularReviewDashboardBatchServiceTest {
 
     Book book = Book.builder()
         .title("testBook")
-        .thumbnailFileName("dummyUrl")
+        .thumbnailUrl("dummyUrl")
         .build();
     UUID bookId = UUID.randomUUID();
     ReflectionTestUtils.setField(book, "id", bookId);
