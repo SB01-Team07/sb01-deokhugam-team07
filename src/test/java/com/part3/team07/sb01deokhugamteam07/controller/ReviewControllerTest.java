@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateReque
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
@@ -27,8 +28,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -338,9 +338,55 @@ class ReviewControllerTest {
         verify(reviewService).softDelete(userId, reviewId);
     }
 
+    @DisplayName("리뷰 삭제 - 요청자 ID 헤더 누락 시 400 반환")
+    @Test
+    void softDeleteReview_Failure_MissingUserIdHeader() throws Exception {
+        //given
+        UUID reviewId = UUID.randomUUID();
 
+        //when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}", reviewId)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
+                .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
+    }
 
+    @DisplayName("리뷰 삭제 - 삭제 권한 없을 경우 403 반환")
+    @Test
+    void softDeleteReview_Failure_Unauthorized() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
 
+        willThrow(new ReviewUnauthorizedException()).given(reviewService).softDelete(userId, reviewId);
+
+        //when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
+                        .with(csrf()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("REVIEW_UNAUTHORIZED"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewUnauthorizedException"));
+    }
+
+    @DisplayName("리뷰 삭제 - 리뷰가 존재하지 않을 경우 404 반환")
+    @Test
+    void softDeleteReview_Failure_ReviewNotFound() throws Exception {
+        // given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+
+        willThrow(new ReviewNotFoundException()).given(reviewService).softDelete(userId, reviewId);
+
+        // when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("REVIEW_NOT_FOUND"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewNotFoundException"));
+    }
 
     @DisplayName("리뷰를 물리 삭제할 수 있다.")
     @Test
