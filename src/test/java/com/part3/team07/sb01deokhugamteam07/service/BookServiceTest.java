@@ -284,4 +284,39 @@ class BookServiceTest {
       );
     }
   }
+
+  @Nested
+  @DisplayName("도서 상세 정보 조회")
+  class FindTest {
+    @Test
+    @DisplayName("도서 상세 정보 조회 성공")
+    void find_success() {
+      // given
+      BookDto bookDto = new BookDto(
+          id,
+          title,
+          author,
+          description,
+          publisher,
+          publishedDate,
+          "",
+          "",
+          0,
+          BigDecimal.ZERO,
+          LocalDateTime.now(),
+          LocalDateTime.now()
+      );
+
+      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookMapper.toDto(any(Book.class))).willReturn(bookDto);
+
+      // when
+      BookDto result = bookService.find(id);
+
+      // then
+      assertThat(result).isEqualTo(bookDto);
+      assertThat(result.id()).isEqualTo(id);
+    }
+
+  }
 }

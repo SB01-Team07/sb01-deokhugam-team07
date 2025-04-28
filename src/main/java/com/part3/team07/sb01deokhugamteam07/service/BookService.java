@@ -86,4 +86,12 @@ public class BookService {
 
     bookRepository.deleteById(id);
   }
+
+  @Transactional(readOnly = true)
+  public BookDto find(UUID id) {
+    Book book = bookRepository.findById(id)
+        .orElseThrow(() -> BookNotFoundException.withId(id));
+
+    return bookMapper.toDto(book);
+  }
 }
