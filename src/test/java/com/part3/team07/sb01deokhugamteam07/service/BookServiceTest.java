@@ -99,7 +99,6 @@ class BookServiceTest {
       );
 
       given(bookRepository.existsByIsbn(request.isbn())).willReturn(false);
-      given(storageService.save(any(), any())).willReturn("");
       given(bookRepository.save(any(Book.class))).will(invocation -> {
         Book book = invocation.getArgument(0);
         ReflectionTestUtils.setField(book, "id", id);
@@ -112,7 +111,6 @@ class BookServiceTest {
 
       // then
       assertThat(result).isEqualTo(bookDto);
-      verify(storageService).save(any(), any());
       verify(bookRepository).save(any(Book.class));
     }
 
@@ -178,7 +176,7 @@ class BookServiceTest {
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
       // when
-      BookDto result = bookService.update(id, request);
+      BookDto result = bookService.update(id, request, null);
 
       // then
       assertThat(result.title()).isEqualTo(newTitle);
@@ -212,7 +210,7 @@ class BookServiceTest {
 
     // when & then
     assertThrows(BookNotFoundException.class,
-        () -> bookService.update(nonExistentId, request)
+        () -> bookService.update(nonExistentId, request, null)
     );
   }
 
