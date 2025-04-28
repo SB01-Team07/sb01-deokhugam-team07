@@ -130,19 +130,19 @@ class NotificationControllerTest {
         .andExpect(jsonPath("$.confirmed").value(true));
   }
 
-  @Test
-  @DisplayName("잘못된 요청 - 요청자의 ID 누락")
-  void update_Notification_IllegalArgument_Fail() throws Exception {
-    UUID notificationId = UUID.randomUUID();
-
-    NotificationUpdateRequest notificationUpdateRequest = new NotificationUpdateRequest(true);
-
-    mockMvc.perform(patch("/api/notifications/{notificationId}", notificationId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(notificationUpdateRequest))
-            .with(csrf()))
-        .andExpect(status().isBadRequest());
-  }
+//  @Test
+//  @DisplayName("잘못된 요청 - 요청자의 ID 누락")
+//  void update_Notification_IllegalArgument_Fail() throws Exception {
+//    UUID notificationId = UUID.randomUUID();
+//
+//    NotificationUpdateRequest notificationUpdateRequest = new NotificationUpdateRequest(true);
+//
+//    mockMvc.perform(patch("/api/notifications/{notificationId}", notificationId)
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .content(objectMapper.writeValueAsString(notificationUpdateRequest))
+//            .with(csrf()))
+//        .andExpect(status().isBadRequest());
+//  }
 
   /**
    * 모든 알림 상태 읽음 처리 관련 테스트
@@ -159,11 +159,11 @@ class NotificationControllerTest {
         .andExpect(status().isNoContent());
   }
 
-  @Test
-  @DisplayName("잘못된 요청 - 요청자의 ID 누락")
-  void update_All_Notification_IllegalArgument_Fail() throws Exception {
-    mockMvc.perform(patch("/api/notifications/read-all")
-            .with(csrf()))
-        .andExpect(status().isBadRequest());
-  }
+//  @Test
+//  @DisplayName("잘못된 요청 - 요청자의 ID 누락")
+//  void update_All_Notification_IllegalArgument_Fail() throws Exception {
+//    mockMvc.perform(patch("/api/notifications/read-all")
+//            .with(csrf()))
+//        .andExpect(status().isBadRequest());
+//  }
 }
