@@ -157,6 +157,22 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.exceptionType").value("ReviewAlreadyExistsException"));
     }
 
+    @DisplayName("리뷰 생성 - 서버 에러 발생 시 500 반환")
+    @Test
+    void createReview_InternalServerError() throws Exception {
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        ReviewCreateRequest request = new ReviewCreateRequest(bookId, userId, "리뷰 내용", 5);
+
+        given(reviewService.create(any())).willThrow(RuntimeException.class);
+
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isInternalServerError());
+    }
+
     @DisplayName("리뷰 상세 조회를 할 수 있다.")
     @Test
     void find() throws Exception {
@@ -204,7 +220,7 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.updatedAt").exists());
     }
 
-    // TODO 리뷰 상세 조회 리펙터링 이후 리펙터링
+    // TODO 리뷰 상세 조회 리펙터링 이후 코드 추가
 /*
     @DisplayName("리뷰 상세 조회 - 요청자 ID 헤더 누락 시 400 반환")
     @Test
