@@ -255,4 +255,23 @@ class CommentRepositoryCustomImplTest {
 
   }
 
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 잘못된 정렬 방향")
+  void findCommentsFailByInvalidDirection() {
+    //given
+    String invalidDirection = "DDD";
+
+    //when & then
+    assertThatThrownBy(() -> commentRepositoryCustom.findCommentByCursor(
+        testReview,
+        invalidDirection,
+        null,
+        null,
+        10,
+        "CreatedAt"
+    ))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("정렬 방향은 ASC 또는 DESC만 가능합니다.");
+  }
+
 }
