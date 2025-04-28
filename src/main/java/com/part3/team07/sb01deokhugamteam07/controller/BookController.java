@@ -9,6 +9,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,7 +29,7 @@ public class BookController {
 
   private final BookService bookService;
 
-  @PostMapping
+  @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ResponseEntity<BookDto> create(@RequestPart("bookData") BookCreateRequest request,
       @RequestPart(value = "thumbnailImage", required = false) MultipartFile thumbnailImage) {
     BookDto bookDto = bookService.create(request, thumbnailImage);

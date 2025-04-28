@@ -21,6 +21,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -126,7 +127,7 @@ class PowerUserDashboardBatchServiceTest {
             .key(userId1)
             .keyType(KeyType.USER)
             .period(period)
-            .value(1 * 0.5 + 5 * 0.2 + 10 * 0.3)
+            .value(BigDecimal.valueOf(1 * 0.5 + 5 * 0.2 + 10 * 0.3))
             .valueType(ValueType.SCORE)
             .rank(2)
             .build(),
@@ -134,7 +135,7 @@ class PowerUserDashboardBatchServiceTest {
             .key(userId2)
             .keyType(KeyType.USER)
             .period(period)
-            .value(1 * 0.5 + 7 * 0.2 + 15 * 0.3)
+            .value(BigDecimal.valueOf(1 * 0.5 + 7 * 0.2 + 15 * 0.3))
             .valueType(ValueType.SCORE)
             .rank(1)
             .build()
