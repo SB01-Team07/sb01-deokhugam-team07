@@ -19,7 +19,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
-import com.part3.team07.sb01deokhugamteam07.service.NotificationService;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,8 +48,6 @@ class PopularReviewDashboardBatchServiceTest {
   private LikeRepository likeRepository;
   @Mock
   private DashboardRepository dashboardRepository;
-  @Mock
-  private NotificationService notificationService;
 
   @InjectMocks
   private PopularReviewDashboardBatchService popularReviewDashboardBatchService;
@@ -114,7 +111,7 @@ class PopularReviewDashboardBatchServiceTest {
             .key(reviewId1)
             .keyType(KeyType.REVIEW)
             .period(period)
-            .value(80.0)
+            .value(BigDecimal.valueOf(80))
             .valueType(ValueType.SCORE)
             .rank(2)
             .build(),
@@ -122,7 +119,7 @@ class PopularReviewDashboardBatchServiceTest {
             .key(reviewId2)
             .keyType(KeyType.REVIEW)
             .period(period)
-            .value(90.0)
+            .value(BigDecimal.valueOf(90))
             .valueType(ValueType.SCORE)
             .rank(1)
             .build()

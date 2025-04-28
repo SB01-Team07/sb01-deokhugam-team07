@@ -14,13 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
-* @package : com.part3.team07.sb01deokhugamteam07.security.filter
-* @name : HeaderAuthenticationFilter.java
-* @date : 2025. 4. 21. 17:29
-* @author : wongil
-* @Description: 요청헤더 Deokhugam-Request-User-ID에 있는 User ID로 인증 처리
-**/
 @Component
 @RequiredArgsConstructor
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {

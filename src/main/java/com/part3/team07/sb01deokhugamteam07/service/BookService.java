@@ -13,6 +13,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -25,6 +26,7 @@ public class BookService {
 
   private final ThumbnailImageService thumbnailImageService;
 
+  @Transactional
   public BookDto create(BookCreateRequest request,
       MultipartFile thumbnailImage) {
     if (bookRepository.existsByIsbn(request.isbn())) {
@@ -46,6 +48,7 @@ public class BookService {
     return bookMapper.toDto(savedBook);
   }
 
+  @Transactional
   public BookDto update(UUID id, BookUpdateRequest request) {
     Book book = bookRepository.findById(id)
         .orElseThrow(() -> BookNotFoundException.withId(id));
@@ -59,6 +62,7 @@ public class BookService {
     return bookMapper.toDto(book);
   }
 
+  @Transactional
   public void softDelete(UUID id) {
     Book book = bookRepository.findById(id)
         .orElseThrow(() -> BookNotFoundException.withId(id));
@@ -67,6 +71,7 @@ public class BookService {
     // TODO: 관련 엔티티 논리 삭제
   }
 
+  @Transactional
   public void hardDelete(UUID id) {
     if (!bookRepository.existsById(id)) {
       throw BookNotFoundException.withId(id);

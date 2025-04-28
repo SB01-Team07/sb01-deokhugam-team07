@@ -42,7 +42,9 @@ public class SecurityConfig {
                 "/index.html",
                 "/favicon.ico",
                 "/error",
-                "/api/users"
+                "/api/users",
+                "/swagger-ui/**",
+                "/v3/api-docs/**"
             ).permitAll() // 위의 엔드포인트 허용
             .requestMatchers("/api/**").authenticated() // 나머지 엔드포인트 막음
         )
