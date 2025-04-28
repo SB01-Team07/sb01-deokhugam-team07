@@ -1,15 +1,14 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
-import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
-import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
-import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,25 +20,38 @@ public class UserExceptionHandler {
 
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(DuplicateUserEmailException.class)
-  public UserRegisterRequest duplicatedEmail(DuplicateUserEmailException e) {
+  public ErrorResponse duplicatedEmail(DuplicateUserEmailException e) {
     log.error("Duplicate Email: {}", e.getRequest().email());
 
-    return e.getRequest();
+    return new ErrorResponse(
+        e,
+        HttpStatus.CONTINUE.value()
+    );
   }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(UserNotFoundException.class)
-  public UUID userNotFound(UserNotFoundException e) {
-    log.error("User Not Found: {}", e.getUserId());
+  public ErrorResponse userNotFound(UserNotFoundException e) {
+    log.error("User Not Found");
 
-    return e.getUserId();
+    return new ErrorResponse(
+        e,
+        HttpStatus.NOT_FOUND.value()
+    );
   }
 
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  @ExceptionHandler(IllegalUserPasswordException.class)
-  public UserLoginRequest duplicatedEmail(IllegalUserPasswordException e) {
-    log.error("Invalid Password: {}", e.getUserLoginRequest().password());
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ExceptionHandler(BadCredentialsException.class)
+  public ErrorResponse badCredential(BadCredentialsException e) {
+    log.error("Bad Credential: {}", e.getMessage());
 
-    return e.getUserLoginRequest();
+    return new ErrorResponse(
+        LocalDateTime.now(),
+        HttpStatus.FORBIDDEN.toString(),
+        ErrorCode.BAD_CREDENTIAL.getMessage(),
+        Map.of(),
+        BadCredentialsException.class.getTypeName(),
+        HttpStatus.FORBIDDEN.value()
+    );
   }
 }
