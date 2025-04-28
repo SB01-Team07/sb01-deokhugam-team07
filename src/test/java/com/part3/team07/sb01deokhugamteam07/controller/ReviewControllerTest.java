@@ -406,6 +406,60 @@ class ReviewControllerTest {
         verify(reviewService).hardDelete(userId, reviewId);
     }
 
+    @DisplayName("리뷰 물리 삭제 - 요청자 ID 헤더 누락 시 400 반환")
+    @Test
+    void hardDelete_Failure_MissingUserIdHeader() throws Exception {
+        //given
+        UUID reviewId = UUID.randomUUID();
+
+        //when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}/hard", reviewId)
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
+                .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
+    }
+
+    @DisplayName("리뷰 물리 삭제 - 삭제 권한 없을 경우 403 반환")
+    @Test
+    void hardDelete_Failure_Unauthorized() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+
+        willThrow(new ReviewUnauthorizedException()) //삭제 리턴 값이 없어서 이렇게 해야하네
+                .given(reviewService)
+                .hardDelete(userId, reviewId);
+
+        //when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}/hard", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
+                        .with(csrf()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("REVIEW_UNAUTHORIZED"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewUnauthorizedException"));
+    }
+
+    @DisplayName("리뷰 물리 삭제 - 리뷰가 존재하지 않을 경우 404 반환")
+    @Test
+    void hardDelete_Failure_ReviewNotFound() throws Exception {
+        // given
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+
+        willThrow(new ReviewNotFoundException())
+                .given(reviewService)
+                .hardDelete(userId, reviewId);
+
+        // when then
+        mockMvc.perform(delete("/api/reviews/{reviewId}/hard", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("REVIEW_NOT_FOUND"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewNotFoundException"));
+    }
+
     @DisplayName("리뷰에 좋아요 등록, 취소를 할 수 있다.")
     @Test
     void toggleLike() throws Exception {
