@@ -157,7 +157,7 @@ public class NotificationService {
     }
 
     // 업데이트
-    notification.isConfirmed(request.confirmed());
+    notification.updateConfirmed(request.confirmed());
 
     return NotificationDto.builder()
         .id(notificationId)
