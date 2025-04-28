@@ -77,21 +77,21 @@ public class ReviewService {
     @Transactional
     public ReviewDto update(UUID userId, UUID reviewId, ReviewUpdateRequest request) {
         log.debug("리뷰 수정 시작: id={}", reviewId);
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
-
         if(!review.isReviewer(userId)){
             throw ReviewUnauthorizedException.forUpdate(userId, reviewId);
         }
         review.update(request.content(), request.rating());
+        boolean likeByMe = likeRepository.existsByReviewIdAndUserId(reviewId, userId);
         log.info("리뷰 수정 완료: id={}", reviewId);
-        return ReviewMapper.toDto(review, false);
+        return ReviewMapper.toDto(review, likeByMe);
     }
 
     @Transactional
     public void softDelete(UUID userId, UUID reviewId){
         log.debug("리뷰 논리 삭제 시작: id={}", reviewId);
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
 
         if(!review.isReviewer(userId)){
@@ -130,7 +130,7 @@ public class ReviewService {
     @Transactional
     public void hardDelete(UUID userId, UUID reviewId){
         log.debug("리뷰 물리 삭제 시작: id={}", reviewId);
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
         if(!review.isReviewer(userId)){
             throw ReviewUnauthorizedException.forDelete(userId, reviewId);
@@ -142,7 +142,7 @@ public class ReviewService {
     @Transactional
     public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
         log.debug("좋아요 토글 요청. reviewId={}, userId={}", reviewId, userId);
-        reviewRepository.findById(reviewId)
+        reviewRepository.findByIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
 
         return likeRepository.findByReviewIdAndUserId(reviewId, userId)
