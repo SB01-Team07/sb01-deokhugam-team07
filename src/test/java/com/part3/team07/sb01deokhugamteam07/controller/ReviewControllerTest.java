@@ -199,10 +199,11 @@ class ReviewControllerTest {
         );
 
         //when
-        given(reviewService.find(reviewId)).willReturn(reviewDto);
+        given(reviewService.find(reviewId, userId)).willReturn(reviewDto);
 
         //then
         mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(reviewId.toString()))
@@ -220,8 +221,6 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.updatedAt").exists());
     }
 
-    // TODO 리뷰 상세 조회 리펙터링 이후 코드 추가
-/*
     @DisplayName("리뷰 상세 조회 - 요청자 ID 헤더 누락 시 400 반환")
     @Test
     void findReview_Failure_MissingUserIdHeader() throws Exception {
@@ -235,7 +234,6 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
                 .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
     }
-*/
 
 
     @DisplayName("리뷰 상세 조회 - 존재하지 않는 리뷰일 경우 404 반환")
@@ -243,11 +241,13 @@ class ReviewControllerTest {
     void findReview_Failure_ReviewNotFound() throws Exception {
         //given
         UUID reviewId = UUID.randomUUID();
-        given(reviewService.find(reviewId))
+        UUID userId = UUID.randomUUID();
+        given(reviewService.find(reviewId, userId))
                 .willThrow(new ReviewNotFoundException());
 
         // when & then
         mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
+                        .header("Deokhugam-Request-User-ID", userId.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("REVIEW_NOT_FOUND"))
