@@ -1,10 +1,9 @@
 package com.part3.team07.sb01deokhugamteam07.storage;
 
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
-import com.part3.team07.sb01deokhugamteam07.exception.file.StorageAlreadyExistsException;
-import com.part3.team07.sb01deokhugamteam07.exception.file.StorageInitException;
-import com.part3.team07.sb01deokhugamteam07.exception.file.StorageSaveFailedException;
-import com.part3.team07.sb01deokhugamteam07.exception.thumbnailImage.ThumbnailImageStorageException;
+import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageAlreadyExistsException;
+import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageInitException;
+import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageSaveFailedException;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -64,7 +63,7 @@ public class LocalStorage implements Storage {
   private String getSubDirByType(FileType type) {
     return switch (type) {
       case THUMBNAIL_IMAGE -> "thumbnail";
-      case LOG -> "log";
+      case LOG -> "logs";
     };
   }
 }
