@@ -77,22 +77,22 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     QComment comment = QComment.comment;
     boolean isDesc = "DESC".equalsIgnoreCase(direction);
 
-    if (cursor == null && after == null) {
+    if ((cursor == null || cursor.isBlank())&& after == null) {
       return null;
     }
 
     switch (sortBy) {
       case "createdAt":
-        if (cursor != null) {
+        if (cursor != null && !cursor.isBlank()) {
           LocalDateTime parsed = LocalDateTime.parse(cursor);
           return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
-        } else if (after != null) {
+        } else if (after != null ) {
           return comment.createdAt.gt(after);
         }
         break;
     }
 
-    return comment.createdAt.gt(after);
+    return null;
   }
 
 }
