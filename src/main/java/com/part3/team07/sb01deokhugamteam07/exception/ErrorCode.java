@@ -22,8 +22,7 @@ public enum ErrorCode {
   //Review 관련 에러 코드
   REVIEW_NOT_FOUND("리뷰 정보를 찾을 수 없습니다."),
   DUPLICATE_REVIEW_EXISTS("이미 작성한 리뷰가 존재합니다."),
-  REVIEW_UNAUTHORIZED_DELETE("리뷰 삭제 권한이 없습니다."),
-  REVIEW_UNAUTHORIZED_UPDATE("리뷰 수정 권한이 없습니다."),
+  REVIEW_UNAUTHORIZED("리뷰에 대한 권한이 없습니다."),
   INVALID_REVIEW_REQUEST("리뷰 요청이 잘못되었습니다."); // (정렬 기준 오류, 페이지네이션 오류 등 포함)
 
   private final String message;
