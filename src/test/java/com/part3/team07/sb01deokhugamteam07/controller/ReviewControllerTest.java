@@ -8,6 +8,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateReque
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
@@ -206,21 +207,40 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.updatedAt").exists());
     }
 
-
-    // TODO: 커스텀 예외 추가시 변경 예정
-/*    @DisplayName("존재하지 않은 리뷰는 상세 조회 불가능 하다.")
+    // TODO 리뷰 상세 조회 리펙터링 이후 리펙터링
+/*
+    @DisplayName("리뷰 상세 조회 - 요청자 ID 헤더 누락 시 400 반환")
     @Test
-    void findReview_Failure_NotFound() throws Exception {
+    void findReview_Failure_MissingUserIdHeader() throws Exception {
         //given
-        UUID invalidReviewId = UUID.randomUUID();
-        given(reviewService.find(invalidReviewId))
-                .willThrow(new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        UUID reviewId = UUID.randomUUID();
 
         //when then
-        mockMvc.perform(get("/api/reviews/{reviewId}", invalidReviewId)
-                    .contentType(MediaType.APPLICATION_JSON));
-                //.andExpect(status().isBadRequest());
-    }*/
+        mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
+                .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
+    }
+*/
+
+
+    @DisplayName("리뷰 상세 조회 - 존재하지 않는 리뷰일 경우 404 반환")
+    @Test
+    void findReview_Failure_ReviewNotFound() throws Exception {
+        //given
+        UUID reviewId = UUID.randomUUID();
+        given(reviewService.find(reviewId))
+                .willThrow(new ReviewNotFoundException());
+
+        // when & then
+        mockMvc.perform(get("/api/reviews/{reviewId}", reviewId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("REVIEW_NOT_FOUND"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewNotFoundException"));
+
+    }
 
     @DisplayName("리뷰를 수정할 수 있다.")
     @Test
