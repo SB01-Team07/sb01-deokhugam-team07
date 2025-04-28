@@ -61,16 +61,17 @@ public class ReviewService {
         reviewRepository.save(review);
 
         log.info("리뷰 생성 완료: id={}, userId={}, bookId{}", review.getId(), user.getId(), book.getId());
-        return ReviewMapper.toDto(review);
+        return ReviewMapper.toDto(review, false);
     }
 
     @Transactional(readOnly = true)
-    public ReviewDto find(UUID reviewId) {
+    public ReviewDto find(UUID reviewId, UUID userId) {
         log.debug("리뷰 상세 조회 시작: id={}", reviewId);
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
+        boolean likeByMe = likeRepository.existsByReviewIdAndUserId(reviewId, userId);
         log.info("리뷰 상세 조회 완료: id={}", reviewId);
-        return ReviewMapper.toDto(review);
+        return ReviewMapper.toDto(review, likeByMe);
     }
 
     @Transactional
@@ -84,7 +85,7 @@ public class ReviewService {
         }
         review.update(request.content(), request.rating());
         log.info("리뷰 수정 완료: id={}", reviewId);
-        return ReviewMapper.toDto(review);
+        return ReviewMapper.toDto(review, false);
     }
 
     @Transactional
