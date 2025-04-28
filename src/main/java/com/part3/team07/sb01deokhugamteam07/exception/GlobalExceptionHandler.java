@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-      ConstraintViolationException ex) {
+          MethodArgumentNotValidException ex) {
     log.error("요청 유효성 검사 실패: {}", ex.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
 

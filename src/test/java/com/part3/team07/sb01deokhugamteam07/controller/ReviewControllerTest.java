@@ -1,10 +1,14 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
+import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -97,17 +102,61 @@ class ReviewControllerTest {
     }
 
     @Test
-    @DisplayName("유효하지 않은 입력이 들어오면 리뷰를 생성할 수 없다.")
+    @DisplayName("리뷰 생성 - 입력값 검증 실패 시 400 반환")
     void createReview_Failure_InvalidRequest() throws Exception {
-        // Given
+        //given
         ReviewCreateRequest invalidRequest = new ReviewCreateRequest(null, null, "", 6);
 
-        // When & Then
+        // when then
         mockMvc.perform(post("/api/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest))
-                        .with(csrf())) //csrf 추가
-                .andExpect(status().isBadRequest());
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.exceptionType").value("MethodArgumentNotValidException"));
+    }
+
+    @DisplayName("리뷰 생성 - 존재하지 않은 책일 경우 404 반환")
+    @Test
+    void createReview_ShouldReturn404_WhenBookNotFound() throws Exception {
+        //given
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        ReviewCreateRequest request = new ReviewCreateRequest(bookId, userId, "리뷰 내용", 5);
+
+        given(reviewService.create(any())).willThrow(new BookNotFoundException());
+
+        //when then
+        mockMvc.perform(post("/api/reviews")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("BOOK_NOT_FOUND"))
+                .andExpect(jsonPath("$.exceptionType").value("BookNotFoundException"));
+    }
+
+    @DisplayName("리뷰 생성 - 이미 작성된 리뷰가 존재할 경우 409 반환")
+    @Test
+    void createReview_Failure_DuplicateReview() throws Exception {
+        // given
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        ReviewCreateRequest request = new ReviewCreateRequest(bookId, userId, "리뷰 내용", 5);
+
+        given(reviewService.create(any())).willThrow(new ReviewAlreadyExistsException());
+
+        // when then
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isConflict()) // 409
+                .andExpect(jsonPath("$.code").value("DUPLICATE_REVIEW"))
+                .andExpect(jsonPath("$.exceptionType").value("ReviewAlreadyExistsException"));
     }
 
     @DisplayName("리뷰 상세 조회를 할 수 있다.")
