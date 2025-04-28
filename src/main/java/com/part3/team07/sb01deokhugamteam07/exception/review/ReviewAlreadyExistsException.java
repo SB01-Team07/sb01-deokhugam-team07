@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class ReviewAlreadyExistsException extends ReviewException {
     public ReviewAlreadyExistsException() {
-        super(ErrorCode.DUPLICATE_REVIEW_EXISTS);
+        super(ErrorCode.DUPLICATE_REVIEW);
     }
 
     public static ReviewAlreadyExistsException withUserIdAndBookId(UUID userId, UUID bookId) {

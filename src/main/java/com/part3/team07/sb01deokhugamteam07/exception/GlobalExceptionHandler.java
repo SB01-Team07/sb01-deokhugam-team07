@@ -4,7 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -118,11 +117,12 @@ public class GlobalExceptionHandler {
   private HttpStatus determineHttpStatus(DeokhugamException exception) {
     ErrorCode errorCode = exception.getErrorCode();
     return switch (errorCode) {
-      case BOOK_NOT_FOUND -> HttpStatus.NOT_FOUND;
-      case DUPLICATE_BOOK -> HttpStatus.CONFLICT;
+      case BOOK_NOT_FOUND, REVIEW_NOT_FOUND -> HttpStatus.NOT_FOUND;
+      case DUPLICATE_BOOK, DUPLICATE_REVIEW -> HttpStatus.CONFLICT;
+      case REVIEW_UNAUTHORIZED -> HttpStatus.FORBIDDEN;
+      case INVALID_REVIEW_REQUEST -> HttpStatus.BAD_REQUEST;
       // 에러 코드 추가 시 업데이트
 //      case  -> HttpStatus.UNAUTHORIZED;
-//      case  -> HttpStatus.BAD_REQUEST;
 //      case  -> HttpStatus.INTERNAL_SERVER_ERROR;
       default -> HttpStatus.INTERNAL_SERVER_ERROR;
     };
