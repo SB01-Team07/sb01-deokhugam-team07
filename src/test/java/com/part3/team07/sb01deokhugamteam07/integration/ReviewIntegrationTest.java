@@ -137,6 +137,7 @@ public class ReviewIntegrationTest {
 
         // When & Then
         mockMvc.perform(get("/api/reviews/{reviewId}", review.getId())
+                        .header("Deokhugam-Request-User-ID", user.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(review.getId().toString()))
