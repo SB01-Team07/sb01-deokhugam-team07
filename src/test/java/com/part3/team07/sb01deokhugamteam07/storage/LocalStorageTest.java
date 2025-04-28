@@ -1,9 +1,10 @@
 package com.part3.team07.sb01deokhugamteam07.storage;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
+import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageAlreadyExistsException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +44,7 @@ class LocalStorageTest {
 
   @Test
   @DisplayName("thumbnailImage put 성공")
-  void put() throws IOException {
+  void put_success() throws IOException {
     // given
     Path filePath = storage.resolvePath(type, fileName);
 
@@ -54,5 +55,19 @@ class LocalStorageTest {
     assertThat(Files.exists(filePath)).isTrue();
     byte[] fileContent = Files.readAllBytes(filePath);
     assertThat(fileContent).isEqualTo(content);
+  }
+
+  @Test
+  @DisplayName("thumbnailImage put 실패 - 있는 파일")
+  void put_fail_duplicateFileName() throws IOException {
+    // given
+    Path filePath = storage.resolvePath(type, fileName);
+    Files.createDirectories(filePath.getParent());
+    Files.write(filePath, content);
+
+    // when & then
+    assertThrows(StorageAlreadyExistsException.class, () -> {
+      storage.put(type, fileName, content);
+    });
   }
 }

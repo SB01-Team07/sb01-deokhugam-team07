@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.storage;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.storage.StorageSaveFailedException;
+import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,7 +68,6 @@ class S3StorageTest {
         .isInstanceOf(StorageAlreadyExistsException.class);
   }
 
-
   @Test
   @DisplayName("storage put 실패 - 저장 중 오류")
   void put_fail_awsServiceException() {
@@ -80,5 +81,18 @@ class S3StorageTest {
     // when & then
     assertThatThrownBy(() -> s3Storage.put(fileType, fileName, bytes))
         .isInstanceOf(StorageSaveFailedException.class);
+  }
+
+  @Test
+  @DisplayName("type으로 LOG 선택 시 logs 반환")
+  void getSubDirByTypeTest() {
+    // given
+    FileType fileType = FileType.LOG;
+
+    // when
+    String filePath = s3Storage.resolvePath(fileType, fileName);
+
+    // then
+    assertThat("logs/" + fileName).isEqualTo(filePath);
   }
 }
