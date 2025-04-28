@@ -12,7 +12,6 @@ public enum ErrorCode {
   // Storage 관련 에러 코드
   STORAGE_INIT("저장소 초기화 중 오류가 발생하였습니다."),
   DUPLICATE_STORAGE("이미 존재하는 리소스입니다."),
-  STORAGE_NOT_FOUND("리소스를 찾을 수 없습니다."),
   STORAGE_SAVE_FAILED("리소스 저장 중 오류가 발생하였습니다."),
 
   // ThumbnailImage 관련 에러 코드
