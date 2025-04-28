@@ -49,13 +49,6 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
-  // 제약 조건 위반 (limit 음수 등)
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
-    log.warn("요청 값 제약 조건 위반: {}", ex.getMessage());
-    ErrorResponse response = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-  }
 
 
 
