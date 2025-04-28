@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.repository;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.QComment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -67,7 +68,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         };
 
       default:
-        throw new IllegalArgumentException(sortBy);
+        throw InvalidCommentQueryException.sortBy();
     }
   }
 
@@ -92,7 +93,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
             LocalDateTime parsed = LocalDateTime.parse(cursor);
             return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
           } catch (DateTimeParseException e){
-            throw new IllegalArgumentException(cursor);
+            throw InvalidCommentQueryException.cursor();
           }
         }
     }
@@ -103,7 +104,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
   //정렬 방향 검증
   private void validateDirection(String direction) {
     if (!"ASC".equalsIgnoreCase(direction) && !"DESC".equalsIgnoreCase(direction)) {
-      throw new IllegalArgumentException("정렬 방향은 ASC 또는 DESC만 가능합니다.");
+      throw InvalidCommentQueryException.direction();
     }
   }
 
