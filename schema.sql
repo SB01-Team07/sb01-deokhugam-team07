@@ -10,7 +10,7 @@ CREATE TABLE users
     is_deleted BOOLEAN             NOT NULL DEFAULT FALSE,
     email      VARCHAR(255) UNIQUE NOT NULL,
     nickname   VARCHAR(20)         NOT NULL,
-    password   VARCHAR(20)         NOT NULL
+    password   VARCHAR(255)         NOT NULL
 );
 
 CREATE TABLE books

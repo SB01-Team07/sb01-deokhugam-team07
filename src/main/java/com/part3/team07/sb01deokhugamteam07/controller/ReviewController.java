@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/reviews")
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -64,7 +64,7 @@ public class ReviewController {
                 .build();
     }
 
-    @DeleteMapping({"{reviewId}/hard"})
+    @DeleteMapping({"/{reviewId}/hard"})
     public ResponseEntity<Void> hardDelete(
             @PathVariable UUID reviewId,
             @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
