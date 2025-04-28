@@ -44,7 +44,7 @@ class BookMapperTest {
     publishedDate = LocalDate.of(1618, 1, 1);
 
     book = new Book(title, author, description, publisher, publishedDate,
-        isbn, thumbnailUrl, 0, 0);
+        isbn, thumbnailUrl, 0, BigDecimal.ZERO);
     ReflectionTestUtils.setField(book, "id", id);
     ReflectionTestUtils.setField(book, "createdAt", LocalDateTime.now());
     ReflectionTestUtils.setField(book, "updatedAt", LocalDateTime.now());
