@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
@@ -11,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -98,8 +100,9 @@ class CommentRepositoryCustomImplTest {
   }
 
   @Test
-  @DisplayName("cursor가 null 일 때 DESC 정렬 조회")
+  @DisplayName("댓글 목록 조회 성공 - cursor가 null 일 때 DESC 정렬 조회")
   void findCommentsCursorNullDESC() {
+    //when
     List<Comment> comments = commentRepositoryCustom.findCommentByCursor(
         testReview,
         "DESC",
@@ -109,6 +112,7 @@ class CommentRepositoryCustomImplTest {
         "createdAt"
     );
 
+    //then
     assertThat(comments).hasSize(3);
     assertThat(comments.get(0).getContent()).isEqualTo("test1");
     assertThat(comments.get(1).getContent()).isEqualTo("test2");
@@ -116,8 +120,9 @@ class CommentRepositoryCustomImplTest {
   }
 
   @Test
-  @DisplayName("cursor가 null 일 때 ASC 정렬 조회")
+  @DisplayName("댓글 목록 조회 성공 - cursor가 null 일 때 ASC 정렬 조회")
   void findCommentsCursorNullASC() {
+    //when
     List<Comment> comments = commentRepositoryCustom.findCommentByCursor(
         testReview,
         "ASC",
@@ -127,6 +132,7 @@ class CommentRepositoryCustomImplTest {
         "createdAt"
     );
 
+    //then
     assertThat(comments).hasSize(3);
     assertThat(comments.get(0).getContent()).isEqualTo("test3");
     assertThat(comments.get(1).getContent()).isEqualTo("test2");
@@ -134,8 +140,9 @@ class CommentRepositoryCustomImplTest {
   }
 
   @Test
-  @DisplayName("cursor가 빈 문자열일 때 DESC 정렬 조회")
+  @DisplayName("댓글 목록 조회 성공 - cursor가 빈 문자열일 때 DESC 정렬 조회")
   void findCommentsCursorBlankDESC() {
+    //when
     List<Comment> comments = commentRepositoryCustom.findCommentByCursor(
         testReview,
         "DESC",
@@ -145,6 +152,7 @@ class CommentRepositoryCustomImplTest {
         "createdAt"
     );
 
+    //then
     assertThat(comments).hasSize(3);
     assertThat(comments.get(0).getContent()).isEqualTo("test1");
     assertThat(comments.get(1).getContent()).isEqualTo("test2");
@@ -153,8 +161,9 @@ class CommentRepositoryCustomImplTest {
   }
 
   @Test
-  @DisplayName("cursor가 빈 문자열일 때 ASC 정렬 조회")
+  @DisplayName("댓글 목록 조회 성공 - cursor가 빈 문자열일 때 ASC 정렬 조회")
   void findCommentsCursorBlankASC() {
+    //when
     List<Comment> comments = commentRepositoryCustom.findCommentByCursor(
         testReview,
         "ASC",
@@ -164,6 +173,7 @@ class CommentRepositoryCustomImplTest {
         "createdAt"
     );
 
+    //then
     assertThat(comments).hasSize(3);
     assertThat(comments.get(0).getContent()).isEqualTo("test3");
     assertThat(comments.get(1).getContent()).isEqualTo("test2");
@@ -171,8 +181,9 @@ class CommentRepositoryCustomImplTest {
   }
 
   @Test
-  @DisplayName("cursor가 존재할 때 DESC 정렬 조회")
+  @DisplayName("댓글 목록 조회 성공 - cursor가 존재할 때 DESC 정렬 조회")
   void findCommentsCursorExistDESC() {
+    //when
     List<Comment> comments = commentRepositoryCustom.findCommentByCursor(
         testReview,
         "DESC",
@@ -182,13 +193,15 @@ class CommentRepositoryCustomImplTest {
         "createdAt"
     );
 
+    //then
     assertThat(comments).hasSize(1);
     assertThat(comments.get(0).getContent()).isEqualTo("test3");
   }
 
   @Test
-  @DisplayName("cursor가 존재할 때 ASC 정렬 조회")
+  @DisplayName("댓글 목록 조회 성공 - cursor가 존재할 때 ASC 정렬 조회")
   void findCommentsCursorExistASC() {
+    //when
     List<Comment> comments = commentRepositoryCustom.findCommentByCursor(
         testReview,
         "ASC",
@@ -198,7 +211,46 @@ class CommentRepositoryCustomImplTest {
         "createdAt"
     );
 
+    //then
     assertThat(comments).hasSize(1);
     assertThat(comments.get(0).getContent()).isEqualTo("test1");
   }
+
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 커서값이 정렬 조건과 다를경우")
+  void findCommentsFailByInvalidCursor() {
+    String invalidCursor = "not-a-datetime";
+
+    //when & then
+    assertThatThrownBy(() -> commentRepositoryCustom.findCommentByCursor(
+        testReview,
+        "DESC",
+        invalidCursor, // 잘못된 커서
+        null,
+        10,
+        "createdAt"
+    ))
+        .isInstanceOf(DateTimeParseException.class);
+  }
+
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 정렬 조건이 잘못된 입력값일 경우")
+  void findCommentsFailByInvalidOrderBy() {
+    //given
+    String invalidSortBy = "invalidField";
+
+    //when & then
+    assertThatThrownBy(() -> commentRepositoryCustom.findCommentByCursor(
+        testReview,
+        "DESC",
+        null,
+        null,
+        10,
+        invalidSortBy
+    ))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining(invalidSortBy);
+
+  }
+
 }
