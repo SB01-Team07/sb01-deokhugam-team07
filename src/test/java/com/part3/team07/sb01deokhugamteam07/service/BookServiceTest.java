@@ -58,6 +58,7 @@ class BookServiceTest {
   private String publisher;
   private LocalDate publishedDate;
   private String isbn;
+  private Book book;
   private Book book1, book2, book3;
   private BookDto bookDto1, bookDto2, bookDto3;
 
@@ -70,8 +71,44 @@ class BookServiceTest {
     publisher = "publisher";
     publishedDate = LocalDate.of(1618, 1, 1);
 
-    book1 = new Book(title, author, description, publisher, publishedDate,
+    book = new Book(title, author, description, publisher, publishedDate,
         isbn, "", 0, BigDecimal.ZERO);
+
+    book1 = Book.builder()
+        .title("Harry Potter")
+        .author("J.K. Rowling")
+        .description("Fantasy book about wizards")
+        .publisher("Publisher A")
+        .publishDate(LocalDate.of(1997, 6, 26))
+        .isbn("1234567890")
+        .thumbnailUrl(null)
+        .reviewCount(1000)
+        .rating(BigDecimal.valueOf(4.5))
+        .build();
+
+    book2 = Book.builder()
+        .title("The Hobbit")
+        .author("J.R.R. Tolkien")
+        .description("Adventure of Bilbo Baggins")
+        .publisher("Publisher B")
+        .publishDate(LocalDate.of(1937, 9, 21))
+        .isbn("2345678901")
+        .thumbnailUrl(null)
+        .reviewCount(2000)
+        .rating(BigDecimal.valueOf(4.7))
+        .build();
+
+    book3 = Book.builder()
+        .title("1984")
+        .author("George Orwell")
+        .description("Dystopian novel")
+        .publisher("Publisher C")
+        .publishDate(LocalDate.of(1949, 6, 8))
+        .isbn("3456789012")
+        .thumbnailUrl(null)
+        .reviewCount(1500)
+        .rating(BigDecimal.valueOf(4.6))
+        .build();
   }
 
   @Nested
@@ -184,7 +221,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book1));
+      given(bookRepository.findById(id)).willReturn(Optional.of(book));
       given(storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE)).willReturn(newThumbnailUrl);
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
@@ -235,7 +272,7 @@ class BookServiceTest {
     @DisplayName("도서 논리 삭제 성공")
     void softDelete_success() {
       // given
-      Book spyBook = spy(book1);
+      Book spyBook = spy(book);
       given(bookRepository.findById(id)).willReturn(Optional.of(spyBook));
 
       // when
@@ -310,7 +347,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book1));
+      given(bookRepository.findById(id)).willReturn(Optional.of(book));
       given(bookMapper.toDto(any(Book.class))).willReturn(bookDto);
 
       // when
@@ -342,13 +379,13 @@ class BookServiceTest {
     void findAll_success() {
       // given
       String keyword = null;
-      String sort = "publishedDate";
-      String order = "desc";
+      String orderBy = "publishedDate";
+      String direction = "desc";
       String cursor = null;
       LocalDateTime after = null;
       int size = 2;
 
-      given(bookRepository.findBooksWithCursor(keyword, sort, order, cursor, after, size + 1))
+      given(bookRepository.findBooksWithCursor(keyword, orderBy, direction, cursor, after, size + 1))
           .willReturn(Arrays.asList(book1, book2));
       given(bookRepository.countByKeyword(keyword)).willReturn(3L);
 
@@ -356,7 +393,7 @@ class BookServiceTest {
       given(bookMapper.toDto(book2)).willReturn(bookDto2);
 
       // when
-      CursorPageResponseBookDto result = bookService.findAll(keyword, sort, order, cursor, after, size);
+      CursorPageResponseBookDto result = bookService.findAll(keyword, orderBy, direction, cursor, after, size);
 
       // then
       assertThat(result.content()).hasSize(2);
@@ -365,5 +402,7 @@ class BookServiceTest {
       assertThat(result.hasNext()).isFalse();
       assertThat(result.totalElements()).isEqualTo(3);
     }
+
+
   }
 }

@@ -39,6 +39,8 @@ class BookRepositoryTest {
         .publishDate(LocalDate.of(1997, 6, 26))
         .isbn("1234567890")
         .thumbnailUrl(null)
+        .reviewCount(1000)
+        .rating(BigDecimal.valueOf(4.5))
         .build();
 
     book2 = Book.builder()
@@ -49,6 +51,8 @@ class BookRepositoryTest {
         .publishDate(LocalDate.of(1937, 9, 21))
         .isbn("2345678901")
         .thumbnailUrl(null)
+        .reviewCount(2000)
+        .rating(BigDecimal.valueOf(4.7))
         .build();
 
     book3 = Book.builder()
@@ -59,6 +63,8 @@ class BookRepositoryTest {
         .publishDate(LocalDate.of(1949, 6, 8))
         .isbn("3456789012")
         .thumbnailUrl(null)
+        .reviewCount(1500)
+        .rating(BigDecimal.valueOf(4.6))
         .build();
 
     book4 = Book.builder()
@@ -69,6 +75,8 @@ class BookRepositoryTest {
         .publishDate(LocalDate.of(1813, 1, 28))
         .isbn("4567890123")
         .thumbnailUrl(null)
+        .reviewCount(800)
+        .rating(BigDecimal.valueOf(4.4))
         .build();
 
     book5 = Book.builder()
@@ -79,32 +87,20 @@ class BookRepositoryTest {
         .publishDate(LocalDate.of(1925, 4, 10))
         .isbn("5678901234")
         .thumbnailUrl(null)
+        .reviewCount(1200)
+        .rating(BigDecimal.valueOf(4.3))
         .build();
 
     bookRepository.saveAll(List.of(book1, book2, book3, book4, book5));
 
-    setField(book1, "rating", BigDecimal.valueOf(4.5));
-    setField(book1, "reviewCount", 1000);
     setField(book1, "createdAt",
         LocalDateTime.of(2023, 1, 1, 0, 0));
-
-    setField(book2, "rating", BigDecimal.valueOf(4.7));
-    setField(book2, "reviewCount", 2000);
     setField(book2, "createdAt",
         LocalDateTime.of(2023, 1, 2, 0, 0));
-
-    setField(book3, "rating", BigDecimal.valueOf(4.6));
-    setField(book3, "reviewCount", 1500);
     setField(book3, "createdAt",
         LocalDateTime.of(2023, 1, 3, 0, 0));
-
-    setField(book4, "rating", BigDecimal.valueOf(4.4));
-    setField(book4, "reviewCount", 800);
     setField(book4, "createdAt",
         LocalDateTime.of(2023, 1, 4, 0, 0));
-
-    setField(book5, "rating", BigDecimal.valueOf(4.3));
-    setField(book5, "reviewCount", 1200);
     setField(book5, "createdAt",
         LocalDateTime.of(2023, 1, 5, 0, 0));
   }
