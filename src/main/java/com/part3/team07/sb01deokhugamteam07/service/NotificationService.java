@@ -3,15 +3,21 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import com.part3.team07.sb01deokhugamteam07.dto.notification.NotificationDto;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPageResponseNotificationDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -135,6 +141,33 @@ public class NotificationService {
         .nextAfter(nextAfter)
         .size(content.size())
         .hasNext(hasNext)
+        .build();
+  }
+
+  @Transactional
+  public NotificationDto update(UUID notificationId, UUID userId, NotificationUpdateRequest request) {
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(()-> new NotificationNotFoundException(notificationId));
+    // TODO 리뷰 에러 추가 시 변경
+    Review review = reviewRepository.findById(notification.getReviewId())
+        .orElseThrow(()-> new NoSuchElementException());
+
+    if(!notification.getUserId().equals(userId)){
+      throw new NotificationUnauthorizedException(userId);
+    }
+
+    // 업데이트
+    notification.isConfirmed(request.confirmed());
+
+    return NotificationDto.builder()
+        .id(notificationId)
+        .userId(userId)
+        .reviewId(notification.getReviewId())
+        .reviewTitle(review.getContent())
+        .content(notification.getContent())
+        .confirmed(notification.isConfirmed())
+        .createdAt(notification.getCreatedAt())
+        .updatedAt(notification.getUpdatedAt())
         .build();
   }
 }

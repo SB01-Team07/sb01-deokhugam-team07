@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,20 +13,24 @@ import static org.mockito.Mockito.when;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.NotificationDto;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPageResponseNotificationDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.swing.text.html.Option;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -237,6 +242,52 @@ class NotificationServiceTest {
 
     assertThrows(UserNotFoundException.class, () -> {
       notificationService.find(nonUserId, "desc", null, null, 20);
+    });
+  }
+
+  @Test
+  @DisplayName("알림 업데이트 성공")
+  public void update_Success(){
+    UUID notificationId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    NotificationUpdateRequest request = new NotificationUpdateRequest(true);
+
+    LocalDateTime createdAt = LocalDateTime.now();
+    LocalDateTime updatedAt =  LocalDateTime.now();
+    Notification notification = Notification.builder()
+        .userId(userId)
+        .reviewId(reviewId)
+        .content("나의 리뷰가 역대 인기 리뷰 9위에 선정되었습니다.")
+        .confirmed(false)
+        .build();
+    ReflectionTestUtils.setField(notification, "id", notificationId);
+    ReflectionTestUtils.setField(notification, "createdAt", createdAt);
+    ReflectionTestUtils.setField(notification, "updatedAt", updatedAt);
+
+    when(notificationRepository.findById(notificationId)).thenReturn(Optional.of(notification));
+    when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+
+    NotificationDto result = notificationService.update(notificationId, userId, request);
+
+    verify(notificationRepository).findById(any(UUID.class));
+    assertThat(result).isNotNull();
+    assertThat(result.id()).isEqualTo(notificationId);
+    assertThat(result.userId()).isEqualTo(userId);
+    assertTrue(result.confirmed());
+  }
+
+
+  @Test
+  @DisplayName("notificationId 가 존재하지 않는 ID 일 경우 NotificationNotFoundException 를 반환한다.")
+  public void update_Fail_With_NonNotificationId(){
+    UUID NonNotificationId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    NotificationUpdateRequest request = new NotificationUpdateRequest(true);
+
+    when(notificationRepository.findById(NonNotificationId)).thenReturn(Optional.empty() );
+
+    assertThrows(NotificationNotFoundException.class, () -> {
+      notificationService.update(NonNotificationId, userId, request);
     });
   }
 }
