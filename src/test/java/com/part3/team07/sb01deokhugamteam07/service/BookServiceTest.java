@@ -17,6 +17,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.book.InvalidSortFieldException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.lang.reflect.Field;
@@ -556,9 +557,10 @@ class BookServiceTest {
       int size = 10;
 
       // when & then
+      // TODO: 커스텀 예외 지정
       assertThatThrownBy(() ->
           bookService.findAll(keyword, sort, order, cursor, after, size)
-      ).isInstanceOf(IllegalArgumentException.class);
+      ).isInstanceOf(InvalidSortFieldException.class);
     }
   }
 }

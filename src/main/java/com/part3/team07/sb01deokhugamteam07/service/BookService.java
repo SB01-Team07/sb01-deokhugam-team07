@@ -8,6 +8,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.book.InvalidSortFieldException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.time.LocalDateTime;
@@ -154,7 +155,7 @@ public class BookService {
   private void validateSortField(String sortField) {
     List<String> validSortFields = List.of("title", "publishedDate", "rating", "reviewCount");
     if (!validSortFields.contains(sortField)) {
-      throw new IllegalArgumentException("Invalid sort field: " + sortField);
+      throw InvalidSortFieldException.withField(sortField);
     }
   }
 }
