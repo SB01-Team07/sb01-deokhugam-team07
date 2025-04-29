@@ -49,7 +49,7 @@ public class ReviewService {
             throw ReviewAlreadyExistsException.withUserIdAndBookId(request.userId(), request.bookId());
         }
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new UserNotFoundException(request.userId()));
+                .orElseThrow(() -> new UserNotFoundException());
         Book book = bookRepository.findById(request.bookId())
                 .orElseThrow(() -> new BookNotFoundException());
 
