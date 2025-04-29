@@ -20,6 +20,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.service.NotificationService;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,7 +70,7 @@ class PopularReviewDashboardBatchServiceTest {
     // 리뷰 설정에 필요한 Book, User
     Book book = Book.builder()
         .title("testBook")
-        .thumbnailFileName("dummyUrl")
+        .thumbnailUrl("dummyUrl")
         .build();
     UUID bookId = UUID.randomUUID();
     ReflectionTestUtils.setField(book, "id", bookId);
@@ -114,7 +115,7 @@ class PopularReviewDashboardBatchServiceTest {
             .key(reviewId1)
             .keyType(KeyType.REVIEW)
             .period(period)
-            .value(80.0)
+            .value(BigDecimal.valueOf(80))
             .valueType(ValueType.SCORE)
             .rank(2)
             .build(),
@@ -122,7 +123,7 @@ class PopularReviewDashboardBatchServiceTest {
             .key(reviewId2)
             .keyType(KeyType.REVIEW)
             .period(period)
-            .value(90.0)
+            .value(BigDecimal.valueOf(90))
             .valueType(ValueType.SCORE)
             .rank(1)
             .build()

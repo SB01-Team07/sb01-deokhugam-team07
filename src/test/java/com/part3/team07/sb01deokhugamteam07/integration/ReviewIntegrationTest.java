@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +71,9 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("url")
+                .thumbnailUrl("url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -118,9 +119,9 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -168,9 +169,9 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -214,9 +215,9 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -254,9 +255,9 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 
@@ -294,9 +295,9 @@ public class ReviewIntegrationTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn("1234567890123")
-                .thumbnailFileName("Url")
+                .thumbnailUrl("Url")
                 .reviewCount(0)
-                .rating(0.0)
+                .rating(BigDecimal.ZERO)
                 .build();
         bookRepository.save(book);
 

@@ -11,6 +11,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,10 +21,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
 
 @DataJpaTest
+@EnableJpaAuditing
 @ActiveProfiles("test")
 class DashboardRepositoryCustomImplTest {
 
@@ -51,7 +54,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.DAILY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -63,7 +66,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.REVIEW)
           .period(Period.DAILY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -75,7 +78,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.BOOK)
           .period(Period.DAILY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -87,7 +90,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.WEEKLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -99,7 +102,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.REVIEW)
           .period(Period.WEEKLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -111,7 +114,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.MONTHLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -123,7 +126,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.REVIEW)
           .period(Period.MONTHLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -135,7 +138,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.BOOK)
           .period(Period.WEEKLY)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -147,7 +150,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.ALL_TIME)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -159,7 +162,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.REVIEW)
           .period(Period.ALL_TIME)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -171,7 +174,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.BOOK)
           .period(Period.ALL_TIME)
-          .value(90 - i)
+          .value(BigDecimal.valueOf(90 - i))
           .rank(i)
           .valueType(ValueType.SCORE)
           .build();
@@ -237,7 +240,7 @@ class DashboardRepositoryCustomImplTest {
         .key(UUID.randomUUID())
         .keyType(KeyType.USER)
         .period(Period.DAILY)
-        .value(70)
+        .value(BigDecimal.valueOf(70))
         .rank(20)
         .valueType(ValueType.SCORE)
         .build();
@@ -249,7 +252,7 @@ class DashboardRepositoryCustomImplTest {
           .key(UUID.randomUUID())
           .keyType(KeyType.USER)
           .period(Period.DAILY)
-          .value(70 - i)
+          .value(BigDecimal.valueOf(70 - i))
           .rank(21 + i) // 20 등이 2명 일시, 그 다음 사람은 22 -> 20 20 22
           .valueType(ValueType.SCORE)
           .build();

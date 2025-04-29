@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.base.BaseSoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class Book extends BaseSoftDeletableEntity {
   @Column(unique = true, updatable = false)
   private String isbn;
 
-  private String thumbnailFileName;
+  private String thumbnailUrl;
 
   @Column(nullable = false)
   @Builder.Default
@@ -45,7 +46,7 @@ public class Book extends BaseSoftDeletableEntity {
 
   @Column(nullable = false)
   @Builder.Default
-  private double rating = 0;
+  private BigDecimal rating = BigDecimal.ZERO;
 
   public void updateTitle(String newTitle) {
     this.title = newTitle;
@@ -65,6 +66,10 @@ public class Book extends BaseSoftDeletableEntity {
 
   public void updatePublishDate(LocalDate newPublishDate) {
     this.publishDate = newPublishDate;
+  }
+
+  public void updateThumbnailUrl(String newThumbnailUrl) {
+    this.thumbnailUrl = newThumbnailUrl;
   }
 
   public void softDelete() {

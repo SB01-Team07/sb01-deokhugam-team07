@@ -20,6 +20,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +101,8 @@ public class DashboardService {
       User user = userMap.get(userId);
       // 유저 지표 정보
       UserMetricsDTO metrics = metricsDTOMap.get(userId);
-      double reviewScoreSum =
-          metrics != null && metrics.reviewScoreSum() != null ? metrics.reviewScoreSum() : 0.0;
+      BigDecimal reviewScoreSum =
+          metrics != null && metrics.reviewScoreSum() != null ? metrics.reviewScoreSum() : BigDecimal.ZERO;
       int likeCount =
           metrics != null && metrics.likeCount() != null ? metrics.likeCount().intValue() : 0;
       int commentCount =
@@ -203,11 +204,11 @@ public class DashboardService {
                 reviewId,
                 review.getBook().getId(),
                 review.getBook().getTitle(),
-                review.getBook().getThumbnailFileName(),
+                review.getBook().getThumbnailUrl(),
                 review.getUser().getId(),
                 review.getUser().getNickname(),
                 review.getContent(),
-                review.getRating(),
+                BigDecimal.valueOf(review.getRating()),
                 period,
                 d.getCreatedAt(),
                 d.getRank(),
@@ -301,7 +302,7 @@ public class DashboardService {
                 bookId,
                 book.getTitle(),
                 book.getAuthor(),
-                book.getThumbnailFileName(), // TODO URL 가져오기 * 반드시 수정
+                book.getThumbnailUrl(),
                 period,
                 d.getRank(),
                 d.getValue(),

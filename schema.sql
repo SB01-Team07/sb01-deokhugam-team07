@@ -10,7 +10,7 @@ CREATE TABLE users
     is_deleted BOOLEAN             NOT NULL DEFAULT FALSE,
     email      VARCHAR(255) UNIQUE NOT NULL,
     nickname   VARCHAR(20)         NOT NULL,
-    password   VARCHAR(20)         NOT NULL
+    password   VARCHAR(255)         NOT NULL
 );
 
 CREATE TABLE books
@@ -25,7 +25,7 @@ CREATE TABLE books
     publisher           VARCHAR(255)  NOT NULL,
     publish_date        DATE          NOT NULL,
     isbn                VARCHAR(255) UNIQUE,
-    thumbnail_file_name TEXT,
+    thumbnail_url TEXT,
     review_count        INTEGER       NOT NULL DEFAULT 0,
     rating              DECIMAL(2, 1) NOT NULL DEFAULT 0.0
 );
