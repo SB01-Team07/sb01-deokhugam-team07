@@ -1,22 +1,23 @@
 package com.part3.team07.sb01deokhugamteam07.dto.book.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record BookCreateRequest(
-    @NotBlank(message = "")
+    @NotBlank(message = "제목을 입력해주세요.")
     String title,
 
-    @NotBlank
+    @NotBlank(message = "저자를 입력해주세요.")
     String author,
 
-    @NotBlank
+    @NotBlank(message = "설명을 입력해주세요.")
     String description,
 
-    @NotBlank
+    @NotBlank(message = "출판사를 입력해주세요.")
     String publisher,
 
-    @NotBlank
+    @NotNull(message = "출판일을 입력해주세요.")
     LocalDate publishedDate,
 
     String isbn

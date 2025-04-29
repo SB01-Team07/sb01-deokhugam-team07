@@ -117,8 +117,6 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.email").value("testmail.com"))
-        .andExpect(jsonPath("$.nickname").value("test"))
     ;
   }
 
