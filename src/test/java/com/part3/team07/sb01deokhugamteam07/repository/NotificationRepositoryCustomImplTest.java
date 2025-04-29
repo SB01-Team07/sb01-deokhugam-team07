@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -15,11 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @EnableJpaAuditing
+@Import(QuerydslConfig.class)
 @ActiveProfiles("test")
 class NotificationRepositoryCustomImplTest {
 

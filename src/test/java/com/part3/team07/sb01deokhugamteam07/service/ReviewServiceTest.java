@@ -8,6 +8,11 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Like;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
@@ -86,7 +91,7 @@ class ReviewServiceTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn(UUID.randomUUID().toString())
-                .thumbnailFileName("url")
+                .thumbnailUrl("url")
                 .reviewCount(0)
                 .rating(BigDecimal.ZERO)
                 .build();
@@ -111,7 +116,7 @@ class ReviewServiceTest {
                 reviewId,
                 bookId,
                 book.getTitle(),
-                book.getThumbnailFileName(),
+                book.getThumbnailUrl(),
                 userId,
                 user.getNickname(),
                 review.getContent(),
@@ -158,8 +163,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(() -> reviewService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 해당 도서에 대한 리뷰가 존재합니다.");
+                .isInstanceOf(ReviewAlreadyExistsException.class);
     }
 
     @DisplayName("존재하지 않는 유저로 리뷰 생성 시 실패한다")
@@ -173,8 +177,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(() -> reviewService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("사용가 존재하지 않습니다.");
+                .isInstanceOf(UserNotFoundException.class);
     }
 
     @DisplayName("존재하지 않는 책으로 리뷰 생성 시 실패한다")
@@ -189,8 +192,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(() -> reviewService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("책이 존재하지 않습니다.");
+                .isInstanceOf(BookNotFoundException.class);
     }
 
     @DisplayName("리뷰 Id로 리뷰 상세조회를 할 수 있다.")
@@ -214,8 +216,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(() -> reviewService.find(reviewId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("리뷰를 찾을 수 없습니다.");
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 
     @DisplayName("본인이 작성한 리뷰를 수정할 수 있다.")
@@ -243,8 +244,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(()-> reviewService.update(otherUserId, reviewId, request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("본인이 작성한 리뷰가 아닙니다.");
+                .isInstanceOf(ReviewUnauthorizedException.class);
     }
 
     @DisplayName("존재하지 않은 리뷰는 수정할 수 없다")
@@ -256,8 +256,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(()-> reviewService.update(userId, otherReviewId, request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("리뷰를 찾을 수 없습니다.");
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 
     @DisplayName("리뷰 논리 삭제를 할 수 있다.")
@@ -283,7 +282,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(() -> reviewService.softDelete(userId, reviewId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 
     @DisplayName("본인이 작성하지 않은 리뷰는 논리 삭제할 수 없다.")
@@ -295,7 +294,7 @@ class ReviewServiceTest {
 
         //when then
         assertThatThrownBy(() -> reviewService.softDelete(otherUserId, reviewId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ReviewUnauthorizedException.class);
     }
 
     @DisplayName("book 기준으로 모든 리뷰를 논리 삭제한다.")
@@ -384,6 +383,7 @@ class ReviewServiceTest {
 
         //then
         assertThat(result.liked()).isTrue();
+        verify(reviewRepository).incrementLikeCount(reviewId);
     }
 
     @Test
@@ -398,6 +398,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(result.liked()).isFalse();
+        verify(reviewRepository).decrementLikeCount(reviewId);
     }
 
     @Test
@@ -408,6 +409,6 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.toggleLike(reviewId, userId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 }
