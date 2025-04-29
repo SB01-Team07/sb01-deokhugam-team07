@@ -27,7 +27,7 @@ public enum ErrorCode {
   // User
   NOT_FOUND_USER("존재하지 않는 유저입니다"),
   BAD_CREDENTIAL("잘못된 요청입니다 - 올바르지 않은 인증"),
-  DUPLICATE_EMAIL("이메일이 중복되었습니다.");
+  DUPLICATE_EMAIL("이메일이 중복되었습니다."),
   
   //Review 관련 에러 코드
   REVIEW_NOT_FOUND("리뷰 정보를 찾을 수 없습니다."),

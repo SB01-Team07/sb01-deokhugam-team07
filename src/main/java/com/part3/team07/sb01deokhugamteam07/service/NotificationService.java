@@ -44,7 +44,7 @@ public class NotificationService {
     try {
       log.info("알림 생성 시작");
       User sender = userRepository.findById(request.getSenderId())
-          .orElseThrow(() -> new UserNotFoundException(request.getSenderId()));
+          .orElseThrow(() -> new UserNotFoundException());
 
       Review review = reviewRepository.findById(request.getReviewId())
           .orElseThrow(() -> new NoSuchElementException(String.valueOf(request.getReviewId())));
@@ -90,7 +90,7 @@ public class NotificationService {
 
     // 사용자 정보 없음
     if(!userRepository.existsById(userId)){
-      throw new UserNotFoundException(userId);
+      throw new UserNotFoundException();
     }
 
     // 1. 커스텀 레포지토리에서 조회
@@ -177,7 +177,7 @@ public class NotificationService {
     if(notifications.isEmpty()){
       // 사용자 정보 없음
       if(!userRepository.existsById(userId)){
-        throw new UserNotFoundException(userId);
+        throw new UserNotFoundException();
       }
     }
 
