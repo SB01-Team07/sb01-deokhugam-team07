@@ -1,6 +1,5 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
-import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -124,13 +122,4 @@ public class GlobalExceptionHandler {
         .body(errorResponse);
   }
 
-  @ExceptionHandler(InvalidCommentQueryException.class)
-  public ResponseEntity<ErrorResponse> handleInvalidCommentQueryException(InvalidCommentQueryException exception) {
-    log.error("잘못된 입력 값 = {}", exception.getErrorCode());
-    ErrorResponse errorResponse = new ErrorResponse(exception, HttpStatus.BAD_REQUEST.value());
-
-    return ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(errorResponse);
-  }
 }
