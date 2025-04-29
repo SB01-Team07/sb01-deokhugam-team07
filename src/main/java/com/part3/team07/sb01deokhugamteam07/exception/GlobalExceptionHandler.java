@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
-      ConstraintViolationException ex) {
+          MethodArgumentNotValidException ex) {
     log.error("요청 유효성 검사 실패: {}", ex.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
 
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
-      ConstraintViolationException ex) {
+          IllegalArgumentException ex) {
     log.error("잘못된 인자값 전달: {}", ex.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
 
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(NullPointerException.class)
   public ResponseEntity<ErrorResponse> handleNullPointerException(
-      ConstraintViolationException ex) {
+          NullPointerException ex) {
     log.error("null 객체 참조: {}", ex.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
 

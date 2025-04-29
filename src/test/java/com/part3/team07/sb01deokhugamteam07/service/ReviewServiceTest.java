@@ -371,6 +371,18 @@ class ReviewServiceTest {
         verify(reviewRepository).delete(review);
     }
 
+    @DisplayName("리뷰 물리 삭제 실패 - 작성자가 아닐 경우 예외 발생")
+    @Test
+    void hardDelete_Failure_Unauthorized() {
+        //given
+        UUID otherUserId = UUID.randomUUID();
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        //when then
+        assertThatThrownBy(() -> reviewService.hardDelete(otherUserId, reviewId))
+                .isInstanceOf(ReviewUnauthorizedException.class);
+    }
+
     @DisplayName("좋아요가 존재하지 않으면 추가한다")
     @Test
     void toggleLike_shouldAddLikeWhenNotExists() {
