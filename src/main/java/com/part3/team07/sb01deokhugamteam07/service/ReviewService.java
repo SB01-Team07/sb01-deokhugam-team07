@@ -11,6 +11,11 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Like;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.ReviewMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
@@ -41,12 +46,12 @@ public class ReviewService {
     public ReviewDto create(ReviewCreateRequest request) {
         log.debug("리뷰 생성 시작: {}", request);
         if(reviewRepository.existsByUserIdAndBookId(request.userId(), request.bookId())) {
-            throw new IllegalArgumentException("이미 해당 도서에 대한 리뷰가 존재합니다.");
+            throw ReviewAlreadyExistsException.withUserIdAndBookId(request.userId(), request.bookId());
         }
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("사용가 존재하지 않습니다."));
+                .orElseThrow(() -> new UserNotFoundException(request.userId()));
         Book book = bookRepository.findById(request.bookId())
-                .orElseThrow(() -> new IllegalArgumentException("책이 존재하지 않습니다."));
+                .orElseThrow(() -> new BookNotFoundException());
 
         Review review = Review.builder()
                 .user(user)
@@ -66,7 +71,7 @@ public class ReviewService {
     public ReviewDto find(UUID reviewId) {
         log.debug("리뷰 상세 조회 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
         log.info("리뷰 상세 조회 완료: id={}", reviewId);
         return ReviewMapper.toDto(review);
     }
@@ -75,10 +80,10 @@ public class ReviewService {
     public ReviewDto update(UUID userId, UUID reviewId, ReviewUpdateRequest request) {
         log.debug("리뷰 수정 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
 
         if(!review.isReviewer(userId)){
-            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 수정 권한 없음
+            throw ReviewUnauthorizedException.forUpdate(userId, reviewId);
         }
         review.update(request.content(), request.rating());
         log.info("리뷰 수정 완료: id={}", reviewId);
@@ -89,10 +94,10 @@ public class ReviewService {
     public void softDelete(UUID userId, UUID reviewId){
         log.debug("리뷰 논리 삭제 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
 
         if(!review.isReviewer(userId)){
-            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
+            throw ReviewUnauthorizedException.forDelete(userId, reviewId);
         }
         commentService.softDeleteAllByReview(review);
         softDeleteAllLikesByReview(review);
@@ -128,9 +133,9 @@ public class ReviewService {
     public void hardDelete(UUID userId, UUID reviewId){
         log.debug("리뷰 물리 삭제 시작: id={}", reviewId);
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));//404 리뷰 정보 없음
+                .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
         if(!review.isReviewer(userId)){
-            throw new IllegalArgumentException("본인이 작성한 리뷰가 아닙니다."); //403 - 리뷰 삭제 권한 없음
+            throw ReviewUnauthorizedException.forDelete(userId, reviewId);
         }
         reviewRepository.delete(review);
         log.info("리뷰 물리 삭제 완료: id={}", reviewId);
@@ -140,7 +145,7 @@ public class ReviewService {
     public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
         log.debug("좋아요 토글 요청. reviewId={}, userId={}", reviewId, userId);
         reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다.")); //404 리뷰 정보 없음
+                .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
 
         return likeRepository.findByReviewIdAndUserId(reviewId, userId)
                 .map(like -> {

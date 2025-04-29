@@ -34,10 +34,14 @@ public class ErrorResponse {
         status);
   }
 
+
   private static String resolveErrorCode(Exception ex) {
     return switch (ex.getClass().getSimpleName()) {
       case "ConstraintViolationException", "MethodArgumentNotValidException" -> "VALIDATION_FAILED";
-      case "IllegalArgumentException"      -> "INVALID_ARGUMENT";
+      case "IllegalArgumentException" -> "INVALID_ARGUMENT";
+      case "MissingServletRequestParameterException" -> "MISSING_PARAMETER";
+      case "MissingRequestHeaderException" -> "MISSING_HEADER";
+      case "MethodArgumentTypeMismatchException" -> "TYPE_MISMATCH";
       case "NullPointerException" -> "NULL_POINTER";
       default -> "INTERNAL_ERROR";
     };

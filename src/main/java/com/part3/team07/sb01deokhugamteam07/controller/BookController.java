@@ -47,10 +47,11 @@ public class BookController {
         .body(bookDto);
   }
 
-  @PatchMapping("/{id}")
+  @PatchMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ResponseEntity<BookDto> update(@PathVariable UUID id,
-      @RequestBody @Valid BookUpdateRequest request) {
-    BookDto bookDto = bookService.update(id, request);
+      @RequestPart("bookData") @Valid BookUpdateRequest request,
+      @RequestPart(value = "thumbnailImage", required = false) MultipartFile thumbnailImage) {
+    BookDto bookDto = bookService.update(id, request, thumbnailImage);
 
     return ResponseEntity
         .status(HttpStatus.OK)

@@ -39,6 +39,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 @WithMockUser
@@ -128,7 +129,7 @@ public class BookControllerTest {
     mockMvc.perform(multipart("/api/books")
             .file(bookCreateRequestPart)
             .file(thumbnailImagePart)
-            .content(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .with(csrf()))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(id.toString()))
@@ -156,6 +157,20 @@ public class BookControllerTest {
           newPublishedDate
       );
 
+      MockMultipartFile bookUpdateRequestPart = new MockMultipartFile(
+          "bookData",
+          "",
+          MediaType.APPLICATION_JSON_VALUE,
+          objectMapper.writeValueAsBytes(request)
+      );
+
+      MockMultipartFile thumbnailImagePart = new MockMultipartFile(
+          "thumbnailImage",
+          "test.jpg",
+          MediaType.IMAGE_JPEG_VALUE,
+          "test-image".getBytes()
+      );
+
       BookDto updatedBook = new BookDto(
           id,
           newTitle,
@@ -171,14 +186,19 @@ public class BookControllerTest {
           LocalDateTime.now()
       );
 
-      given(bookService.update(eq(id), any(BookUpdateRequest.class)))
+      given(bookService.update(eq(id), any(BookUpdateRequest.class), any(MultipartFile.class)))
           .willReturn(updatedBook);
 
       // when & then
-      mockMvc.perform(patch("/api/books/{id}", id)
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(request))
-              .with(csrf()))
+      mockMvc.perform(MockMvcRequestBuilders.multipart("/api/books/{id}", id)
+              .file(bookUpdateRequestPart)
+              .file(thumbnailImagePart)
+              .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+              .with(csrf())
+              .with(patchRequest -> {
+                patchRequest.setMethod("PATCH");
+                return patchRequest;
+              }))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.id").value(id.toString()))
           .andExpect(jsonPath("$.title").value(newTitle))
@@ -206,11 +226,30 @@ public class BookControllerTest {
           newPublishedDate
       );
 
+      MockMultipartFile bookUpdateRequestPart = new MockMultipartFile(
+          "bookData",
+          "",
+          MediaType.APPLICATION_JSON_VALUE,
+          objectMapper.writeValueAsBytes(request)
+      );
+
+      MockMultipartFile thumbnailImagePart = new MockMultipartFile(
+          "thumbnailImage",
+          "test.jpg",
+          MediaType.IMAGE_JPEG_VALUE,
+          "test-image".getBytes()
+      );
+
       // when & then
-      mockMvc.perform(patch("/api/books/{id}", id)
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(request))
-              .with(csrf()))
+      mockMvc.perform(MockMvcRequestBuilders.multipart("/api/books/{id}", id)
+          .file(bookUpdateRequestPart)
+          .file(thumbnailImagePart)
+          .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+          .with(csrf())
+          .with(patchRequest -> {
+            patchRequest.setMethod("PATCH");
+            return patchRequest;
+          }))
           .andExpect(status().isBadRequest());
     }
   }
