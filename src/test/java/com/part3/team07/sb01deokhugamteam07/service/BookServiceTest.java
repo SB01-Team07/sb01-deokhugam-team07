@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -543,7 +544,21 @@ class BookServiceTest {
       assertThat(result.hasNext()).isFalse();
     }
 
+    @Test
+    @DisplayName("잘못된 정렬 필드를 입력하면 예외 발생")
+    void findAll_fail_WithInvalidSortField() {
+      // given
+      String keyword = null;
+      String sort = "invalidField";
+      String order = "desc";
+      String cursor = null;
+      LocalDateTime after = null;
+      int size = 10;
 
-
+      // when & then
+      assertThatThrownBy(() ->
+          bookService.findAll(keyword, sort, order, cursor, after, size)
+      ).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 }
