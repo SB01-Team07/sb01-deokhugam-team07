@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
@@ -20,6 +21,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +58,8 @@ class BookServiceTest {
   private String publisher;
   private LocalDate publishedDate;
   private String isbn;
-  private Book book;
+  private Book book1, book2, book3;
+  private BookDto bookDto1, bookDto2, bookDto3;
 
   @BeforeEach
   void setUp() {
@@ -67,7 +70,7 @@ class BookServiceTest {
     publisher = "publisher";
     publishedDate = LocalDate.of(1618, 1, 1);
 
-    book = new Book(title, author, description, publisher, publishedDate,
+    book1 = new Book(title, author, description, publisher, publishedDate,
         isbn, "", 0, BigDecimal.ZERO);
   }
 
@@ -181,7 +184,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookRepository.findById(id)).willReturn(Optional.of(book1));
       given(storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE)).willReturn(newThumbnailUrl);
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
@@ -232,7 +235,7 @@ class BookServiceTest {
     @DisplayName("도서 논리 삭제 성공")
     void softDelete_success() {
       // given
-      Book spyBook = spy(book);
+      Book spyBook = spy(book1);
       given(bookRepository.findById(id)).willReturn(Optional.of(spyBook));
 
       // when
@@ -307,7 +310,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookRepository.findById(id)).willReturn(Optional.of(book1));
       given(bookMapper.toDto(any(Book.class))).willReturn(bookDto);
 
       // when
@@ -329,6 +332,38 @@ class BookServiceTest {
           () -> bookService.find(id)
       );
     }
+  }
 
+  @Nested
+  @DisplayName("도서 목록 조회")
+  class FindAllTest {
+    @Test
+    @DisplayName("도서 목록 조회 성공")
+    void findAll_success() {
+      // given
+      String keyword = null;
+      String sort = "publishedDate";
+      String order = "desc";
+      String cursor = null;
+      LocalDateTime after = null;
+      int size = 2;
+
+      given(bookRepository.findBooksWithCursor(keyword, sort, order, cursor, after, size + 1))
+          .willReturn(Arrays.asList(book1, book2));
+      given(bookRepository.countByKeyword(keyword)).thenReturn(3L);
+
+      given(bookMapper.toDto(book1)).thenReturn(bookDto1);
+      given(bookMapper.toDto(book2)).thenReturn(bookDto2);
+
+      // when
+      CursorPageResponseBookDto result = bookService.findAll(keyword, sort, order, cursor, after, size);
+
+      // then
+      assertThat(result.content()).hasSize(2);
+      assertThat(result.content().get(0)).isEqualTo(bookDto1);
+      assertThat(result.content().get(1)).isEqualTo(bookDto2);
+      assertThat(result.hasNext()).isFalse();
+      assertThat(result.totalElements()).isEqualTo(3);
+    }
   }
 }

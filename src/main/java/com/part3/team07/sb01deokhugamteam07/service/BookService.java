@@ -3,15 +3,18 @@ package com.part3.team07.sb01deokhugamteam07.service;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -94,5 +97,64 @@ public class BookService {
         .orElseThrow(() -> BookNotFoundException.withId(id));
 
     return bookMapper.toDto(book);
+  }
+
+  @Transactional(readOnly = true)
+  public CursorPageResponseBookDto findAll(String keyword, String orderBy, String direction,
+      String cursor, LocalDateTime after, int size) {
+    orderBy = orderBy != null ? orderBy : "publishedDate";
+    direction = direction != null ? direction : "desc";
+    size = size > 0 ? size : 50;
+
+    validateSortField(orderBy);
+
+    List<Book> books = bookRepository.findBooksWithCursor(
+        keyword, orderBy, direction, cursor, after, size + 1);
+    boolean hasNext = books.size() > size;
+
+    if (hasNext) {
+      books = books.subList(0, size);
+    }
+
+    List<BookDto> bookDtos = books.stream()
+        .map(bookMapper::toDto)
+        .collect(Collectors.toList());
+
+    String nextCursor = null;
+    LocalDateTime nextAfter = null;
+
+    if (hasNext && !books.isEmpty()) {
+      Book lastBook = books.get(books.size() - 1);
+      nextCursor = getCursorValue(lastBook, orderBy);
+      nextAfter = lastBook.getCreatedAt();
+    }
+
+    long totalElements = bookRepository.countByKeyword(keyword);
+
+    return new CursorPageResponseBookDto(
+        bookDtos,
+        nextCursor,
+        nextAfter,
+        size,
+        totalElements,
+        hasNext
+    );
+  }
+
+  private String getCursorValue(Book book, String sortField) {
+    return switch (sortField) {
+      case "title" -> book.getTitle();
+      case "publishedDate" -> book.getPublishDate().toString();
+      case "rating" -> String.valueOf(book.getRating());
+      case "reviewCount" -> String.valueOf(book.getReviewCount());
+      default -> book.getPublishDate().toString();
+    };
+  }
+
+  private void validateSortField(String sortField) {
+    List<String> validSortFields = List.of("title", "publishedDate", "rating", "reviewCount");
+    if (!validSortFields.contains(sortField)) {
+      throw new IllegalArgumentException("Invalid sort field: " + sortField);
+    }
   }
 }
