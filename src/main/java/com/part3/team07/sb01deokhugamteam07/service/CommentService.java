@@ -5,6 +5,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateReq
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -15,6 +16,7 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -114,6 +116,64 @@ public class CommentService {
     decreaseCommentCountOnHardDelete(comment); //review commentCount 감소
     commentRepository.delete(comment);
     log.info("hardDelete comment complete");
+  }
+
+  @Transactional(readOnly = true)
+  public CursorPageResponseCommentDto findCommentsByReviewId(
+      UUID reviewId,
+      String direction,
+      String cursor,
+      LocalDateTime after,
+      int limit
+  ) {
+    log.debug("find comment list: reviewId = {}", reviewId);
+    //리뷰 존재 여부 확인
+    Review review = findReview(reviewId);
+
+    //기본 정렬 조건 생성시간으로 지정
+    String sortBy = "createdAt";
+
+    //댓글 조회 (limit+1 개 조회)
+    List<Comment> comments = commentRepository.findCommentByCursor(
+        review,
+        direction,
+        cursor,
+        after,
+        limit,
+        sortBy
+    );
+
+    //다음 페이지 판단
+    boolean hasNext = comments.size() > limit;
+    if (hasNext) {
+      comments = comments.subList(0, limit);
+    }
+
+    //댓글 DTO 변환
+    List<CommentDto> content = comments.stream()
+        .map(commentMapper::toDto)
+        .toList();
+
+    //다음 커서 생성
+    String nextCursor = null;
+    LocalDateTime nextAfter = null;
+
+    if (hasNext) {
+      Comment last = comments.get(comments.size() - 1);
+      // 기본이 createdAt 기준이라고 설정
+      nextCursor = last.getCreatedAt().toString();
+      nextAfter = last.getCreatedAt();
+    }
+
+    log.info("find comment list: size = {}", content.size());
+    return new CursorPageResponseCommentDto(
+        content,
+        nextCursor,
+        nextAfter,
+        limit,
+        content.size(),
+        hasNext
+    );
   }
 
   private void isSoftDeleted(Comment comment) {

@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,12 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @DataJpaTest
 @EnableJpaAuditing
+@Import(QuerydslConfig.class)
 @ActiveProfiles("test")
 class NotificationRepositoryTest {
 
