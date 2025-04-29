@@ -81,6 +81,9 @@ class NotificationServiceTest {
     review = Review.builder().user(receiver).build();
   }
 
+  /**
+   * 알림 생성 관련 테스트
+   **/
   @Test
   @DisplayName("알림 생성 성공 : 좋아요")
   void create_Success_When_Review_is_Liked() {
@@ -246,6 +249,9 @@ class NotificationServiceTest {
     });
   }
 
+  /**
+   * 알림 읽음 상태 처리 관련 테스트
+   * **/
   @Test
   @DisplayName("알림 업데이트 성공")
   public void update_Success(){
@@ -292,6 +298,9 @@ class NotificationServiceTest {
     });
   }
 
+  /**
+   * 모든 알림 상태 읽음 처리 관련 테스트
+   * **/
   @Test
   @DisplayName("모든 알림을 읽음 상태로 업데이트 성공")
   public void update_All_Success(){
@@ -326,5 +335,16 @@ class NotificationServiceTest {
 
     verify(notificationRepository).findAllByUserId(userId);
     verify(userRepository).existsById(userId);
+  }
+
+  /**
+   * 알림 삭제 관련 테스트
+   * **/
+  @Test
+  @DisplayName("알림 삭제 성공")
+  public void delete_Success(){
+    notificationService.delete();
+
+    verify(notificationRepository).deleteAllByConfirmedTrueAndCreatedAtBefore(any(LocalDateTime.class));
   }
 }

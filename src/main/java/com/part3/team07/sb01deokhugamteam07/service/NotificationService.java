@@ -16,8 +16,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCus
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -185,5 +184,10 @@ public class NotificationService {
     for(Notification n : notifications){
       n.updateConfirmed(true);
     }
+  }
+
+  @Transactional
+  public void delete(){
+    notificationRepository.deleteAllByConfirmedTrueAndCreatedAtBefore(LocalDateTime.now().minusWeeks(1));
   }
 }

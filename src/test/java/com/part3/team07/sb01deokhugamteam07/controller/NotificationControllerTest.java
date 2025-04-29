@@ -45,7 +45,7 @@ class NotificationControllerTest {
 
   /**
    * 알림 조회 관련 테스트
-   * **/
+   **/
   @Test
   @DisplayName("알림 조회 성공")
   void find_Notification_Success() throws Exception {
@@ -95,7 +95,7 @@ class NotificationControllerTest {
 
   /**
    * 알림 읽음 상태 처리 관련 테스트
-   * **/
+   **/
   @Test
   @DisplayName("알림 업데이트 성공")
   void update_Notification_Success() throws Exception {
@@ -120,10 +120,10 @@ class NotificationControllerTest {
         any(NotificationUpdateRequest.class))).thenReturn(notificationDto);
 
     mockMvc.perform(patch("/api/notifications/{notificationId}", notificationId)
-        .header(requestHeader, userId.toString())
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(notificationUpdateRequest))
-        .with(csrf()))
+            .header(requestHeader, userId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(notificationUpdateRequest))
+            .with(csrf()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(notificationId.toString()))
         .andExpect(jsonPath("$.userId").value(userId.toString()))
@@ -146,7 +146,7 @@ class NotificationControllerTest {
 
   /**
    * 모든 알림 상태 읽음 처리 관련 테스트
-   * **/
+   **/
   @Test
   @DisplayName("모든 알림 업데이트 성공")
   void update_All_Notification_Success() throws Exception {
