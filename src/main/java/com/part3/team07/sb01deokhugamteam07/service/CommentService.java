@@ -133,7 +133,16 @@ public class CommentService {
   ) {
     log.debug("find comment list: reviewId = {}", reviewId);
     //커서, 정렬방향 검증
-    validateFindCommentsParams(direction, cursor);
+    if (!"ASC".equalsIgnoreCase(direction) && !"DESC".equalsIgnoreCase(direction)) {
+      throw InvalidCommentQueryException.direction();
+    }
+    if (cursor != null && !cursor.isBlank()) {
+      try {
+        LocalDateTime.parse(cursor);
+      } catch (DateTimeParseException e) {
+        throw InvalidCommentQueryException.cursor();
+      }
+    }
 
     //리뷰 존재 여부 확인
     Review review = findReview(reviewId);
@@ -230,18 +239,4 @@ public class CommentService {
     log.debug("댓글 생성으로 리뷰 commentCount 증가: reviewId={}", reviewId);
     reviewRepository.incrementCommentCount(reviewId);
   }
-
-  private void validateFindCommentsParams(String direction, String cursor) {
-    if (!"ASC".equalsIgnoreCase(direction) && !"DESC".equalsIgnoreCase(direction)) {
-      throw InvalidCommentQueryException.direction();
-    }
-    if (cursor != null && !cursor.isBlank()) {
-      try {
-        LocalDateTime.parse(cursor);
-      } catch (DateTimeParseException e) {
-        throw InvalidCommentQueryException.cursor();
-      }
-    }
-  }
-
 }
