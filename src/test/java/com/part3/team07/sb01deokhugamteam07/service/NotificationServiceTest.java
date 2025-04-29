@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -289,5 +290,41 @@ class NotificationServiceTest {
     assertThrows(NotificationNotFoundException.class, () -> {
       notificationService.update(NonNotificationId, userId, request);
     });
+  }
+
+  @Test
+  @DisplayName("모든 알림을 읽음 상태로 업데이트 성공")
+  public void update_All_Success(){
+    UUID userId = UUID.randomUUID();
+    Notification notification1 = Notification.builder()
+        .confirmed(false)
+        .build();
+    Notification notification2 = Notification.builder()
+        .confirmed(false)
+        .build();
+    List<Notification> notifications = List.of(notification1, notification2);
+
+    when(notificationRepository.findAllByUserId(userId)).thenReturn(notifications);
+    notificationService.updateAll(userId);
+
+    verify(notificationRepository).findAllByUserId(userId);
+    verify(userRepository, never()).existsById(any());
+    assertTrue(notification1.isConfirmed());
+    assertTrue(notification2.isConfirmed());
+  }
+
+  @Test
+  @DisplayName("빈 리스트가 반환된 경우 user 의 유무를 확인하고, 없을시 UserNotFoundException 를 반환한다.")
+  public void update_All_Fail_With_NonNotificationId(){
+    UUID userId = UUID.randomUUID();
+
+    when(notificationRepository.findAllByUserId(userId)).thenReturn(List.of());
+
+    assertThrows(UserNotFoundException.class, () -> {
+      notificationService.updateAll(userId);
+    });
+
+    verify(notificationRepository).findAllByUserId(userId);
+    verify(userRepository).existsById(userId);
   }
 }
