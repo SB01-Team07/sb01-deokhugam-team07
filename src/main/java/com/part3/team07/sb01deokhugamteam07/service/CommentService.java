@@ -57,6 +57,7 @@ public class CommentService {
 
     commentRepository.save(comment);
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
+    increaseCommentCount(review.getId()); //review commentCount 증가
     return commentMapper.toDto(comment);
   }
 
@@ -89,6 +90,7 @@ public class CommentService {
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
+    decreaseCommentCountOnSoftDelete(comment); //review commentCount 감소 - 댓글 논리 삭제가 실제 일어났다고 보장된 상태
     log.info("softDelete comment complete");
   }
 
@@ -109,6 +111,7 @@ public class CommentService {
     Comment comment = findComment(commentId);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
+    decreaseCommentCountOnHardDelete(comment); //review commentCount 감소
     commentRepository.delete(comment);
     log.info("hardDelete comment complete");
   }
@@ -139,6 +142,26 @@ public class CommentService {
     if (!comment.getUser().equals(user)) {
       throw new CommentUnauthorizedException();
     }
+  }
+
+  //commentCount 감소 - 논리삭제
+  private void decreaseCommentCountOnSoftDelete(Comment comment) {
+    log.debug("댓글 논리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+    reviewRepository.decrementCommentCount(comment.getReview().getId());
+  }
+
+  //commentCount 감소 - 물리삭제
+  private void decreaseCommentCountOnHardDelete(Comment comment) {
+    if (!comment.isDeleted()) {
+      log.debug("댓글 물리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+      reviewRepository.decrementCommentCount(comment.getReview().getId());
+    }
+  }
+
+  //commentCount 증가
+  private void increaseCommentCount(UUID reviewId) {
+    log.debug("댓글 생성으로 리뷰 commentCount 증가: reviewId={}", reviewId);
+    reviewRepository.incrementCommentCount(reviewId);
   }
 
 }

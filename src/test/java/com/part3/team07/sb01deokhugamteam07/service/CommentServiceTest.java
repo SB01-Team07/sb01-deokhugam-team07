@@ -6,8 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
@@ -136,6 +135,8 @@ class CommentServiceTest {
             savedComment.getUser().equals(testUser) &&
             savedComment.getReview().equals(testReview)
     ));
+    verify(reviewRepository).incrementCommentCount(comment.getReview().getId()); //댓글 증가 메서드 호출 확인
+
   }
 
   @Test
@@ -294,6 +295,7 @@ class CommentServiceTest {
     //then
     assertThatThrownBy(() -> commentService.find(commentId))
         .isInstanceOf(CommentNotFoundException.class);
+    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
@@ -366,6 +368,7 @@ class CommentServiceTest {
 
     //then
     verify(commentRepository).delete(comment);
+    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
@@ -392,5 +395,22 @@ class CommentServiceTest {
     assertThatThrownBy(() -> commentService.hardDelete(commentId, otherUserId))
         .isInstanceOf(CommentUnauthorizedException.class);
   }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 - 이미 논리 삭제된 댓글은 commentCount 감소하지 않음")
+  void hardDeleteCommentAlreadySoftDeleted() {
+    // given
+    comment.softDelete();
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
+
+    // when
+    commentService.hardDelete(commentId, userId);
+
+    // then
+    verify(commentRepository).delete(comment);
+    verify(reviewRepository, never()).decrementCommentCount(any());
+  }
+
 
 }
