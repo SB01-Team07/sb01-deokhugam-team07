@@ -350,10 +350,10 @@ class BookServiceTest {
 
       given(bookRepository.findBooksWithCursor(keyword, sort, order, cursor, after, size + 1))
           .willReturn(Arrays.asList(book1, book2));
-      given(bookRepository.countByKeyword(keyword)).thenReturn(3L);
+      given(bookRepository.countByKeyword(keyword)).willReturn(3L);
 
-      given(bookMapper.toDto(book1)).thenReturn(bookDto1);
-      given(bookMapper.toDto(book2)).thenReturn(bookDto2);
+      given(bookMapper.toDto(book1)).willReturn(bookDto1);
+      given(bookMapper.toDto(book2)).willReturn(bookDto2);
 
       // when
       CursorPageResponseBookDto result = bookService.findAll(keyword, sort, order, cursor, after, size);
