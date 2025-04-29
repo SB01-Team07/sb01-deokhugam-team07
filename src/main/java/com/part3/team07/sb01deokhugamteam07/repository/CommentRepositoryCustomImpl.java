@@ -87,12 +87,8 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     switch (sortBy) {
       case "createdAt":
         if (cursor != null && !cursor.isBlank()) {
-          try {
             LocalDateTime parsed = LocalDateTime.parse(cursor);
             return isDesc ? comment.createdAt.lt(parsed) : comment.createdAt.gt(parsed);
-          } catch (DateTimeParseException e){
-            throw InvalidCommentQueryException.cursor();
-          }
         }
     }
 
