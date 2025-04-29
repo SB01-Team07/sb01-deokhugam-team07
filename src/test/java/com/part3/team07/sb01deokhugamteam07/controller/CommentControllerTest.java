@@ -95,9 +95,28 @@ class CommentControllerTest {
   }
 
   @Test
-  @DisplayName("댓글 생성 실패 - 잘못된 요청")
+  @DisplayName("댓글 생성 실패 - 400 잘못된 요청")
   @WithMockUser
-  void createCommentFailByInvalidRequest() throws Exception {
+  void createCommentFail_InvalidRequest() throws Exception {
+    // given
+    CommentCreateRequest invalidRequest = new CommentCreateRequest(
+        null,
+        null,
+        ""
+    );
+
+    // when & then
+    mockMvc.perform(post("/api/comments")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(invalidRequest))
+            .with(csrf()))  // 스프링 시큐리티 토큰
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("댓글 생성 실패 - 404 리뷰 존재X")
+  @WithMockUser
+  void createCommentFail_ReviewNotFound() throws Exception {
     // given
     CommentCreateRequest invalidRequest = new CommentCreateRequest(
         null,
@@ -155,9 +174,9 @@ class CommentControllerTest {
   }
 
   @Test
-  @DisplayName("댓글 수정 실패 - 잘못된 요청")
+  @DisplayName("댓글 수정 실패 - 400 잘못된 요청")
   @WithMockUser
-  void updateCommentFailByInvalidRequest() throws Exception {
+  void updateCommentFail_InvalidRequest() throws Exception {
     //given
     UUID testCommentId = UUID.randomUUID();
     UUID testUserId = UUID.randomUUID();
@@ -293,7 +312,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 목록 조회 실패 - 404 리뷰 존재X")
   @WithMockUser
-  void findCommentsByReviewId_fail_reviewNotFound() throws Exception {
+  void findCommentsByReviewIdFail_ReviewNotFound() throws Exception {
     //given
     UUID reviewId = UUID.randomUUID();
     given(commentService.findCommentsByReviewId(any(), any(), any(), any(), anyInt()))
@@ -308,7 +327,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 목록 조회 실패 - 400 잘못된 정렬")
   @WithMockUser
-  void findComments_invalidDirection_400() throws Exception {
+  void findCommentsByReviewIdFail_InvalidDirection() throws Exception {
     UUID reviewId = UUID.randomUUID();
 
     given(commentService.findCommentsByReviewId(any(), any(), any(), any(), anyInt()))
@@ -327,7 +346,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 목록 조회 실패 - 400 잘못된 커서")
   @WithMockUser
-  void findComments_invalidCursor() throws Exception {
+  void findCommentsByReviewIdFail_InvalidCursor() throws Exception {
     UUID reviewId = UUID.randomUUID();
 
     given(commentService.findCommentsByReviewId(any(), any(), any(), any(), anyInt()))
@@ -346,7 +365,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 목록 조회 실패 - 400 reviewId 누락")
   @WithMockUser
-  void findComments_reviewIdMissing() throws Exception {
+  void findCommentsByReviewIdFail_ReviewIdMissing() throws Exception {
     mockMvc.perform(get("/api/comments")
             .with(csrf()))
         .andExpect(status().isBadRequest());
