@@ -19,6 +19,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateReq
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import java.time.LocalDateTime;
@@ -288,22 +289,22 @@ class CommentControllerTest {
         .andExpect(jsonPath("$.hasNext").value(false))
         .andExpect(jsonPath("$.size").value(2));
   }
-/* todo 예외 추가 시 수정
+
   @Test
   @DisplayName("댓글 목록 조회 실패 - 404 리뷰 존재X")
   @WithMockUser
-  void findCommentsByReviewId_fail_reviewNotFound() throws  Exception{
+  void findCommentsByReviewId_fail_reviewNotFound() throws Exception {
     //given
     UUID reviewId = UUID.randomUUID();
-    given(commentService.findCommentsByReviewId(any(),any(),any(),any(), anyInt()))
-        .willThrow(new NoSuchElementException());
+    given(commentService.findCommentsByReviewId(any(), any(), any(), any(), anyInt()))
+        .willThrow(new ReviewNotFoundException());
     //when & then
     mockMvc.perform(get("/api/comments")
-        .param("reviewId", reviewId.toString())
-        .with(csrf()))
-        .andExpect(status().isNoContent());
+            .param("reviewId", reviewId.toString())
+            .with(csrf()))
+        .andExpect(status().isNotFound());
   }
-*/
+
   @Test
   @DisplayName("댓글 목록 조회 실패 - 400 잘못된 정렬")
   @WithMockUser
@@ -322,12 +323,33 @@ class CommentControllerTest {
             .with(csrf()))
         .andExpect(status().isBadRequest());
   }
-/*
+
   @Test
-  @DisplayName("댓글 목록 조회 실패 - 400 reviewId 누락")
-  void findComments_reviewIdMissing_400() throws Exception {
-    mockMvc.perform(get("/comments"))
+  @DisplayName("댓글 목록 조회 실패 - 400 잘못된 커서")
+  @WithMockUser
+  void findComments_invalidCursor() throws Exception {
+    UUID reviewId = UUID.randomUUID();
+
+    given(commentService.findCommentsByReviewId(any(), any(), any(), any(), anyInt()))
+        .willThrow(InvalidCommentQueryException.cursor());
+
+    mockMvc.perform(get("/api/comments")
+            .param("reviewId", reviewId.toString())
+            .param("direction", "DESC")
+            .param("cursor", "InvalidCursor")
+            .param("after", "")
+            .param("limit", "10")
+            .with(csrf()))
         .andExpect(status().isBadRequest());
   }
-*/
+
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 400 reviewId 누락")
+  @WithMockUser
+  void findComments_reviewIdMissing() throws Exception {
+    mockMvc.perform(get("/api/comments")
+            .with(csrf()))
+        .andExpect(status().isBadRequest());
+  }
+
 }
