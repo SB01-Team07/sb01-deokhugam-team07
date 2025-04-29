@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new UserNotFoundException(email));
+        .orElseThrow(UserNotFoundException::new);
 
     return new CustomUserDetails(user);
   }
@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   // 헤더 인증용
   public UserDetails loadUserById(UUID userId) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+        .orElseThrow(UserNotFoundException::new);
 
     return new CustomUserDetails(user);
   }

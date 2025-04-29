@@ -60,7 +60,7 @@ public class UserService {
   **/
   public UserDto login(UserLoginRequest request) {
     User user = userRepository.findByEmail(request.email())
-        .orElseThrow(() -> new UserNotFoundException(request));
+        .orElseThrow(UserNotFoundException::new);
 
     if (!passwordEncoder.matches(request.password(), user.getPassword())) {
       throw new IllegalUserPasswordException(request);
@@ -156,7 +156,7 @@ public class UserService {
 
   private void isDeleted(UUID userId, User findUser) {
     if (findUser.isDeleted()) {
-      throw new UserNotFoundException(userId);
+      throw new UserNotFoundException();
     }
   }
 
@@ -168,7 +168,7 @@ public class UserService {
 
   private User findUser(UUID userId) {
     return userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+        .orElseThrow(() -> new UserNotFoundException());
   }
 
   private void validateEmail(UserRegisterRequest request) {
@@ -179,7 +179,7 @@ public class UserService {
 
   private void isExistsUser(UUID userId) {
     if (!userRepository.existsById(userId)) {
-      throw new UserNotFoundException(userId);
+      throw new UserNotFoundException();
     }
   }
 }

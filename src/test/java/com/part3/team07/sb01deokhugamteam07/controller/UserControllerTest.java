@@ -167,7 +167,7 @@ class UserControllerTest {
 
     // when
     when(userService.login(any(UserLoginRequest.class)))
-        .thenThrow(new UserNotFoundException(request));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -237,7 +237,7 @@ class UserControllerTest {
         .thenReturn(Optional.of(authUser));
 
     when(userService.find(any()))
-        .thenThrow(new UserNotFoundException(findUserID));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -316,7 +316,7 @@ class UserControllerTest {
     when(userRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(user));
     when(userService.update(userId, request))
-        .thenThrow(new UserNotFoundException(userId));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -343,7 +343,7 @@ class UserControllerTest {
     when(userRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(user));
     when(userService.update(userId, request))
-        .thenThrow(new UserNotFoundException(userId));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -405,7 +405,7 @@ class UserControllerTest {
     // when
     when(userRepository.findById(eq(userId)))
         .thenReturn(Optional.of(authUser));
-    doThrow(new UserNotFoundException(userId))
+    doThrow(new UserNotFoundException())
         .when(userService).softDelete(eq(userId));
 
     // then
@@ -463,7 +463,7 @@ class UserControllerTest {
     // when
     when(userRepository.findById(eq(userId)))
         .thenReturn(Optional.of(authUser));
-    doThrow(new UserNotFoundException(userId))
+    doThrow(new UserNotFoundException())
         .when(userService).physicalDelete(eq(userId));
 
     mockMvc

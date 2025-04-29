@@ -189,7 +189,7 @@ public class CommentService {
 
   private User findUser(UUID userId) {
     return userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+        .orElseThrow(() -> new UserNotFoundException());
   }
 
   private Review findReview(UUID reviewId) {
