@@ -6,6 +6,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateReq
 import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +98,7 @@ public class CommentController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponseCommentDto> findCommentsByReviewId(
-      @RequestParam UUID reviewId,
+      @RequestParam @NotNull UUID reviewId,
       @RequestParam(required = false, defaultValue = "DESC") String direction,
       @RequestParam(required = false) String cursor,
       @RequestParam(required = false) LocalDateTime after,
