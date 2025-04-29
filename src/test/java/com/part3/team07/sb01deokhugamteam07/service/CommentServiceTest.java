@@ -13,6 +13,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateReq
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
+import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
@@ -52,6 +53,9 @@ class CommentServiceTest {
 
   @Mock
   private ReviewRepository reviewRepository;
+
+  @Mock
+  private NotificationService notificationService;
 
   @Mock
   private CommentMapper commentMapper;

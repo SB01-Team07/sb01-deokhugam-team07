@@ -56,6 +56,9 @@ class ReviewServiceTest {
     @Mock
     private CommentService commentService;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private ReviewService reviewService;
 
@@ -88,7 +91,7 @@ class ReviewServiceTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn(UUID.randomUUID().toString())
-                .thumbnailFileName("url")
+                .thumbnailUrl("url")
                 .reviewCount(0)
                 .rating(BigDecimal.ZERO)
                 .build();
@@ -113,7 +116,7 @@ class ReviewServiceTest {
                 reviewId,
                 bookId,
                 book.getTitle(),
-                book.getThumbnailFileName(),
+                book.getThumbnailUrl(),
                 userId,
                 user.getNickname(),
                 review.getContent(),

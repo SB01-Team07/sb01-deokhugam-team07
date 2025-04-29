@@ -3,6 +3,8 @@ package com.part3.team07.sb01deokhugamteam07.service;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -31,6 +33,8 @@ public class CommentService {
   private final ReviewRepository reviewRepository;
   private final CommentMapper commentMapper;
 
+  private final NotificationService notificationService;
+
   @Transactional
   public CommentDto create(CommentCreateRequest createRequest) {
     log.debug("create comment {}", createRequest);
@@ -42,6 +46,14 @@ public class CommentService {
         .review(review)
         .content(createRequest.content())
         .build();
+
+    // 알림 생성
+    NotificationCreateRequest notificationRequest = NotificationCreateRequest.builder()
+        .type(NotificationType.REVIEW_COMMENTED)
+        .senderId(createRequest.userId())
+        .reviewId(createRequest.reviewId())
+        .build();
+    notificationService.create(notificationRequest);
 
     commentRepository.save(comment);
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
