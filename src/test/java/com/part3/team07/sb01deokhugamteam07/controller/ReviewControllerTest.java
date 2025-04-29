@@ -10,6 +10,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExists
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,6 +48,9 @@ class ReviewControllerTest {
 
     @MockitoBean
     private CustomUserDetailsService customUserDetailsService; //시큐리티를 위한 목 객체 생성
+
+    @MockitoBean
+    private DashboardService dashboardService;
 
     @DisplayName("리뷰를 생성할 수 있다.")
     @Test
@@ -524,4 +529,30 @@ class ReviewControllerTest {
                 .andExpect(jsonPath("$.exceptionType").value("ReviewNotFoundException"));
     }
 
+    @Test
+    @DisplayName("인기 리뷰 조회")
+    void findPopularReviews() throws Exception {
+        Period period = Period.DAILY;
+        String direction = "asc";
+        String cursor = null;
+        String after = null;
+        int limit = 50;
+
+        CursorPageResponsePopularReviewDto cursorPageResponsePopularReviewDto =
+            CursorPageResponsePopularReviewDto.builder()
+                .hasNext(false)
+                .build();
+
+        when(dashboardService.getPopularReviews(period,direction,cursor,after,limit)).thenReturn(cursorPageResponsePopularReviewDto);
+
+        mockMvc.perform(get("/api/reviews/popular")
+                .param("period", period.toString())
+                .param("direction",direction)
+                .param("cursor", cursor)
+                .param("after", after)
+                .param("limit", String.valueOf(limit))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.hasNext" ).value(false));
+    }
 }
