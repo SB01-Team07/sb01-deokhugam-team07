@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = NullableNotBlankValidator.class)
 public @interface NullableNotBlank {
-  // ConstraintViolationException 발생
   String message() default "값이 비어 있을 수 없습니다.";
   Class<?>[] groups() default {};
   Class<? extends Payload>[] payload() default {};

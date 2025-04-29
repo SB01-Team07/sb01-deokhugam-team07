@@ -3,6 +3,9 @@ package com.part3.team07.sb01deokhugamteam07.service;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -13,6 +16,7 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -31,6 +35,8 @@ public class CommentService {
   private final ReviewRepository reviewRepository;
   private final CommentMapper commentMapper;
 
+  private final NotificationService notificationService;
+
   @Transactional
   public CommentDto create(CommentCreateRequest createRequest) {
     log.debug("create comment {}", createRequest);
@@ -43,8 +49,17 @@ public class CommentService {
         .content(createRequest.content())
         .build();
 
+    // 알림 생성
+    NotificationCreateRequest notificationRequest = NotificationCreateRequest.builder()
+        .type(NotificationType.REVIEW_COMMENTED)
+        .senderId(createRequest.userId())
+        .reviewId(createRequest.reviewId())
+        .build();
+    notificationService.create(notificationRequest);
+
     commentRepository.save(comment);
     log.info("create comment complete: id={}, comment={}", comment.getId(), comment.getContent());
+    increaseCommentCount(review.getId()); //review commentCount 증가
     return commentMapper.toDto(comment);
   }
 
@@ -77,6 +92,7 @@ public class CommentService {
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
+    decreaseCommentCountOnSoftDelete(comment); //review commentCount 감소 - 댓글 논리 삭제가 실제 일어났다고 보장된 상태
     log.info("softDelete comment complete");
   }
 
@@ -97,8 +113,67 @@ public class CommentService {
     Comment comment = findComment(commentId);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
+    decreaseCommentCountOnHardDelete(comment); //review commentCount 감소
     commentRepository.delete(comment);
     log.info("hardDelete comment complete");
+  }
+
+  @Transactional(readOnly = true)
+  public CursorPageResponseCommentDto findCommentsByReviewId(
+      UUID reviewId,
+      String direction,
+      String cursor,
+      LocalDateTime after,
+      int limit
+  ) {
+    log.debug("find comment list: reviewId = {}", reviewId);
+    //리뷰 존재 여부 확인
+    Review review = findReview(reviewId);
+
+    //기본 정렬 조건 생성시간으로 지정
+    String sortBy = "createdAt";
+
+    //댓글 조회 (limit+1 개 조회)
+    List<Comment> comments = commentRepository.findCommentByCursor(
+        review,
+        direction,
+        cursor,
+        after,
+        limit,
+        sortBy
+    );
+
+    //다음 페이지 판단
+    boolean hasNext = comments.size() > limit;
+    if (hasNext) {
+      comments = comments.subList(0, limit);
+    }
+
+    //댓글 DTO 변환
+    List<CommentDto> content = comments.stream()
+        .map(commentMapper::toDto)
+        .toList();
+
+    //다음 커서 생성
+    String nextCursor = null;
+    LocalDateTime nextAfter = null;
+
+    if (hasNext) {
+      Comment last = comments.get(comments.size() - 1);
+      // 기본이 createdAt 기준이라고 설정
+      nextCursor = last.getCreatedAt().toString();
+      nextAfter = last.getCreatedAt();
+    }
+
+    log.info("find comment list: size = {}", content.size());
+    return new CursorPageResponseCommentDto(
+        content,
+        nextCursor,
+        nextAfter,
+        limit,
+        content.size(),
+        hasNext
+    );
   }
 
   private void isSoftDeleted(Comment comment) {
@@ -127,6 +202,26 @@ public class CommentService {
     if (!comment.getUser().equals(user)) {
       throw new CommentUnauthorizedException();
     }
+  }
+
+  //commentCount 감소 - 논리삭제
+  private void decreaseCommentCountOnSoftDelete(Comment comment) {
+    log.debug("댓글 논리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+    reviewRepository.decrementCommentCount(comment.getReview().getId());
+  }
+
+  //commentCount 감소 - 물리삭제
+  private void decreaseCommentCountOnHardDelete(Comment comment) {
+    if (!comment.isDeleted()) {
+      log.debug("댓글 물리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+      reviewRepository.decrementCommentCount(comment.getReview().getId());
+    }
+  }
+
+  //commentCount 증가
+  private void increaseCommentCount(UUID reviewId) {
+    log.debug("댓글 생성으로 리뷰 commentCount 증가: reviewId={}", reviewId);
+    reviewRepository.incrementCommentCount(reviewId);
   }
 
 }

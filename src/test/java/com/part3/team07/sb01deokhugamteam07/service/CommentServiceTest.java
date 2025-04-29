@@ -1,19 +1,20 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
+import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
@@ -53,6 +54,9 @@ class CommentServiceTest {
 
   @Mock
   private ReviewRepository reviewRepository;
+
+  @Mock
+  private NotificationService notificationService;
 
   @Mock
   private CommentMapper commentMapper;
@@ -132,6 +136,8 @@ class CommentServiceTest {
             savedComment.getUser().equals(testUser) &&
             savedComment.getReview().equals(testReview)
     ));
+    verify(reviewRepository).incrementCommentCount(comment.getReview().getId()); //댓글 증가 메서드 호출 확인
+
   }
 
   @Test
@@ -290,6 +296,7 @@ class CommentServiceTest {
     //then
     assertThatThrownBy(() -> commentService.find(commentId))
         .isInstanceOf(CommentNotFoundException.class);
+    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
@@ -362,6 +369,7 @@ class CommentServiceTest {
 
     //then
     verify(commentRepository).delete(comment);
+    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
@@ -389,4 +397,169 @@ class CommentServiceTest {
         .isInstanceOf(CommentUnauthorizedException.class);
   }
 
+  @Test
+  @DisplayName("댓글 물리 삭제 - 이미 논리 삭제된 댓글은 commentCount 감소하지 않음")
+  void hardDeleteCommentAlreadySoftDeleted() {
+    // given
+    comment.softDelete();
+    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
+
+    // when
+    commentService.hardDelete(commentId, userId);
+
+    // then
+    verify(commentRepository).delete(comment);
+    verify(reviewRepository, never()).decrementCommentCount(any());
+  }
+
+
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 성공 - hasNext: true")
+  void findCommentsByReviewId_hasNextTrue() {
+    //given
+    LocalDateTime time = LocalDateTime.of(2025, 4, 25, 12, 0);
+    int limit = 3;
+
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
+
+    Comment c1 = new Comment(testUser, testReview, "c1"); // 가장 최신 댓글
+    Comment c2 = new Comment(testUser, testReview, "c2");
+    Comment c3 = new Comment(testUser, testReview, "c3");
+    Comment c4 = new Comment(testUser, testReview, "c4"); // 가장 오래된 댓글
+
+    LocalDateTime t1 = time.minusMinutes(1);
+    LocalDateTime t2 = time.minusMinutes(2);
+    LocalDateTime t3 = time.minusMinutes(3);
+    LocalDateTime t4 = time.minusMinutes(4);
+
+    ReflectionTestUtils.setField(c1, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c2, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c3, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c4, "id", UUID.randomUUID());
+
+    ReflectionTestUtils.setField(c1, "createdAt", t1);
+    ReflectionTestUtils.setField(c2, "createdAt", t2);
+    ReflectionTestUtils.setField(c3, "createdAt", t3);
+    ReflectionTestUtils.setField(c4, "createdAt", t4);
+
+    List<Comment> mockComments = List.of(c1, c2, c3, c4);
+
+    //limit 3이기 때문에 최신 댓글에서 3번째 댓글(t3)의 값이 커서에 들어가야한다.
+    given(commentRepository.findCommentByCursor(
+        eq(testReview),
+        eq("DESC"),
+        eq(t3.toString()),
+        eq(t3),
+        eq(limit),
+        eq("createdAt")
+    )).willReturn(mockComments);
+
+    CommentDto dto1 = new CommentDto(c1.getId(), reviewId, userId, testUser.getNickname(),
+        c1.getContent(), c1.getCreatedAt(), c1.getCreatedAt());
+    CommentDto dto2 = new CommentDto(c2.getId(), reviewId, userId, testUser.getNickname(),
+        c2.getContent(), c2.getCreatedAt(), c2.getCreatedAt());
+    CommentDto dto3 = new CommentDto(c3.getId(), reviewId, userId, testUser.getNickname(),
+        c3.getContent(), c3.getCreatedAt(), c3.getCreatedAt());
+
+    given(commentMapper.toDto(c1)).willReturn(dto1);
+    given(commentMapper.toDto(c2)).willReturn(dto2);
+    given(commentMapper.toDto(c3)).willReturn(dto3);
+
+    //when
+    CursorPageResponseCommentDto result = commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        t3.toString(),
+        t3,
+        limit
+    );
+
+    //then
+    assertThat(result.content()).containsExactly(dto1, dto2, dto3);
+    assertThat(result.size()).isEqualTo(3);
+    assertThat(result.hasNext()).isTrue();
+    assertThat(result.nextCursor()).isEqualTo(c3.getCreatedAt().toString());
+    assertThat(result.nextAfter()).isEqualTo(c3.getCreatedAt());
+  }
+
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 성공 - hasNext: False")
+  void findCommentsByReviewId_hasNextFalse() {
+    //given
+    LocalDateTime time = LocalDateTime.of(2025, 4, 25, 12, 0);
+    int limit = 3;
+
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
+
+    Comment c1 = new Comment(testUser, testReview, "c1"); // 가장 최신 댓글
+    Comment c2 = new Comment(testUser, testReview, "c2");
+    Comment c3 = new Comment(testUser, testReview, "c3"); // 가장 오래된 댓글
+
+    LocalDateTime t1 = time.minusMinutes(1);
+    LocalDateTime t2 = time.minusMinutes(2);
+    LocalDateTime t3 = time.minusMinutes(3);
+
+    ReflectionTestUtils.setField(c1, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c2, "id", UUID.randomUUID());
+    ReflectionTestUtils.setField(c3, "id", UUID.randomUUID());
+
+    ReflectionTestUtils.setField(c1, "createdAt", t1);
+    ReflectionTestUtils.setField(c2, "createdAt", t2);
+    ReflectionTestUtils.setField(c3, "createdAt", t3);
+
+    List<Comment> mockComments = List.of(c1, c2, c3);
+
+    //limit 3이기 때문에 최신 댓글에서 3번째 댓글(t3)의 값이 커서에 들어가야한다.
+    given(commentRepository.findCommentByCursor(
+        eq(testReview),
+        eq("DESC"),
+        eq(t3.toString()),
+        eq(t3),
+        eq(limit),
+        eq("createdAt")
+    )).willReturn(mockComments);
+
+    CommentDto dto1 = new CommentDto(c1.getId(), reviewId, userId, testUser.getNickname(),
+        c1.getContent(), c1.getCreatedAt(), c1.getCreatedAt());
+    CommentDto dto2 = new CommentDto(c2.getId(), reviewId, userId, testUser.getNickname(),
+        c2.getContent(), c2.getCreatedAt(), c2.getCreatedAt());
+    CommentDto dto3 = new CommentDto(c3.getId(), reviewId, userId, testUser.getNickname(),
+        c3.getContent(), c3.getCreatedAt(), c3.getCreatedAt());
+
+    given(commentMapper.toDto(c1)).willReturn(dto1);
+    given(commentMapper.toDto(c2)).willReturn(dto2);
+    given(commentMapper.toDto(c3)).willReturn(dto3);
+
+    //when
+    CursorPageResponseCommentDto result = commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        t3.toString(),
+        t3,
+        limit
+    );
+
+    //then
+    assertThat(result.content()).containsExactly(dto1, dto2, dto3);
+    assertThat(result.size()).isEqualTo(3);
+    assertThat(result.hasNext()).isFalse();
+    assertThat(result.nextCursor()).isNull();
+    assertThat(result.nextAfter()).isNull();
+  }
+
+  @Test
+  @DisplayName("리뷰에 달린 댓글 목록 조회 실패 - 리뷰 존재X")
+  void findCommentsByReviewId_fail_reviewNotFound() {
+    //given
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.empty());
+    //when & then
+    assertThatThrownBy(() -> commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        null,
+        null,
+        3
+    )).isInstanceOf(NoSuchElementException.class);
+  }
 }

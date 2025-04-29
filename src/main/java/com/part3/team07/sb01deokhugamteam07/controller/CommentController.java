@@ -3,8 +3,10 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -90,5 +93,23 @@ public class CommentController {
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
+  }
+
+  @GetMapping
+  public ResponseEntity<CursorPageResponseCommentDto> findCommentsByReviewId(
+      @RequestParam UUID reviewId,
+      @RequestParam(required = false, defaultValue = "DESC") String direction,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) LocalDateTime after,
+      @RequestParam(defaultValue = "50") int limit
+  ) {
+    log.info("find comments by review request: cursor = {}", cursor);
+    CursorPageResponseCommentDto response = commentService.findCommentsByReviewId(
+        reviewId, direction, cursor, after, limit
+    );
+    log.debug("find comments by review success");
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(response);
   }
 }

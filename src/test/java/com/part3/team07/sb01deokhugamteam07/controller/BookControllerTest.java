@@ -4,8 +4,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -15,8 +17,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponsePopularBookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +39,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 @WithMockUser
@@ -49,6 +57,10 @@ public class BookControllerTest {
 
   @MockitoBean
   private BookService bookService;
+
+  @MockitoBean
+  private DashboardService dashboardService;
+
 
   private UUID id;
   private String title;
@@ -117,7 +129,7 @@ public class BookControllerTest {
     mockMvc.perform(multipart("/api/books")
             .file(bookCreateRequestPart)
             .file(thumbnailImagePart)
-            .content(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .with(csrf()))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(id.toString()))
@@ -145,6 +157,20 @@ public class BookControllerTest {
           newPublishedDate
       );
 
+      MockMultipartFile bookUpdateRequestPart = new MockMultipartFile(
+          "bookData",
+          "",
+          MediaType.APPLICATION_JSON_VALUE,
+          objectMapper.writeValueAsBytes(request)
+      );
+
+      MockMultipartFile thumbnailImagePart = new MockMultipartFile(
+          "thumbnailImage",
+          "test.jpg",
+          MediaType.IMAGE_JPEG_VALUE,
+          "test-image".getBytes()
+      );
+
       BookDto updatedBook = new BookDto(
           id,
           newTitle,
@@ -160,14 +186,19 @@ public class BookControllerTest {
           LocalDateTime.now()
       );
 
-      given(bookService.update(eq(id), any(BookUpdateRequest.class)))
+      given(bookService.update(eq(id), any(BookUpdateRequest.class), any(MultipartFile.class)))
           .willReturn(updatedBook);
 
       // when & then
-      mockMvc.perform(patch("/api/books/{id}", id)
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(request))
-              .with(csrf()))
+      mockMvc.perform(MockMvcRequestBuilders.multipart("/api/books/{id}", id)
+              .file(bookUpdateRequestPart)
+              .file(thumbnailImagePart)
+              .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+              .with(csrf())
+              .with(patchRequest -> {
+                patchRequest.setMethod("PATCH");
+                return patchRequest;
+              }))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.id").value(id.toString()))
           .andExpect(jsonPath("$.title").value(newTitle))
@@ -195,11 +226,30 @@ public class BookControllerTest {
           newPublishedDate
       );
 
+      MockMultipartFile bookUpdateRequestPart = new MockMultipartFile(
+          "bookData",
+          "",
+          MediaType.APPLICATION_JSON_VALUE,
+          objectMapper.writeValueAsBytes(request)
+      );
+
+      MockMultipartFile thumbnailImagePart = new MockMultipartFile(
+          "thumbnailImage",
+          "test.jpg",
+          MediaType.IMAGE_JPEG_VALUE,
+          "test-image".getBytes()
+      );
+
       // when & then
-      mockMvc.perform(patch("/api/books/{id}", id)
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(request))
-              .with(csrf()))
+      mockMvc.perform(MockMvcRequestBuilders.multipart("/api/books/{id}", id)
+          .file(bookUpdateRequestPart)
+          .file(thumbnailImagePart)
+          .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+          .with(csrf())
+          .with(patchRequest -> {
+            patchRequest.setMethod("PATCH");
+            return patchRequest;
+          }))
           .andExpect(status().isBadRequest());
     }
   }
@@ -238,4 +288,30 @@ public class BookControllerTest {
     }
   }
 
+  @Test
+  @DisplayName("인기 도서 조회")
+  void findPopularBooks_success() throws Exception {
+    Period period = Period.DAILY;
+    String direction = "asc";
+    String cursor = null;
+    String after = null;
+    int limit = 50;
+
+    CursorPageResponsePopularBookDto cursorPageResponsePopularBookDto =
+        CursorPageResponsePopularBookDto.builder()
+            .hasNext(false)
+            .build();
+
+    when(dashboardService.getPopularBooks(period,direction,cursor,after,limit)).thenReturn(cursorPageResponsePopularBookDto);
+
+    mockMvc.perform(get("/api/books/popular")
+            .param("period", period.toString())
+            .param("direction",direction)
+            .param("cursor", cursor)
+            .param("after", after)
+            .param("limit", String.valueOf(limit))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.hasNext" ).value(false));
+  }
 }
