@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -459,6 +460,87 @@ class BookServiceTest {
       assertThat(result.content().get(1)).isEqualTo(bookDto2);
       assertThat(result.hasNext()).isFalse();
       assertThat(result.totalElements()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("다음 페이지가 있는 경우 다음 페이지 정보가 포함")
+    void findAll_success_WithNextPage() {
+      // given
+      String keyword = null;
+      String sort = "publishedDate";
+      String order = "desc";
+      String cursor = null;
+      LocalDateTime after = null;
+      int size = 2;
+
+      given(bookRepository.findBooksWithCursor(keyword, sort, order, cursor, after, size + 1))
+          .willReturn(Arrays.asList(book1, book2, book3));
+      given(bookRepository.countByKeyword(keyword)).willReturn(3L);
+
+      given(bookMapper.toDto(book1)).willReturn(bookDto1);
+      given(bookMapper.toDto(book2)).willReturn(bookDto2);
+
+      // when
+      CursorPageResponseBookDto result = bookService.findAll(keyword, sort, order, cursor, after, size);
+
+      // then
+      assertThat(result.content()).hasSize(2);
+      assertThat(result.hasNext()).isTrue();
+      assertThat(result.nextCursor()).isEqualTo(book2.getPublishDate().toString());
+      assertThat(result.nextAfter()).isEqualTo(book2.getCreatedAt());
+    }
+
+    @Test
+    @DisplayName("키워드로 책 검색 성공")
+    void findAll_success_WithKeyword() {
+      // given
+      String keyword = "Potter";
+      String sort = "title";
+      String order = "asc";
+      String cursor = null;
+      LocalDateTime after = null;
+      int size = 10;
+
+      given(bookRepository.findBooksWithCursor(keyword, sort, order, cursor, after, size + 1))
+          .willReturn(List.of(book1));
+      given(bookRepository.countByKeyword(keyword)).willReturn(1L);
+
+      given(bookMapper.toDto(book1)).willReturn(bookDto1);
+
+      // when
+      CursorPageResponseBookDto result = bookService.findAll(keyword, sort, order, cursor, after, size);
+
+      // then
+      assertThat(result.content()).hasSize(1);
+      assertThat(result.content().get(0).title()).isEqualTo("Harry Potter");
+      assertThat(result.totalElements()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("기본 정렬 옵션을 사용하여 책 목록을 조회")
+    void findAll_success_WithDefaultSortOptions() {
+      // given
+      String keyword = null;
+      String sort = null;  // 기본값: publishedDate
+      String order = null; // 기본값: desc
+      String cursor = null;
+      LocalDateTime after = null;
+      int size = 10;
+
+      given(bookRepository.findBooksWithCursor(keyword, "publishedDate", "desc", cursor, after, size + 1))
+          .willReturn(Arrays.asList(book1, book2, book3));
+      given(bookRepository.countByKeyword(keyword)).willReturn(3L);
+
+      given(bookMapper.toDto(book1)).willReturn(bookDto1);
+      given(bookMapper.toDto(book2)).willReturn(bookDto2);
+      given(bookMapper.toDto(book3)).willReturn(bookDto3);
+
+      // when
+      CursorPageResponseBookDto result = bookService.findAll(keyword, sort, order, cursor, after, size);
+
+      // then
+      assertThat(result.content()).hasSize(3);
+      assertThat(result.hasNext()).isFalse();
     }
 
 
