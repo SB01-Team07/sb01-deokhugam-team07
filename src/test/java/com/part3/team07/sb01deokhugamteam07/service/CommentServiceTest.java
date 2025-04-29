@@ -550,8 +550,30 @@ class CommentServiceTest {
   }
 
   @Test
+  @DisplayName("댓글 목록 조회 성공 - 정렬방향, 커서 정상값일때")
+  void findCommentsByReviewId_validDirectionAndCursor() {
+    //given
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
+    given(commentRepository.findCommentByCursor(
+        any(), eq("ASC"), any(), any(), anyInt(), any())
+    ).willReturn(List.of());
+
+    //when
+    CursorPageResponseCommentDto result = commentService.findCommentsByReviewId(
+        reviewId,
+        "ASC",
+        LocalDateTime.now().toString(),
+        null,
+        10
+    );
+
+    //then
+    assertThat(result.content()).isEmpty();
+  }
+
+  @Test
   @DisplayName("댓글 목록 조회 실패 - 리뷰 존재X")
-  void findCommentsByReviewId_fail_reviewNotFound() {
+  void findCommentsByReviewIdFailReviewNotFound() {
     //given
     given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.empty());
     //when & then
