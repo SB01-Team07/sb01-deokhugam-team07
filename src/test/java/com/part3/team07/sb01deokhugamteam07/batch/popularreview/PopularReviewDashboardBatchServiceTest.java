@@ -19,6 +19,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import com.part3.team07.sb01deokhugamteam07.service.NotificationService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +50,8 @@ class PopularReviewDashboardBatchServiceTest {
   private LikeRepository likeRepository;
   @Mock
   private DashboardRepository dashboardRepository;
+  @Mock
+  private NotificationService notificationService;
 
   @InjectMocks
   private PopularReviewDashboardBatchService popularReviewDashboardBatchService;

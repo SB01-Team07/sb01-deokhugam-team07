@@ -51,6 +51,9 @@ class ReviewServiceTest {
     @Mock
     private CommentService commentService;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private ReviewService reviewService;
 
