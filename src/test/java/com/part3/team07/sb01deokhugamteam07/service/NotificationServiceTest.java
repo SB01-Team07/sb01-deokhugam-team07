@@ -1,18 +1,29 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.part3.team07.sb01deokhugamteam07.dto.notification.NotificationDto;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.response.CursorPageResponseNotificationDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +48,9 @@ class NotificationServiceTest {
   @Mock
   private NotificationRepository notificationRepository;
 
+  @Mock
+  private NotificationRepositoryCustom notificationRepositoryCustom;
+
   @InjectMocks
   private NotificationService notificationService;
 
@@ -48,7 +62,7 @@ class NotificationServiceTest {
   private Review review;
 
   @BeforeEach
-  void setup(){
+  void setup() {
     senderId = UUID.randomUUID();
     sender = User.builder().nickname("testUser").build();
     ReflectionTestUtils.setField(sender, "id", senderId);
@@ -133,8 +147,96 @@ class NotificationServiceTest {
 
     when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(sender));
     when(reviewRepository.findById(any(UUID.class))).thenReturn(Optional.of(review));
-    when(notificationRepository.save(any(Notification.class))).thenThrow(new DataAccessResourceFailureException("DB 연결 실패"));
+    when(notificationRepository.save(any(Notification.class))).thenThrow(
+        new DataAccessResourceFailureException("DB 연결 실패"));
 
     assertDoesNotThrow(() -> notificationService.create(request));
+  }
+
+  @Test
+  @DisplayName("알림 목록 조회 성공")
+  void find_Success() {
+    // given
+    UUID userId = UUID.randomUUID();
+    String direction = "desc";
+    LocalDateTime cursor = LocalDateTime.now();
+    int limit = 20;
+
+    Notification notification = Notification.builder()
+        .userId(userId)
+        .build();
+    ReflectionTestUtils.setField(notification, "createdAt", cursor);
+    List<Notification> notifications = List.of(notification);
+
+    when(userRepository.existsById(any(UUID.class))).thenReturn(true);
+    when(notificationRepositoryCustom.findByUserIdWithCursor(userId, direction, null, null,
+        limit + 1)).thenReturn(notifications);
+
+    // when
+    CursorPageResponseNotificationDto result = notificationService.find(
+        userId,
+        direction,
+        null,
+        null,
+        limit
+    );
+
+    // then
+    assertThat(result).isNotNull();
+    assertThat(result.nextCursor()).isEqualTo(null);
+    assertFalse(result.hasNext());
+    assertThat(result.content().get(0).userId()).isEqualTo(userId);
+  }
+
+  @Test
+  @DisplayName("알림 목록 조회 성공 - 다음 페이지가 있는 경우")
+  void find_Success_With_NextPage() {
+    // given
+    UUID userId = UUID.randomUUID();
+    String direction = "desc";
+    LocalDateTime cursor = LocalDateTime.now();
+    int limit = 20;
+
+    List<Notification> notifications = new ArrayList<>();
+    for (int i = 0; i <= limit; i++) {
+      Notification notification = Notification.builder()
+          .userId(userId)
+          .content("Test content")
+          .build();
+      ReflectionTestUtils.setField(notification, "createdAt", cursor.minusMinutes(i));
+      notifications.add(notification);
+    }
+
+    when(userRepository.existsById(any(UUID.class))).thenReturn(true);
+    when(notificationRepositoryCustom.findByUserIdWithCursor(userId, direction, null, null,
+        limit + 1)).thenReturn(notifications);
+    when(notificationRepository.countAllByUserId(userId)).thenReturn((long) notifications.size());
+
+    // when
+    CursorPageResponseNotificationDto result = notificationService.find(
+        userId,
+        direction,
+        null,
+        null,
+        limit
+    );
+
+    assertThat(result).isNotNull();
+    assertThat(result.nextCursor()).isNotNull();
+    assertTrue(result.hasNext());
+    assertThat(result.content().size()).isEqualTo(limit);
+  }
+
+  @Test
+  @DisplayName("userId가 존재하지 않는 userId 의 경우 UserNotFound 에러를 반환한다.")
+  public void find_Fail_With_NullUserId() {
+    // given
+    UUID nonUserId = UUID.randomUUID();
+
+    when(userRepository.existsById(nonUserId)).thenReturn(false);
+
+    assertThrows(UserNotFoundException.class, () -> {
+      notificationService.find(nonUserId, "desc", null, null, 20);
+    });
   }
 }
