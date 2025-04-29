@@ -42,8 +42,6 @@ public class GlobalExceptionHandler {
   }
 
 
-
-
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<ErrorResponse> handleConstraintViolationException(
       ConstraintViolationException ex) {
