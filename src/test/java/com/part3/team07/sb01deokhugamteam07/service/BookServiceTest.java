@@ -18,6 +18,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsExce
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,6 +86,10 @@ class BookServiceTest {
         .reviewCount(1000)
         .rating(BigDecimal.valueOf(4.5))
         .build();
+    setField(book1, "id", UUID.randomUUID());
+    setField(book1, "createdAt",
+        LocalDateTime.of(2023, 1, 1, 0, 0));
+    setField(book1, "createdAt", LocalDateTime.now());
 
     book2 = Book.builder()
         .title("The Hobbit")
@@ -97,6 +102,10 @@ class BookServiceTest {
         .reviewCount(2000)
         .rating(BigDecimal.valueOf(4.7))
         .build();
+    setField(book2, "id", UUID.randomUUID());
+    setField(book2, "createdAt",
+        LocalDateTime.of(2023, 1, 2, 0, 0));
+    setField(book2, "createdAt", LocalDateTime.now());
 
     book3 = Book.builder()
         .title("1984")
@@ -109,6 +118,53 @@ class BookServiceTest {
         .reviewCount(1500)
         .rating(BigDecimal.valueOf(4.6))
         .build();
+    setField(book3, "id", UUID.randomUUID());
+    setField(book3, "createdAt",
+        LocalDateTime.of(2023, 1, 3, 0, 0));
+    setField(book3, "createdAt", LocalDateTime.now());
+
+
+    bookDto1 = createBookDto(book1);
+    bookDto2 = createBookDto(book2);
+    bookDto3 = createBookDto(book3);
+  }
+
+  private void setField(Object target, String fieldName, Object value) {
+    try {
+      Field field = findField(target.getClass(), fieldName);
+      field.setAccessible(true);
+      field.set(target, value);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+    while (clazz != null) {
+      try {
+        return clazz.getDeclaredField(fieldName);
+      } catch (NoSuchFieldException e) {
+        clazz = clazz.getSuperclass();
+      }
+    }
+    throw new NoSuchFieldException(fieldName);
+  }
+
+  private BookDto createBookDto(Book book) {
+    return new BookDto(
+        book.getId(),
+        book.getTitle(),
+        book.getAuthor(),
+        book.getDescription(),
+        book.getPublisher(),
+        book.getPublishDate(),
+        book.getIsbn(),
+        book.getThumbnailUrl(),
+        book.getReviewCount(),
+        book.getRating(),
+        book.getCreatedAt(),
+        book.getUpdatedAt()
+    );
   }
 
   @Nested
@@ -385,7 +441,8 @@ class BookServiceTest {
       LocalDateTime after = null;
       int size = 2;
 
-      given(bookRepository.findBooksWithCursor(keyword, orderBy, direction, cursor, after, size + 1))
+      given(
+          bookRepository.findBooksWithCursor(keyword, orderBy, direction, cursor, after, size + 1))
           .willReturn(Arrays.asList(book1, book2));
       given(bookRepository.countByKeyword(keyword)).willReturn(3L);
 
@@ -393,7 +450,8 @@ class BookServiceTest {
       given(bookMapper.toDto(book2)).willReturn(bookDto2);
 
       // when
-      CursorPageResponseBookDto result = bookService.findAll(keyword, orderBy, direction, cursor, after, size);
+      CursorPageResponseBookDto result = bookService.findAll(keyword, orderBy, direction, cursor,
+          after, size);
 
       // then
       assertThat(result.content()).hasSize(2);
@@ -402,6 +460,7 @@ class BookServiceTest {
       assertThat(result.hasNext()).isFalse();
       assertThat(result.totalElements()).isEqualTo(3);
     }
+
 
 
   }
