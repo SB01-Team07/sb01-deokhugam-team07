@@ -66,7 +66,7 @@ class PopularReviewDashboardBatchServiceTest {
     // 리뷰 설정에 필요한 Book, User
     Book book = Book.builder()
         .title("testBook")
-        .thumbnailFileName("dummyUrl")
+        .thumbnailUrl("dummyUrl")
         .build();
     UUID bookId = UUID.randomUUID();
     ReflectionTestUtils.setField(book, "id", bookId);
