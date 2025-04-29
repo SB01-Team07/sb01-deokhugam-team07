@@ -86,7 +86,7 @@ class ReviewServiceTest {
                 .publisher("Publisher")
                 .publishDate(LocalDate.now())
                 .isbn(UUID.randomUUID().toString())
-                .thumbnailFileName("url")
+                .thumbnailUrl("url")
                 .reviewCount(0)
                 .rating(BigDecimal.ZERO)
                 .build();
@@ -111,7 +111,7 @@ class ReviewServiceTest {
                 reviewId,
                 bookId,
                 book.getTitle(),
-                book.getThumbnailFileName(),
+                book.getThumbnailUrl(),
                 userId,
                 user.getNickname(),
                 review.getContent(),
@@ -384,6 +384,7 @@ class ReviewServiceTest {
 
         //then
         assertThat(result.liked()).isTrue();
+        verify(reviewRepository).incrementLikeCount(reviewId);
     }
 
     @Test
@@ -398,6 +399,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(result.liked()).isFalse();
+        verify(reviewRepository).decrementLikeCount(reviewId);
     }
 
     @Test

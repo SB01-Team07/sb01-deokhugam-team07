@@ -204,7 +204,7 @@ public class DashboardService {
                 reviewId,
                 review.getBook().getId(),
                 review.getBook().getTitle(),
-                review.getBook().getThumbnailFileName(),
+                review.getBook().getThumbnailUrl(),
                 review.getUser().getId(),
                 review.getUser().getNickname(),
                 review.getContent(),
@@ -302,7 +302,7 @@ public class DashboardService {
                 bookId,
                 book.getTitle(),
                 book.getAuthor(),
-                book.getThumbnailFileName(), // TODO URL 가져오기 * 반드시 수정
+                book.getThumbnailUrl(),
                 period,
                 d.getRank(),
                 d.getValue(),
