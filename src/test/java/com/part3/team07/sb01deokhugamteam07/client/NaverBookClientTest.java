@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.client;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -7,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import com.part3.team07.sb01deokhugamteam07.client.dto.NaverBookRssResponse;
 import com.part3.team07.sb01deokhugamteam07.client.dto.NaverBookRssResponse.Item;
 import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.NaverBookMapper;
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -70,5 +72,21 @@ class NaverBookClientTest {
 
     // then
     Assertions.assertThat(actual).isEqualTo(expectedDto);
+  }
+
+  @Test
+  @DisplayName("searchByIsbn 실패 - 검색 결과 없음")
+  void searchByIsbn_fail_BookNotFound() {
+    // given
+    String isbn = "1111111111111";
+
+    given(restTemplate.exchange(
+        any(), eq(NaverBookRssResponse.class))
+    ).willReturn(ResponseEntity.ok(null));
+
+    // when & then
+    assertThrows(BookNotFoundException.class,
+        () -> naverBookClient.searchByIsbn(isbn)
+    );
   }
 }

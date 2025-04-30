@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.client;
 
 import com.part3.team07.sb01deokhugamteam07.client.dto.NaverBookRssResponse;
 import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.NaverBookMapper;
 import java.net.URI;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class NaverBookClient {
     NaverBookRssResponse.Item item = Optional.ofNullable(resp.getBody())
         .map(NaverBookRssResponse::getItems)
         .flatMap(items -> items.stream().findFirst())
-        .orElseThrow(() -> new IllegalStateException("검색 결과가 없습니다."));
+        .orElseThrow(() -> BookNotFoundException.withIsbn(isbn));
 
     return naverBookMapper.toDto(item);
   }
