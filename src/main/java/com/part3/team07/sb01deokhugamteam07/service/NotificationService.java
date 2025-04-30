@@ -10,6 +10,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationUnauthorizedException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
@@ -44,7 +45,7 @@ public class NotificationService {
     try {
       log.info("알림 생성 시작");
       User sender = userRepository.findById(request.getSenderId())
-          .orElseThrow(() -> new UserNotFoundException());
+          .orElseThrow(UserNotFoundException::new);
 
       Review review = reviewRepository.findById(request.getReviewId())
           .orElseThrow(() -> new NoSuchElementException(String.valueOf(request.getReviewId())));
@@ -147,9 +148,8 @@ public class NotificationService {
   public NotificationDto update(UUID notificationId, UUID userId, NotificationUpdateRequest request) {
     Notification notification = notificationRepository.findById(notificationId)
         .orElseThrow(()-> new NotificationNotFoundException(notificationId));
-    // TODO 리뷰 에러 추가 시 변경
     Review review = reviewRepository.findById(notification.getReviewId())
-        .orElseThrow(()-> new NoSuchElementException());
+        .orElseThrow(ReviewNotFoundException::new);
 
     if(!notification.getUserId().equals(userId)){
       throw new NotificationUnauthorizedException(userId);
