@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +61,7 @@ public class PowerUserDashboardBatchService {
 
     // 결과 저장용 대시보드 리스트, 유저 점수 맵
     List<Dashboard> dashboards = new ArrayList<>();
-    Map<UUID, Double> userScoreMap = new HashMap<>();
+    Map<UUID, Double> userScoreMap = new LinkedHashMap<>();
 
     // 2. 각 유저의 활동 정보 가져오기
     for (User user : users) {
