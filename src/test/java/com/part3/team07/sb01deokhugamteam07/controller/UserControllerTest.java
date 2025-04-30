@@ -27,6 +27,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordEx
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
+import com.part3.team07.sb01deokhugamteam07.security.PreAuthUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
+@WithMockUser
 @WebMvcTest(UserController.class)
 @Import({SecurityConfig.class, CustomUserDetailsService.class})
 class UserControllerTest {
@@ -64,6 +66,9 @@ class UserControllerTest {
 
   @MockitoBean
   private AuthenticationManager authenticationManager;
+
+  @MockitoBean
+  private PreAuthUserDetailsService preAuthUserDetailsService;
 
   @MockitoBean
   private DashboardService dashboardService;
