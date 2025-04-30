@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -274,6 +275,44 @@ public class BookControllerTest {
               .contentType(MediaType.APPLICATION_JSON)
               .with(csrf()))
           .andExpect(status().isNoContent());
+    }
+  }
+
+  @Nested
+  @DisplayName("도서 상세 정보 조회")
+  class FindTest {
+    @Test
+    @DisplayName("도서 상세 정보 조회 성공")
+    void find_success() throws Exception {
+      // given
+      BookDto bookDto = new BookDto(
+          id,
+          title,
+          author,
+          description,
+          publisher,
+          publishedDate,
+          "",
+          "",
+          0,
+          BigDecimal.ZERO,
+          LocalDateTime.now(),
+          LocalDateTime.now()
+      );
+
+      // when
+      given(bookService.find(id)).willReturn(bookDto);
+
+      // then
+      mockMvc.perform(get("/api/books/{id}", id)
+              .contentType(MediaType.APPLICATION_JSON)
+              .with(csrf()))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id").value(id.toString()))
+          .andExpect(jsonPath("$.title").value("title"))
+          .andExpect(jsonPath("$.author").value("author"))
+          .andExpect(jsonPath("$.reviewCount").value(0))
+          .andExpect(jsonPath("$.rating").value(0));
     }
   }
 
