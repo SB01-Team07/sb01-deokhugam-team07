@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
@@ -51,6 +52,9 @@ class BookServiceTest {
 
   @Mock
   private StorageService storageService;
+
+  @Mock
+  private ReviewService reviewService;
 
   @InjectMocks
   private BookService bookService;
@@ -339,6 +343,7 @@ class BookServiceTest {
       // then
       verify(spyBook).softDelete();
       assertTrue(spyBook.isDeleted());
+      verify(reviewService, times(1)).softDeleteAllByBook(spyBook);
     }
 
     @Test
