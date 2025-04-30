@@ -26,4 +26,6 @@ public interface LikeRepository extends JpaRepository<Like, UUID> {
   Optional<Like> findByReviewIdAndUserId(UUID reviewId, UUID userId);
 
   List<Like> findAllByReviewId(UUID reviewId);
+
+  boolean existsByReviewIdAndUserId(UUID reviewId, UUID userId);
 }

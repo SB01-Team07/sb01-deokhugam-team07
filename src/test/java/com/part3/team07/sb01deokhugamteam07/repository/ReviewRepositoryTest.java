@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -205,6 +206,53 @@ class ReviewRepositoryTest {
         // then
         Review updated = reviewRepository.findById(reviewId).orElseThrow();
         assertThat(updated.getCommentCount()).isEqualTo(0);
+    }
+
+    @DisplayName("findByIdAndIsDeletedFalse - 삭제되지 않은 리뷰 조회 성공")
+    @Test
+    void findByIdAndIsDeletedFalse_success() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        em.flush();
+        em.clear();
+
+
+        // when
+        Optional<Review> result = reviewRepository.findByIdAndIsDeletedFalse(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getContent()).isEqualTo("정말 좋은 책입니다!");
+    }
+
+    @DisplayName("findByIdAndIsDeletedFalse - 논리 삭제된 리뷰 조회 실패")
+    @Test
+    void findByIdAndIsDeletedFalse_deletedReview() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+        UUID reviewId = review.getId();
+
+        review.softDelete();
+        reviewRepository.save(review);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Optional<Review> result = reviewRepository.findByIdAndIsDeletedFalse(reviewId);
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(result).isEmpty();
     }
 
 

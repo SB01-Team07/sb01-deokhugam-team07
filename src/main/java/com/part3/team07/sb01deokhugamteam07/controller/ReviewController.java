@@ -41,11 +41,13 @@ public class ReviewController {
     }
 
     @GetMapping("{reviewId}")
-    public ResponseEntity<ReviewDto> find(@PathVariable UUID reviewId) {
+    public ResponseEntity<ReviewDto> find(
+            @PathVariable UUID reviewId,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID userId) {
         log.info("리뷰 상세 조회 요청: {}", reviewId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(reviewService.find(reviewId));
+                .body(reviewService.find(reviewId, userId));
     }
 
     @PatchMapping("{reviewId}")

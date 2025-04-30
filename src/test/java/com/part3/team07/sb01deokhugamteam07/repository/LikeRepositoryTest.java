@@ -102,4 +102,22 @@ class LikeRepositoryTest {
                 .extracting("reviewId")
                 .containsOnly(reviewId);
     }
+
+    @DisplayName("리뷰 ID와 유저 ID로 좋아요 존재 여부를 조회할 수 있다.")
+    @Test
+    void existsByReviewIdAndUserId() {
+        // given
+        UUID reviewId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        likeRepository.save(new Like(userId, reviewId));
+
+        em.flush();
+        em.clear();
+
+        // when
+        boolean exists = likeRepository.existsByReviewIdAndUserId(reviewId, userId);
+
+        // then
+        assertThat(exists).isTrue();
+    }
 }

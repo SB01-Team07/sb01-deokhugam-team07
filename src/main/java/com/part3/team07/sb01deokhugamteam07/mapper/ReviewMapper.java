@@ -5,7 +5,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Review;
 
 public class ReviewMapper {
 
-    public static ReviewDto toDto(Review review) {
+    public static ReviewDto toDto(Review review, boolean likeByMe) {
         return new ReviewDto(
                 review.getId(),
                 review.getBook().getId(),
@@ -17,7 +17,7 @@ public class ReviewMapper {
                 review.getRating(),
                 review.getLikeCount(),
                 review.getCommentCount(),
-                false, // likeByMe는 기본 false
+                likeByMe,
                 review.getCreatedAt(),
                 review.getUpdatedAt()
         );

@@ -199,23 +199,37 @@ class ReviewServiceTest {
     @Test
     void find() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when
-        ReviewDto result = reviewService.find(reviewId);
+        ReviewDto result = reviewService.find(reviewId, userId);
 
         //then
         assertThat(result).isEqualTo(reviewDto);
+    }
+
+    @DisplayName("리뷰 조회 시, 사용자가 좋아요를 눌렀으면 likeByMe가 true로 설정된다.")
+    @Test
+    void find_likeByMe_true() {
+        // given
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
+        given(likeRepository.existsByReviewIdAndUserId(reviewId, userId)).willReturn(true);
+
+        // when
+        ReviewDto result = reviewService.find(reviewId, userId);
+
+        // then
+        assertThat(result.likeByMe()).isTrue();
     }
 
     @DisplayName("리뷰 Id로 조회 시 존재하지 않으면 예외가 발생한다.")
     @Test
     void find_ReviewNotFound() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.empty());
 
         //when then
-        assertThatThrownBy(() -> reviewService.find(reviewId))
+        assertThatThrownBy(() -> reviewService.find(reviewId, userId))
                 .isInstanceOf(ReviewNotFoundException.class);
     }
 
@@ -224,7 +238,7 @@ class ReviewServiceTest {
     void update() {
         //given
         ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when
         ReviewDto result = reviewService.update(userId, reviewId, request);
@@ -240,7 +254,7 @@ class ReviewServiceTest {
         //given
         UUID otherUserId = UUID.randomUUID();
         ReviewUpdateRequest request = new ReviewUpdateRequest("수정한 내용", 3);
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when then
         assertThatThrownBy(()-> reviewService.update(otherUserId, reviewId, request))
@@ -263,7 +277,7 @@ class ReviewServiceTest {
     @Test
     void softDelete() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
         given(likeRepository.findAllByReviewId(reviewId)).willReturn(List.of(like));
 
         //when
@@ -278,7 +292,7 @@ class ReviewServiceTest {
     @Test
     void softDelete_fail_whenUserIsNotAuthor() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.empty());
 
         //when then
         assertThatThrownBy(() -> reviewService.softDelete(userId, reviewId))
@@ -290,7 +304,7 @@ class ReviewServiceTest {
     void softDelete_fail_whenReviewNotFound() {
         //given
         UUID otherUserId = UUID.randomUUID();
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when then
         assertThatThrownBy(() -> reviewService.softDelete(otherUserId, reviewId))
@@ -362,7 +376,7 @@ class ReviewServiceTest {
     @Test
     void hardDelete() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when
         reviewService.hardDelete(userId, reviewId);
@@ -376,7 +390,7 @@ class ReviewServiceTest {
     void hardDelete_Failure_Unauthorized() {
         //given
         UUID otherUserId = UUID.randomUUID();
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
 
         //when then
         assertThatThrownBy(() -> reviewService.hardDelete(otherUserId, reviewId))
@@ -387,7 +401,7 @@ class ReviewServiceTest {
     @Test
     void toggleLike_shouldAddLikeWhenNotExists() {
         //given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
         given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.empty());
 
         //when
@@ -402,7 +416,7 @@ class ReviewServiceTest {
     @DisplayName("좋아요가 존재하면 삭제한다")
     void toggleLike_shouldCancelLikeWhenExists() {
         // given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
         given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.of(like));
 
         // when
@@ -417,7 +431,7 @@ class ReviewServiceTest {
     @DisplayName("좋아요 추가,해제 시 리뷰가 존재하지 않으면 예외가 발생한다")
     void toggleLike_shouldThrowIfReviewNotFound() {
         // given
-        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+        given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> reviewService.toggleLike(reviewId, userId))
