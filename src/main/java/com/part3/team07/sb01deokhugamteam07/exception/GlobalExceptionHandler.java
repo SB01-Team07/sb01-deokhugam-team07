@@ -61,8 +61,8 @@ public class GlobalExceptionHandler {
     log.error("요청 유효성 검사 실패: {}", ex.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(
         LocalDateTime.now(),
-        "INVALID_VALUE",
-        ErrorCode.INVALID_VALUE.getMessage(),
+        "VALIDATION_FAILED",
+        ErrorCode.VALIDATION_FAILED.getMessage(),
         Map.of(),
         "MethodArgumentNotValidException",
         HttpStatus.BAD_REQUEST.value()

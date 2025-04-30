@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
   // 공통
-  INVALID_VALUE("유효하지 않은 입력입니다."),
+  VALIDATION_FAILED("유효하지 않은 입력입니다."),
 
   // Book 관련 에러 코드
   DUPLICATE_BOOK("이미 존재하는 도서입니다."),
