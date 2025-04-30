@@ -20,6 +20,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateReq
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
@@ -281,6 +282,22 @@ class CommentControllerTest {
         .andExpect(jsonPath("$.userId").value(testUserId.toString()))
         .andExpect(jsonPath("$.reviewId").value(testReviewId.toString()))
         .andExpect(jsonPath("$.userNickname").value(userNickname));
+  }
+
+  @Test
+  @DisplayName("댓글 상세 조회 실패 - 404 댓글 존재X")
+  @WithMockUser
+  void findCommentFail_ReviewNotFound() throws Exception {
+    //given
+    UUID testCommentId = UUID.randomUUID();
+
+    given(commentService.find(eq(testCommentId))).willThrow(new CommentNotFoundException());
+
+    //when & then
+    mockMvc.perform(get("/api/comments/{commentId}", testCommentId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isNotFound());
   }
 
   @Test
