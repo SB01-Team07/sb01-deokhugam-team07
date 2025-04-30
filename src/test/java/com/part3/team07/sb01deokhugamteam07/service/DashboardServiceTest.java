@@ -1,7 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -138,6 +138,25 @@ class DashboardServiceTest {
     assertThat(result.content().get(0).rank()).isEqualTo(1);
   }
 
+  @Test
+  @DisplayName("Dashboard 가 없을 때 빈 PowerUserDto 리스트 반환")
+  void get_Power_User_Weekly_Empty() {
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(Period.WEEKLY), eq("ASC"), eq(null), eq(null), eq(11), eq(KeyType.USER))
+    ).thenReturn(List.of());
+    when(dashboardRepository.countByKeyTypeAndPeriod(KeyType.USER, Period.WEEKLY))
+        .thenReturn(0L);
+
+    CursorPageResponsePowerUserDto result = dashboardService.getPowerUsers(
+        Period.WEEKLY, "ASC", null, null, 10
+    );
+
+    assertThat(result).isNotNull();
+    assertThat(result.content()).isEmpty();
+    assertThat(result.hasNext()).isFalse();
+    assertThat(result.totalElements()).isEqualTo(0);
+  }
+
 
   @Test
   @DisplayName("주간 인기 리뷰를 정상적으로 조회")
@@ -150,7 +169,8 @@ class DashboardServiceTest {
     UUID dashboardId = UUID.randomUUID();
 
     // dashboardRepositoryCustom 반환 목 객체
-    Dashboard reviewDashboard = new Dashboard(reviewId, KeyType.REVIEW, period, BigDecimal.valueOf(12.1),
+    Dashboard reviewDashboard = new Dashboard(reviewId, KeyType.REVIEW, period,
+        BigDecimal.valueOf(12.1),
         ValueType.SCORE, 1);
     ReflectionTestUtils.setField(reviewDashboard, "id", dashboardId);
     List<Dashboard> mockDashboards = List.of(reviewDashboard);
@@ -225,6 +245,25 @@ class DashboardServiceTest {
   }
 
   @Test
+  @DisplayName("Dashboard 가 없을 때 빈 PopularReviewDto 리스트 반환")
+  void get_Popular_Review_Weekly_Empty() {
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(Period.WEEKLY), eq("ASC"), eq(null), eq(null), eq(11), eq(KeyType.REVIEW))
+    ).thenReturn(List.of());
+    when(dashboardRepository.countByKeyTypeAndPeriod(KeyType.REVIEW, Period.WEEKLY))
+        .thenReturn(0L);
+
+    CursorPageResponsePopularReviewDto result = dashboardService.getPopularReviews(
+        Period.WEEKLY, "ASC", null, null, 10
+    );
+
+    assertThat(result).isNotNull();
+    assertThat(result.content()).isEmpty();
+    assertThat(result.hasNext()).isFalse();
+    assertThat(result.totalElements()).isEqualTo(0);
+  }
+
+  @Test
   @DisplayName("주간 인기 도서를 정상적으로 조회")
   void getPowerBooksWeeklySuccess() {
     // given
@@ -235,7 +274,8 @@ class DashboardServiceTest {
     UUID bookId = UUID.randomUUID();
     UUID dashboardId = UUID.randomUUID();
 
-    Dashboard bookDashboard = new Dashboard(bookId, KeyType.REVIEW, period, BigDecimal.valueOf(12.1),
+    Dashboard bookDashboard = new Dashboard(bookId, KeyType.REVIEW, period,
+        BigDecimal.valueOf(12.1),
         ValueType.SCORE, 1);
     ReflectionTestUtils.setField(bookDashboard, "id", dashboardId);
     List<Dashboard> dashboards = List.of(bookDashboard);
@@ -270,5 +310,24 @@ class DashboardServiceTest {
     // then
     assertThat(result).isNotNull();
     assertThat(result.content().get(0).rank()).isEqualTo(1);
+  }
+
+  @Test
+  @DisplayName("Dashboard 가 없을 때 빈 PopularBookDto 리스트 반환")
+  void get_Popular_Book_Weekly_Empty() {
+    when(dashboardRepositoryCustom.findDashboardsByPeriodWithCursor(
+        eq(Period.WEEKLY), eq("ASC"), eq(null), eq(null), eq(11), eq(KeyType.BOOK))
+    ).thenReturn(List.of());
+    when(dashboardRepository.countByKeyTypeAndPeriod(KeyType.BOOK, Period.WEEKLY))
+        .thenReturn(0L);
+
+    CursorPageResponsePopularBookDto result = dashboardService.getPopularBooks(
+        Period.WEEKLY, "ASC", null, null, 10
+    );
+
+    assertThat(result).isNotNull();
+    assertThat(result.content()).isEmpty();
+    assertThat(result.hasNext()).isFalse();
+    assertThat(result.totalElements()).isEqualTo(0);
   }
 }

@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.annotations.SdkTestInternalApi;
 
 @Slf4j
 @Service

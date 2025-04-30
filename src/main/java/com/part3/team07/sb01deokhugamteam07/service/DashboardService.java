@@ -297,7 +297,7 @@ public class DashboardService {
 
     // 없을시 조기 반환
     if(dashboards.isEmpty()){
-      long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.REVIEW, period);
+      long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.BOOK, period);
       return new CursorPageResponsePopularBookDto(
           List.of(),
           null,
