@@ -92,7 +92,7 @@ class BookServiceTest {
     setField(book1, "id", UUID.randomUUID());
     setField(book1, "createdAt",
         LocalDateTime.of(2023, 1, 1, 0, 0));
-    setField(book1, "createdAt", LocalDateTime.now());
+    setField(book1, "updatedAt", LocalDateTime.now());
 
     book2 = Book.builder()
         .title("The Hobbit")
@@ -108,7 +108,7 @@ class BookServiceTest {
     setField(book2, "id", UUID.randomUUID());
     setField(book2, "createdAt",
         LocalDateTime.of(2023, 1, 2, 0, 0));
-    setField(book2, "createdAt", LocalDateTime.now());
+    setField(book2, "updatedAt", LocalDateTime.now());
 
     book3 = Book.builder()
         .title("1984")
@@ -124,8 +124,7 @@ class BookServiceTest {
     setField(book3, "id", UUID.randomUUID());
     setField(book3, "createdAt",
         LocalDateTime.of(2023, 1, 3, 0, 0));
-    setField(book3, "createdAt", LocalDateTime.now());
-
+    setField(book3, "updateddAt", LocalDateTime.now());
 
     bookDto1 = createBookDto(book1);
     bookDto2 = createBookDto(book2);

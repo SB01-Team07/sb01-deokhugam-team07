@@ -3,11 +3,14 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,6 +76,21 @@ public class BookController {
   @GetMapping("/{id}")
   public ResponseEntity<BookDto> find(@PathVariable UUID id) {
     BookDto bookDto = bookService.find(id);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(bookDto);
+  }
+
+  @GetMapping
+  public ResponseEntity<CursorPageResponseBookDto> findAll(
+      @RequestParam(required = false) String keyword,
+      @RequestParam(required = false, defaultValue = "title") String orderBy,
+      @RequestParam(required = false, defaultValue = "desc") String direction,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
+      @RequestParam(required = false, defaultValue = "50") int size) {
+    CursorPageResponseBookDto bookDto = bookService.findAll(keyword, orderBy, direction, cursor, after, size);
 
     return ResponseEntity
         .status(HttpStatus.OK)

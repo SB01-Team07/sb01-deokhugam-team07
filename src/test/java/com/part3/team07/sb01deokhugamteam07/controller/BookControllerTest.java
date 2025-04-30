@@ -1,26 +1,41 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
+import static org.assertj.core.api.Fail.fail;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,11 +43,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,6 +77,8 @@ public class BookControllerTest {
   private String publisher;
   private LocalDate publishedDate;
   private String isbn;
+  private Book book1, book2;
+  private BookDto bookDto1, bookDto2;
 
   @BeforeEach
   void setUp() {
@@ -68,6 +88,79 @@ public class BookControllerTest {
     description = "description";
     publisher = "publisher";
     publishedDate = LocalDate.of(1618, 1, 1);
+
+    book1 = Book.builder()
+        .title("Harry Potter")
+        .author("J.K. Rowling")
+        .description("Fantasy book about wizards")
+        .publisher("Publisher A")
+        .publishDate(LocalDate.of(1997, 6, 26))
+        .isbn("1234567890")
+        .thumbnailUrl(null)
+        .reviewCount(1000)
+        .rating(BigDecimal.valueOf(4.5))
+        .build();
+    setField(book1, "id", UUID.randomUUID());
+    setField(book1, "createdAt",
+        LocalDateTime.of(2023, 1, 1, 0, 0));
+    setField(book1, "updatedAt", LocalDateTime.now());
+
+    book2 = Book.builder()
+        .title("The Hobbit")
+        .author("J.R.R. Tolkien")
+        .description("Adventure of Bilbo Baggins")
+        .publisher("Publisher B")
+        .publishDate(LocalDate.of(1937, 9, 21))
+        .isbn("2345678901")
+        .thumbnailUrl(null)
+        .reviewCount(2000)
+        .rating(BigDecimal.valueOf(4.7))
+        .build();
+    setField(book2, "id", UUID.randomUUID());
+    setField(book2, "createdAt",
+        LocalDateTime.of(2023, 1, 2, 0, 0));
+    setField(book2, "updatedAt", LocalDateTime.now());
+
+    bookDto1 = createBookDto(book1);
+    bookDto2 = createBookDto(book2);
+  }
+
+  private void setField(Object target, String fieldName, Object value) {
+    try {
+      Field field = findField(target.getClass(), fieldName);
+      field.setAccessible(true);
+      field.set(target, value);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+    while (clazz != null) {
+      try {
+        return clazz.getDeclaredField(fieldName);
+      } catch (NoSuchFieldException e) {
+        clazz = clazz.getSuperclass();
+      }
+    }
+    throw new NoSuchFieldException(fieldName);
+  }
+
+  private BookDto createBookDto(Book book) {
+    return new BookDto(
+        book.getId(),
+        book.getTitle(),
+        book.getAuthor(),
+        book.getDescription(),
+        book.getPublisher(),
+        book.getPublishDate(),
+        book.getIsbn(),
+        book.getThumbnailUrl(),
+        book.getReviewCount(),
+        book.getRating(),
+        book.getCreatedAt(),
+        book.getUpdatedAt()
+    );
   }
 
   @Test
@@ -300,10 +393,9 @@ public class BookControllerTest {
           LocalDateTime.now()
       );
 
-      // when
       given(bookService.find(id)).willReturn(bookDto);
 
-      // then
+      // when & then
       mockMvc.perform(get("/api/books/{id}", id)
               .contentType(MediaType.APPLICATION_JSON)
               .with(csrf()))
@@ -313,6 +405,52 @@ public class BookControllerTest {
           .andExpect(jsonPath("$.author").value("author"))
           .andExpect(jsonPath("$.reviewCount").value(0))
           .andExpect(jsonPath("$.rating").value(0));
+    }
+  }
+
+  @Nested
+  @DisplayName("도서 목록 조회")
+  class FindAllTest {
+    @Test
+    @DisplayName("도서 목록 조회 성공")
+    void findAll_success() throws Exception {
+      // given
+      LocalDateTime nextAfter = LocalDateTime.of(2023, 1, 2, 0, 0);
+
+      CursorPageResponseBookDto response = new CursorPageResponseBookDto(
+          List.of(bookDto1, bookDto2),
+          LocalDateTime.of(1937, 9, 21, 0, 0).toString(),
+          nextAfter,
+          2,
+          10,
+          true
+      );
+
+      given(bookService.findAll(
+          anyString(), // keyword
+          anyString(), // orderBy
+          anyString(), // direction
+          nullable(String.class), // lastBookId (null 가능)
+          nullable(LocalDateTime.class), // lastCreatedAt (null 가능)
+          anyInt()
+      )).willReturn(response);
+
+
+      // when & then
+      mockMvc.perform(get("/api/books")
+              .contentType(MediaType.APPLICATION_JSON)
+              .with(csrf())
+              .param("keyword", "fantasy")
+              .param("orderBy", "publishedDate")
+              .param("direction", "desc")
+              .param("size", "2"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.content", hasSize(2)))
+          .andExpect(jsonPath("$.content[0].title", is("Harry Potter")))
+          .andExpect(jsonPath("$.content[1].title", is("The Hobbit")))
+          .andExpect(jsonPath("$.size", is(2)))
+          .andExpect(jsonPath("$.totalElements", is(10)))
+          .andExpect(jsonPath("$.hasNext", is(true)));
     }
   }
 
