@@ -3,6 +3,7 @@ package com.part3.team07.sb01deokhugamteam07.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -18,6 +19,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
+import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
@@ -108,7 +111,7 @@ class CommentControllerTest {
     // when & then
     mockMvc.perform(post("/api/comments")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(invalidRequest))
+            .content(objectMapper.writeValueAsString(invalidRequest))
             .with(csrf()))  // 스프링 시큐리티 토큰
         .andExpect(status().isBadRequest());
   }
@@ -118,18 +121,22 @@ class CommentControllerTest {
   @WithMockUser
   void createCommentFail_ReviewNotFound() throws Exception {
     // given
-    CommentCreateRequest invalidRequest = new CommentCreateRequest(
-        null,
-        null,
-        ""
+    UUID testReviewId = UUID.randomUUID();
+    UUID testUserId = UUID.randomUUID();
+    CommentCreateRequest createRequest = new CommentCreateRequest(
+        testReviewId,
+        testUserId,
+        "create content"
     );
+
+    given(commentService.create(eq(createRequest))).willThrow(new ReviewNotFoundException());
 
     // when & then
     mockMvc.perform(post("/api/comments")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(invalidRequest))
+            .content(objectMapper.writeValueAsString(createRequest))
             .with(csrf()))  // 스프링 시큐리티 토큰
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isNotFound());
   }
 
   @Test
@@ -191,6 +198,52 @@ class CommentControllerTest {
             .content(objectMapper.writeValueAsString(invalidRequest))
             .with(csrf()))  // 스프링 시큐리티 토큰
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("댓글 수정 실패 - 403 권한 없음")
+  @WithMockUser
+  void updateCommentFail_ValidateCommentAuthor() throws Exception {
+    //given
+    UUID testCommentId = UUID.randomUUID();
+    UUID notAuthorUserId = UUID.randomUUID();
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        "new content"
+    );
+
+    given(commentService.update(eq(testCommentId), eq(notAuthorUserId),
+        any(CommentUpdateRequest.class)))
+        .willThrow(new CommentUnauthorizedException());
+    // when & then
+    mockMvc.perform(patch("/api/comments/{commentId}", testCommentId)
+            .header("Deokhugam-Request-User-ID", notAuthorUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest))
+            .with(csrf()))  // 스프링 시큐리티 토큰
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("댓글 수정 실패 - 404 리뷰 존재X")
+  @WithMockUser
+  void updateCommentFail_ReviewNotFound() throws Exception {
+    // given
+    UUID testCommentId = UUID.randomUUID();
+    UUID testUserId = UUID.randomUUID();
+    CommentUpdateRequest updateRequest = new CommentUpdateRequest(
+        "new content"
+    );
+
+    given(commentService.update(eq(testCommentId), eq(testUserId), any(CommentUpdateRequest.class)))
+        .willThrow(new ReviewNotFoundException());
+
+    // when & then
+    mockMvc.perform(patch("/api/comments/{commentId}", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest))
+            .with(csrf()))  // 스프링 시큐리티 토큰
+        .andExpect(status().isNotFound());
   }
 
   @Test
