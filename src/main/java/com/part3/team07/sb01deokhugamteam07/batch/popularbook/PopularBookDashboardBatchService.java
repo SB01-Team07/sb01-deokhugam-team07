@@ -45,7 +45,8 @@ public class PopularBookDashboardBatchService {
     // 1. 전체 도서 조회 (is_deleted = false)
     List<Book> books = bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
     if(books.isEmpty()){
-      throw new BookNotFoundException();
+      log.info("처리할 도서가 없습니다. period={}", period);
+      return;
     }
 
     // 날짜 범위 계산

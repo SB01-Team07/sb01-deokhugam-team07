@@ -46,6 +46,10 @@ public class PopularReviewDashboardBatchService {
     log.info("savePopularReviewDashboardData 호출: period={}", period);
     // 1. 전체 리뷰 조회 (is_deleted = false)
     List<Review> reviews = reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
+    if (reviews.isEmpty()) {
+      log.info("처리할 리뷰가 없습니다. period={}", period);
+      return;
+    }
 
     // 날짜 범위 계산
     LocalDate[] dateRange = dateRangeUtil.getDateRange(period);

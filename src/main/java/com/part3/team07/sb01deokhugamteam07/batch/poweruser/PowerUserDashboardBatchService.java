@@ -39,7 +39,6 @@ public class PowerUserDashboardBatchService {
   private final DashboardRepository dashboardRepository;
 
   /**
-   * TODO 다른 도메인 엮여있어서 통합 테스트는 이후에 진행해보겠습니다
    * 파워 유저 관련 데이터를 dashboard 테이블에 저장합니다.
    *
    * @param period 기간 정보 (e.g. DAILY, WEEKLY, MONTHLY, ALL_TIME)
@@ -49,6 +48,10 @@ public class PowerUserDashboardBatchService {
 
     // 1. 전체 유저 조회 (is_deleted = false)
     List<User> users = userRepository.findByIsDeletedFalse();
+    if (users.isEmpty()) {
+      log.info("처리할 유저가 없습니다. period={}", period);
+      return;
+    }
 
     // 날짜 범위 계산
     LocalDate[] dateRange = dateRangeUtil.getDateRange(period);
