@@ -124,7 +124,7 @@ class BookServiceTest {
     setField(book3, "id", UUID.randomUUID());
     setField(book3, "createdAt",
         LocalDateTime.of(2023, 1, 3, 0, 0));
-    setField(book3, "updateddAt", LocalDateTime.now());
+    setField(book3, "updatedAt", LocalDateTime.now());
 
     bookDto1 = createBookDto(book1);
     bookDto2 = createBookDto(book2);
