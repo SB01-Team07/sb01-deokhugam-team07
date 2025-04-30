@@ -2,6 +2,8 @@ package com.part3.team07.sb01deokhugamteam07.batch.popularreview;
 
 import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
 import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationCreateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.notification.request.NotificationType;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
@@ -10,6 +12,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import com.part3.team07.sb01deokhugamteam07.service.NotificationService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ public class PopularReviewDashboardBatchService {
   private final CommentRepository commentRepository;
   private final LikeRepository likeRepository;
   private final DashboardRepository dashboardRepository;
+  private final NotificationService notificationService;
 
   /**
    * 인기 리뷰 관련 데이터를 dashboard 테이블에 저장합니다.
@@ -77,6 +81,20 @@ public class PopularReviewDashboardBatchService {
 
     // 4. SCORE 기준으로 전체 리뷰 순위 매기기 -> 정렬 후 rank 지정
     dashboards = assignRank.assignRank(reviewScoreMap, period, KeyType.REVIEW, dashboards);
+
+    // 알림 생성
+    List<Dashboard> topTen = dashboards.stream()
+        .limit(10)
+        .toList();
+    for (Dashboard dashboard : topTen) {
+      NotificationCreateRequest request = NotificationCreateRequest.builder()
+          .type(NotificationType.REVIEW_RANKED)
+          .reviewId(dashboard.getKey())
+          .period(period)
+          .rank(dashboard.getRank())
+          .build();
+      notificationService.create(request);
+    }
 
     // 5. 데이터베이스에 저장
     dashboardRepository.saveAll(dashboards);

@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,6 +33,12 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
 import java.lang.reflect.Field;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponsePopularBookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Period;
+import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
+import com.part3.team07.sb01deokhugamteam07.service.BookService;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,6 +76,10 @@ public class BookControllerTest {
 
   @MockitoBean
   private BookService bookService;
+
+  @MockitoBean
+  private DashboardService dashboardService;
+
 
   private UUID id;
   private String title;
@@ -454,4 +465,30 @@ public class BookControllerTest {
     }
   }
 
+  @Test
+  @DisplayName("인기 도서 조회")
+  void findPopularBooks_success() throws Exception {
+    Period period = Period.DAILY;
+    String direction = "asc";
+    String cursor = null;
+    String after = null;
+    int limit = 50;
+
+    CursorPageResponsePopularBookDto cursorPageResponsePopularBookDto =
+        CursorPageResponsePopularBookDto.builder()
+            .hasNext(false)
+            .build();
+
+    when(dashboardService.getPopularBooks(period,direction,cursor,after,limit)).thenReturn(cursorPageResponsePopularBookDto);
+
+    mockMvc.perform(get("/api/books/popular")
+            .param("period", period.toString())
+            .param("direction",direction)
+            .param("cursor", cursor)
+            .param("after", after)
+            .param("limit", String.valueOf(limit))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.hasNext" ).value(false));
+  }
 }

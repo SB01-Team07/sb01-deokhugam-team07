@@ -3,7 +3,9 @@ package com.part3.team07.sb01deokhugamteam07.dto.review.response;
 import com.part3.team07.sb01deokhugamteam07.dto.review.PopularReviewDto;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record CursorPageResponsePopularReviewDto(
     List<PopularReviewDto> content,
     String nextCursor,

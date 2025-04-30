@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CommentRepository extends JpaRepository<Comment, UUID> {
+public interface CommentRepository extends JpaRepository<Comment, UUID>, CommentRepositoryCustom {
+
   // 파워 유저에서 이용되는 메서드, 특정 사용자가 작성한 댓글을 날짜 범위내에서 조회하여 개수 반환
   long countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
       java.util.UUID userId,

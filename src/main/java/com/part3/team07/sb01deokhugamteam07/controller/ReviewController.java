@@ -5,8 +5,13 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponsePopularReviewDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Period;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +28,7 @@ import java.util.UUID;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final DashboardService dashboardService;
 
     @PostMapping
     public ResponseEntity<ReviewDto> create(@RequestBody @Validated ReviewCreateRequest request) {
@@ -83,6 +89,19 @@ public class ReviewController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(reviewService.toggleLike(reviewId, userId));
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<CursorPageResponsePopularReviewDto> findPopularReviews(
+        @RequestParam Period period,
+        @RequestParam(required = false, defaultValue = "asc") @Pattern(regexp = "(?i)ASC|DESC", message = "direction은 ASC 또는 DESC만 가능합니다.") String direction,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(required = false) String after,
+        @RequestParam(required = false, defaultValue = "50") @Min(1) int limit
+    ){
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(dashboardService.getPopularReviews(period, direction, cursor, after, limit));
     }
 
 }

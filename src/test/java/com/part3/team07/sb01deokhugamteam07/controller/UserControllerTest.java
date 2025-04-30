@@ -19,12 +19,15 @@ import com.part3.team07.sb01deokhugamteam07.dto.user.UserDto;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserLoginRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserRegisterRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.user.request.UserUpdateRequest;
+import com.part3.team07.sb01deokhugamteam07.dto.user.response.CursorPageResponsePowerUserDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +41,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -60,6 +64,9 @@ class UserControllerTest {
 
   @MockitoBean
   private AuthenticationManager authenticationManager;
+
+  @MockitoBean
+  private DashboardService dashboardService;
 
   @Test
   @DisplayName("POST /api/users - 회원가입 성공")
@@ -160,7 +167,7 @@ class UserControllerTest {
 
     // when
     when(userService.login(any(UserLoginRequest.class)))
-        .thenThrow(new UserNotFoundException(request));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -230,7 +237,7 @@ class UserControllerTest {
         .thenReturn(Optional.of(authUser));
 
     when(userService.find(any()))
-        .thenThrow(new UserNotFoundException(findUserID));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -309,7 +316,7 @@ class UserControllerTest {
     when(userRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(user));
     when(userService.update(userId, request))
-        .thenThrow(new UserNotFoundException(userId));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -336,7 +343,7 @@ class UserControllerTest {
     when(userRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(user));
     when(userService.update(userId, request))
-        .thenThrow(new UserNotFoundException(userId));
+        .thenThrow(new UserNotFoundException());
 
     // then
     mockMvc
@@ -398,7 +405,7 @@ class UserControllerTest {
     // when
     when(userRepository.findById(eq(userId)))
         .thenReturn(Optional.of(authUser));
-    doThrow(new UserNotFoundException(userId))
+    doThrow(new UserNotFoundException())
         .when(userService).softDelete(eq(userId));
 
     // then
@@ -456,12 +463,40 @@ class UserControllerTest {
     // when
     when(userRepository.findById(eq(userId)))
         .thenReturn(Optional.of(authUser));
-    doThrow(new UserNotFoundException(userId))
+    doThrow(new UserNotFoundException())
         .when(userService).physicalDelete(eq(userId));
 
     mockMvc
         .perform(delete("/api/users/{userId}/hard", userId)
             .header("Deokhugam-Request-User-ID", userId))
         .andExpect(status().isNotFound());
+  }
+  
+  @Test
+  @WithMockUser
+  @DisplayName("GET /api/users/power - 파워 유저 조회")
+  void findPowerUsers() throws Exception {
+    Period period = Period.DAILY;
+    String direction = "asc";
+    String cursor = null;
+    String after = null;
+    int limit = 50;
+
+    CursorPageResponsePowerUserDto cursorPageResponsePowerUserDto =
+        CursorPageResponsePowerUserDto.builder()
+            .hasNext(false)
+            .build();
+
+    when(dashboardService.getPowerUsers(period,direction,cursor,after,limit)).thenReturn(cursorPageResponsePowerUserDto);
+
+    mockMvc.perform(get("/api/users/power")
+            .param("period", period.toString())
+            .param("direction",direction)
+            .param("cursor", cursor)
+            .param("after", after)
+            .param("limit", String.valueOf(limit))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.hasNext" ).value(false));
   }
 }

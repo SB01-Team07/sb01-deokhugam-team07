@@ -4,9 +4,14 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponsePopularBookDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class BookController {
 
   private final BookService bookService;
+  private final DashboardService dashboardService;
 
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ResponseEntity<BookDto> create(@RequestPart("bookData") BookCreateRequest request,
@@ -95,5 +101,18 @@ public class BookController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(bookDto);
+
+  @GetMapping("/popular")
+  public ResponseEntity<CursorPageResponsePopularBookDto> findPopularBooks(
+      @RequestParam Period period,
+      @RequestParam(required = false, defaultValue = "asc") @Pattern(regexp = "(?i)ASC|DESC", message = "direction은 ASC 또는 DESC만 가능합니다.") String direction,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) String after,
+      @RequestParam(required = false, defaultValue = "50") @Min(1) int limit
+  ){
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(dashboardService.getPopularBooks(period, direction, cursor, after, limit));
   }
 }

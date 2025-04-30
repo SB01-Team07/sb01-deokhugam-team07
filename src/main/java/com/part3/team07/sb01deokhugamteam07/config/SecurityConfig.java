@@ -35,6 +35,8 @@ public class SecurityConfig {
     http
         .sessionManagement(sm -> sm.sessionCreationPolicy(STATELESS))
         .csrf(csrf -> csrf.disable())
+        .formLogin(form -> form.disable())
+        .httpBasic(hb -> hb.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
                 "/api/users/login",

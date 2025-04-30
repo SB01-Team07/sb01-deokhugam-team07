@@ -43,4 +43,9 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
     filterChain.doFilter(request, response);
   }
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    return "/api/users/login".equals(request.getServletPath());
+  }
 }
