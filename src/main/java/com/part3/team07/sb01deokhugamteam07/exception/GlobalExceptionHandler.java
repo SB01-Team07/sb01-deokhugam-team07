@@ -102,11 +102,12 @@ public class GlobalExceptionHandler {
     return switch (errorCode) {
       case BOOK_NOT_FOUND, REVIEW_NOT_FOUND, COMMENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
       case DUPLICATE_BOOK, DUPLICATE_REVIEW -> HttpStatus.CONFLICT;
-      case REVIEW_UNAUTHORIZED -> HttpStatus.FORBIDDEN;
+      case REVIEW_UNAUTHORIZED, COMMENT_UNAUTHORIZED -> HttpStatus.FORBIDDEN;
       case INVALID_REVIEW_REQUEST, INVALID_COMMENT_CURSOR, INVALID_COMMENT_DIRECTION
           ,INVALID_COMMENT_SORT_BY -> HttpStatus.BAD_REQUEST;
-      case  COMMENT_UNAUTHORIZED -> HttpStatus.UNAUTHORIZED;
+
       // 에러 코드 추가 시 업데이트
+//      case  -> HttpStatus.UNAUTHORIZED;
 //      case  -> HttpStatus.INTERNAL_SERVER_ERROR;
       default -> HttpStatus.INTERNAL_SERVER_ERROR;
     };
