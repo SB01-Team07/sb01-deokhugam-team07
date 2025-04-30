@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
@@ -78,6 +79,7 @@ class BookServiceTest {
     description = "description";
     publisher = "publisher";
     publishedDate = LocalDate.of(1618, 1, 1);
+    isbn = "12345";
 
     book = new Book(title, author, description, publisher, publishedDate,
         isbn, "", 0, BigDecimal.ZERO);
@@ -239,6 +241,30 @@ class BookServiceTest {
       assertThrows(BookAlreadyExistsException.class,
           () -> bookService.create(request, null)
       );
+    }
+  }
+
+  @Nested
+  @DisplayName("네이버 API 호출")
+  class GetInfoTest{
+    @Test
+    @DisplayName("네이버 API 호출 성공")
+    void getInfo_success() {
+      // given
+      NaverBookDto naverBookDto = new NaverBookDto(
+          "title",
+          "author",
+          "description",
+          "publisher",
+          LocalDate.of(2025, 4, 30),
+          "isbn",
+          null);
+
+      // when
+      NaverBookDto result = bookService.getInfo(isbn);
+
+      // then
+      assertThat(result).isEqualTo(naverBookDto);
     }
   }
 
