@@ -96,11 +96,13 @@ public class BookController {
       @RequestParam(required = false) String cursor,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
       @RequestParam(required = false, defaultValue = "50") int size) {
-    CursorPageResponseBookDto bookDto = bookService.findAll(keyword, orderBy, direction, cursor, after, size);
+    CursorPageResponseBookDto bookDto = bookService.findAll(keyword, orderBy, direction, cursor,
+        after, size);
 
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(bookDto);
+  }
 
   @GetMapping("/popular")
   public ResponseEntity<CursorPageResponsePopularBookDto> findPopularBooks(
