@@ -49,3 +49,8 @@ jwt:
     jwt-secret: tRsLycvAv+NdFne3uTGzRHlH4XNXGP2v/6QW5dCT0Fs=
     jwt-expiration: 3600000
     jwt-issuer: deokhugam
+
+naver:
+  book:
+    client-id:
+    client-secret: 
