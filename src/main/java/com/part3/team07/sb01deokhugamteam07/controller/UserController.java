@@ -10,7 +10,6 @@ import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetails;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -55,7 +54,7 @@ public class UserController {
    **/
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public UserDto join(@RequestBody @Validated UserRegisterRequest request, HttpServletResponse response) {
+  public UserDto join(@RequestBody @Validated UserRegisterRequest request) {
 
     UserDto registeredUser = userService.register(request);
     CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserById(
