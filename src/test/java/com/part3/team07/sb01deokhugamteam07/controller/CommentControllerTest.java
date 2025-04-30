@@ -204,7 +204,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 수정 실패 - 403 권한 없음")
   @WithMockUser
-  void updateCommentFail_ValidateCommentAuthor() throws Exception {
+  void updateCommentFail_InvalidCommentAuthor() throws Exception {
     //given
     UUID testCommentId = UUID.randomUUID();
     UUID notAuthorUserId = UUID.randomUUID();
@@ -287,7 +287,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("댓글 상세 조회 실패 - 404 댓글 존재X")
   @WithMockUser
-  void findCommentFail_ReviewNotFound() throws Exception {
+  void findCommentFail_CommentNotFound() throws Exception {
     //given
     UUID testCommentId = UUID.randomUUID();
 
@@ -314,6 +314,60 @@ class CommentControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .with(csrf())) // 스프링 시큐리티 토큰
         .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @DisplayName("댓글 논리 삭제 실패 - 400 잘못된 요청")
+  @WithMockUser
+  void softDeleteCommentFail_InvalidRequest() throws Exception {
+    //given
+    UUID testCommentId = UUID.randomUUID();
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}", testCommentId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("댓글 논리 삭제 실패 - 403 권한 없음")
+  @WithMockUser
+  void softDeleteCommentFail_InvalidCommentAuthor() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    doThrow(new CommentUnauthorizedException())
+        .when(commentService)
+        .softDelete(eq(testCommentId), eq(testUserId));
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("댓글 논리 삭제 실패 - 404 댓글 존재X")
+  @WithMockUser
+  void softDeleteCommentFail_CommentNotFound() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    doThrow(new CommentNotFoundException())
+        .when(commentService)
+        .softDelete(eq(testCommentId), eq(testUserId));
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isNotFound());
   }
 
   @Test
