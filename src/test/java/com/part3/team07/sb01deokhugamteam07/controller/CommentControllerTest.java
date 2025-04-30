@@ -19,7 +19,6 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.CommentDto;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.request.CommentUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageResponseCommentDto;
-import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
@@ -28,7 +27,6 @@ import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.CommentService;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -182,7 +180,7 @@ class CommentControllerTest {
   }
 
   @Test
-  @DisplayName("댓글 수정 실패 - 400 잘못된 요청")
+  @DisplayName("댓글 수정 실패 - 400 댓글 내용 빈값")
   @WithMockUser
   void updateCommentFail_InvalidRequest() throws Exception {
     //given
@@ -317,7 +315,7 @@ class CommentControllerTest {
   }
 
   @Test
-  @DisplayName("댓글 논리 삭제 실패 - 400 잘못된 요청")
+  @DisplayName("댓글 논리 삭제 실패 - 400 userId 누락")
   @WithMockUser
   void softDeleteCommentFail_InvalidRequest() throws Exception {
     //given
@@ -385,6 +383,61 @@ class CommentControllerTest {
             .with(csrf())) // 스프링 시큐리티 토큰
         .andExpect(status().isNoContent());
   }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 실패 - 400 userId 누락")
+  @WithMockUser
+  void hardDeleteCommentFail_InvalidRequest() throws Exception {
+    //given
+    UUID testCommentId = UUID.randomUUID();
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}/hard", testCommentId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 실패 - 403 권한 없음")
+  @WithMockUser
+  void hardDeleteCommentFail_InvalidCommentAuthor() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    doThrow(new CommentUnauthorizedException())
+        .when(commentService)
+        .hardDelete(eq(testCommentId), eq(testUserId));
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}/hard", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("댓글 물리 삭제 실패 - 404 댓글 존재X")
+  @WithMockUser
+  void hardDeleteCommentFail_CommentNotFound() throws Exception {
+    //given
+    UUID testUserId = UUID.randomUUID();
+    UUID testCommentId = UUID.randomUUID();
+
+    doThrow(new CommentNotFoundException())
+        .when(commentService)
+        .hardDelete(eq(testCommentId), eq(testUserId));
+
+    //when & then
+    mockMvc.perform(delete("/api/comments/{commentId}/hard", testCommentId)
+            .header("Deokhugam-Request-User-ID", testUserId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf())) // 스프링 시큐리티 토큰
+        .andExpect(status().isNotFound());
+  }
+
 
   @Test
   @DisplayName("댓글 목록 조회 성공")
