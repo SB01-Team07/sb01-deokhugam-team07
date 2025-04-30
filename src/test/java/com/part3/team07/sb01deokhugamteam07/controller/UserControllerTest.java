@@ -26,6 +26,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.user.DuplicateUserEmailExc
 import com.part3.team07.sb01deokhugamteam07.exception.user.IllegalUserPasswordException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetails;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.security.PreAuthUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
@@ -42,14 +43,17 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WithMockUser
 @WebMvcTest(UserController.class)
-@Import({SecurityConfig.class, CustomUserDetailsService.class})
+@Import({SecurityConfig.class, CustomUserDetailsService.class, PreAuthUserDetailsService.class})
 class UserControllerTest {
 
   @Autowired
@@ -57,6 +61,9 @@ class UserControllerTest {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @MockitoBean
   private UserService userService;
@@ -71,7 +78,11 @@ class UserControllerTest {
   private PreAuthUserDetailsService preAuthUserDetailsService;
 
   @MockitoBean
+  private CustomUserDetailsService userDetailsService;
+
+  @MockitoBean
   private DashboardService dashboardService;
+
 
   @Test
   @DisplayName("POST /api/users - 회원가입 성공")
@@ -84,13 +95,27 @@ class UserControllerTest {
     UserDto response = new UserDto(userId, "test@mail.com", "test", LocalDateTime.now());
     String responseJson = objectMapper.writeValueAsString(response);
 
+    User dummyUser = new User("test", passwordEncoder.encode("password123"), "test@mail.com");
+    ReflectionTestUtils.setField(dummyUser, "id", userId);
+    CustomUserDetails principal = new CustomUserDetails(dummyUser);
+
     // when
+    when(preAuthUserDetailsService.loadUserDetails(any(PreAuthenticatedAuthenticationToken.class)))
+        .thenReturn(principal);
+    when(userDetailsService.loadUserById(eq(userId)))
+        .thenReturn(principal);
+    Authentication auth = new UsernamePasswordAuthenticationToken(
+        principal,
+        null,
+        principal.getAuthorities()
+    );
+    when(authenticationManager.authenticate(any(Authentication.class)))
+        .thenReturn(auth);
     when(userService.register(any(UserRegisterRequest.class)))
         .thenReturn(response);
 
     // then
-    mockMvc
-        .perform(post("/api/users")
+    mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestJson))
         .andExpect(status().isCreated())
@@ -419,7 +444,7 @@ class UserControllerTest {
             .header("Deokhugam-Request-User-ID", userId))
         .andExpect(status().isNotFound());
   }
-  
+
   @Test
   @DisplayName("DELETE /api/users/{userId}/hard - 사용자 물리 삭제")
   void physicalDelete() throws Exception {
@@ -476,7 +501,7 @@ class UserControllerTest {
             .header("Deokhugam-Request-User-ID", userId))
         .andExpect(status().isNotFound());
   }
-  
+
   @Test
   @WithMockUser
   @DisplayName("GET /api/users/power - 파워 유저 조회")
@@ -492,16 +517,17 @@ class UserControllerTest {
             .hasNext(false)
             .build();
 
-    when(dashboardService.getPowerUsers(period,direction,cursor,after,limit)).thenReturn(cursorPageResponsePowerUserDto);
+    when(dashboardService.getPowerUsers(period, direction, cursor, after, limit)).thenReturn(
+        cursorPageResponsePowerUserDto);
 
     mockMvc.perform(get("/api/users/power")
             .param("period", period.toString())
-            .param("direction",direction)
+            .param("direction", direction)
             .param("cursor", cursor)
             .param("after", after)
             .param("limit", String.valueOf(limit))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.hasNext" ).value(false));
+        .andExpect(jsonPath("$.hasNext").value(false));
   }
 }
