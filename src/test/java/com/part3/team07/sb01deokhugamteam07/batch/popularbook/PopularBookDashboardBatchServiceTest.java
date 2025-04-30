@@ -1,7 +1,9 @@
 package com.part3.team07.sb01deokhugamteam07.batch.popularbook;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +23,7 @@ import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -145,6 +148,13 @@ class PopularBookDashboardBatchServiceTest {
     verify(reviewRepository, times(2)).findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(any(),
         any(), any());
     verify(dashboardRepository).saveAll(any());
+  }
+
+  @Test
+  public void when_No_Books_Exist() {
+    when(bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(List.of());
+    popularBookDashboardBatchService.savePopularBookDashboardData(Period.DAILY);
+    verify(dashboardRepository, never()).saveAll(anyList());
   }
 
 
