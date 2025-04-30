@@ -427,11 +427,11 @@ public class BookControllerTest {
       );
 
       given(bookService.findAll(
-          anyString(), // keyword
-          anyString(), // orderBy
-          anyString(), // direction
-          nullable(String.class), // lastBookId (null 가능)
-          nullable(LocalDateTime.class), // lastCreatedAt (null 가능)
+          anyString(),
+          anyString(),
+          anyString(),
+          nullable(String.class),
+          nullable(LocalDateTime.class),
           anyInt()
       )).willReturn(response);
 
