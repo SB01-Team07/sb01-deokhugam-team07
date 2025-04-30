@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
@@ -477,5 +478,37 @@ public class BookControllerTest {
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.hasNext" ).value(false));
+  }
+
+  @Nested
+  @DisplayName("ISBN으로 도서 정보 조회")
+  class GetInfoTest {
+    @Test
+    @DisplayName("getInfo 성공")
+    void getInfo_success() throws Exception {
+      // given
+      String isbn = "9788960515529";
+      NaverBookDto dto = new NaverBookDto(
+          "자바의 정석",
+          "남궁성",
+          "자바를 완벽히 이해할 수 있는 책",
+          "도우출판",
+          LocalDate.of(2013, 1, 1),
+          isbn,
+          "http://example.com/image.jpg".getBytes()
+      );
+
+      given(bookService.getInfo(isbn)).willReturn(dto);
+
+      // when & then
+      mockMvc.perform(get("/api/books/info")
+              .contentType(MediaType.APPLICATION_JSON)
+              .with(csrf())
+              .param("isbn", isbn))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.title").value("자바의 정석"))
+          .andExpect(jsonPath("$.author").value("남궁성"))
+          .andExpect(jsonPath("$.isbn").value(isbn));
+    }
   }
 }

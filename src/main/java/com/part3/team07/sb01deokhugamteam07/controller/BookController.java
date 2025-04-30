@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.controller;
 
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
@@ -116,5 +117,14 @@ public class BookController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(dashboardService.getPopularBooks(period, direction, cursor, after, limit));
+  }
+
+  @GetMapping("/info")
+  public ResponseEntity<NaverBookDto> getInfo(@RequestParam String isbn) {
+    NaverBookDto naverBookDto = bookService.getInfo(isbn);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(naverBookDto);
   }
 }
