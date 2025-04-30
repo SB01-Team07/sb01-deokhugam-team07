@@ -1,5 +1,6 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
+import com.part3.team07.sb01deokhugamteam07.client.NaverBookClient;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
@@ -35,6 +36,8 @@ public class BookService {
   private final StorageService storageService;
   private final ReviewService reviewService;
 
+  private final NaverBookClient naverBookClient;
+
   @Transactional
   public BookDto create(BookCreateRequest request,
       MultipartFile thumbnailImage) {
@@ -60,14 +63,8 @@ public class BookService {
   }
 
   public NaverBookDto getInfo(String isbn) {
-    return new NaverBookDto(
-        "title",
-        "author",
-        "description",
-        "publisher",
-        LocalDate.of(2025, 4, 30),
-        "isbn",
-        null);
+
+    return naverBookClient.searchByIsbn(isbn);
   }
 
   @Transactional
