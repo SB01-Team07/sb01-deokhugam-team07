@@ -8,11 +8,15 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
+import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.InvalidSortFieldException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +39,8 @@ public class BookService {
 
   private final StorageService storageService;
   private final ReviewService reviewService;
+
+  private final ReviewRepository reviewRepository;
 
   private final NaverBookClient naverBookClient;
 
@@ -167,6 +173,32 @@ public class BookService {
     List<String> validSortFields = List.of("title", "publishedDate", "rating", "reviewCount");
     if (!validSortFields.contains(sortField)) {
       throw InvalidSortFieldException.withField(sortField);
+    }
+  }
+
+  @Transactional
+  public void updateReviewStats() {
+    List<Book> books = bookRepository.findAll();
+
+    for (Book book : books) {
+      List<Review> reviews = reviewRepository.findAllByBook(book);
+
+      if (reviews.isEmpty())
+        continue;
+
+      BigDecimal sum = reviews.stream()
+          .map(review -> BigDecimal.valueOf(review.getRating()))
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal average = sum.divide(
+          BigDecimal.valueOf(reviews.size()),
+          1,
+          RoundingMode.HALF_UP
+      );
+
+      int reviewCount = reviews.size();
+
+      book.updateReviewStats(reviewCount, average);
     }
   }
 }
