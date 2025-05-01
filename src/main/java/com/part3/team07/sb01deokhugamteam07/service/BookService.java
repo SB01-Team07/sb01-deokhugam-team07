@@ -17,7 +17,6 @@ import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -159,23 +158,6 @@ public class BookService {
     );
   }
 
-  private String getCursorValue(Book book, String sortField) {
-    return switch (sortField) {
-      case "title" -> book.getTitle();
-      case "publishedDate" -> book.getPublishDate().toString();
-      case "rating" -> String.valueOf(book.getRating());
-      case "reviewCount" -> String.valueOf(book.getReviewCount());
-      default -> book.getPublishDate().toString();
-    };
-  }
-
-  private void validateSortField(String sortField) {
-    List<String> validSortFields = List.of("title", "publishedDate", "rating", "reviewCount");
-    if (!validSortFields.contains(sortField)) {
-      throw InvalidSortFieldException.withField(sortField);
-    }
-  }
-
   @Transactional
   public void updateReviewStats() {
     List<Book> books = bookRepository.findAll();
@@ -199,6 +181,23 @@ public class BookService {
       int reviewCount = reviews.size();
 
       book.updateReviewStats(reviewCount, average);
+    }
+  }
+
+  private String getCursorValue(Book book, String sortField) {
+    return switch (sortField) {
+      case "title" -> book.getTitle();
+      case "publishedDate" -> book.getPublishDate().toString();
+      case "rating" -> String.valueOf(book.getRating());
+      case "reviewCount" -> String.valueOf(book.getReviewCount());
+      default -> book.getPublishDate().toString();
+    };
+  }
+
+  private void validateSortField(String sortField) {
+    List<String> validSortFields = List.of("title", "publishedDate", "rating", "reviewCount");
+    if (!validSortFields.contains(sortField)) {
+      throw InvalidSortFieldException.withField(sortField);
     }
   }
 }

@@ -606,7 +606,8 @@ class BookServiceTest {
   }
 
   @Test
-  void updateReviewStats_리뷰기반_정상_업데이트() {
+  @DisplayName("updateReviewStats 성공")
+  void updateReviewStats_success() {
     // given
     Book book = mock(Book.class);
 
