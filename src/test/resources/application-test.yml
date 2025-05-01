@@ -53,4 +53,4 @@ jwt:
 naver:
   book:
     client-id:
-    client-secret: 
+    client-secret:
