@@ -143,7 +143,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
         query.orderBy(isAsc ? book.reviewCount.asc() : book.reviewCount.desc());
         break;
       default:
-        query.orderBy(book.publishDate.desc());
+        query.orderBy(book.title.desc());
         break;
     }
 
