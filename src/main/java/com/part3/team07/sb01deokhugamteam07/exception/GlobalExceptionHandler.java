@@ -1,6 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -57,7 +59,14 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
           MethodArgumentNotValidException ex) {
     log.error("요청 유효성 검사 실패: {}", ex.getMessage());
-    ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
+    ErrorResponse errorResponse = new ErrorResponse(
+        LocalDateTime.now(),
+        "VALIDATION_FAILED",
+        ErrorCode.VALIDATION_FAILED.getMessage(),
+        Map.of(),
+        "MethodArgumentNotValidException",
+        HttpStatus.BAD_REQUEST.value()
+    );
 
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
