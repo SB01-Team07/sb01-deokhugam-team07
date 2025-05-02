@@ -11,7 +11,7 @@ public class BookReviewScheduler {
 
   private final BookService bookService;
 
-  @Scheduled(cron = "0 0 * * * *")
+  @Scheduled(cron = "0 */5 * * * *")
   public void updateBookReviews() {
     bookService.updateReviewStats();
   }
