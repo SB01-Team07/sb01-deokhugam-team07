@@ -83,4 +83,21 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
             case CREATED_AT -> direction == ReviewDirection.DESC ? review.createdAt.desc() : review.createdAt.asc();
         };
     }
+
+    @Override
+    public long count(UUID userId, UUID bookId, String keyword) {
+        return queryFactory
+                .select(review.count())
+                .from(review)
+                .join(review.user, user)
+                .join(review.book, book)
+                .where(ExpressionUtils.allOf(
+                        review.isDeleted.isFalse(),
+                        userIdEq(userId),
+                        bookIdEq(bookId),
+                        keywordContains(keyword)
+                ))
+                .fetchOne();
+    }
+
 }

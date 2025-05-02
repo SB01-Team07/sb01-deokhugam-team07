@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ReviewRepositoryCustom {
     List<Tuple> findAll(UUID userId, UUID bookId, String keyword, ReviewOrderBy orderBy, ReviewDirection direction,
                         String cursor, LocalDateTime after, int limit, UUID requestUserId);
+
+    long count(UUID userId, UUID bookId, String keyword);
 }
