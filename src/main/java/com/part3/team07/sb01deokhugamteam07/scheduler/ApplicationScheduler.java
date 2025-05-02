@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.batch;
+package com.part3.team07.sb01deokhugamteam07.scheduler;
 
 import com.part3.team07.sb01deokhugamteam07.batch.popularbook.PopularBookDashboardBatchService;
 import com.part3.team07.sb01deokhugamteam07.batch.popularreview.PopularReviewDashboardBatchService;
