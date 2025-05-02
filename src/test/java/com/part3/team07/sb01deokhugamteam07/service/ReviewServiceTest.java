@@ -4,10 +4,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
-import com.part3.team07.sb01deokhugamteam07.entity.Book;
-import com.part3.team07.sb01deokhugamteam07.entity.Like;
-import com.part3.team07.sb01deokhugamteam07.entity.Review;
-import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponseReviewDto;
+import com.part3.team07.sb01deokhugamteam07.entity.*;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
@@ -18,6 +16,10 @@ import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.math.BigDecimal;
+
+import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
+import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
+import com.querydsl.core.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +38,9 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,6 +116,7 @@ class ReviewServiceTest {
                 .userId(userId)
                 .reviewId(reviewId)
                 .build();
+
 
         reviewDto = new ReviewDto(
                 reviewId,
@@ -436,5 +442,112 @@ class ReviewServiceTest {
         // when & then
         assertThatThrownBy(() -> reviewService.toggleLike(reviewId, userId))
                 .isInstanceOf(ReviewNotFoundException.class);
+    }
+
+    @DisplayName("리뷰 목록 조회 가능하다.")
+    @Test
+    void findAllReviews_success() {
+        // given
+        String keyword = null;
+        String cursor = null;
+        LocalDateTime after = null;
+        int limit = 20;
+        ReviewOrderBy orderBy = ReviewOrderBy.CREATED_AT;
+        ReviewDirection direction = ReviewDirection.DESC;
+
+        Tuple tuple = mock(Tuple.class);
+        given(tuple.get(QReview.review)).willReturn(review);
+        given(tuple.get(QLike.like)).willReturn(like);
+
+        List<Tuple> mockResult = List.of(tuple);
+        given(reviewRepository.findAll(userId, bookId, keyword, orderBy, direction, cursor, after, limit + 1, userId))
+                .willReturn(mockResult);
+
+        // when
+        CursorPageResponseReviewDto response = reviewService.findAll(userId, bookId, keyword, orderBy, direction, cursor, after, limit, userId);
+
+        // then
+        assertThat(response.content()).hasSize(1);
+        assertThat(response.content().get(0).id()).isEqualTo(reviewId);
+        assertThat(response.content().get(0).likeByMe()).isTrue();
+
+        verify(reviewRepository).findAll(any(), any(), any(), any(), any(), any(), any(), anyInt(), any());
+    }
+
+    @DisplayName("필터 조건과 함께 리뷰 목록을 조회할 수 있다.")
+    @Test
+    void findAll_withFilters_success() {
+        // given
+        String keyword = "좋아요";
+        String cursor = UUID.randomUUID().toString();
+        LocalDateTime after = LocalDateTime.now().minusDays(1);
+        int limit = 10;
+
+        Tuple tuple = mock(Tuple.class);
+        given(tuple.get(QReview.review)).willReturn(review);
+        given(tuple.get(QLike.like)).willReturn(like);
+
+        given(reviewRepository.findAll(userId, bookId, keyword, ReviewOrderBy.CREATED_AT, ReviewDirection.DESC, cursor, after, limit + 1, userId))
+                .willReturn(List.of(tuple));
+
+        // when
+        CursorPageResponseReviewDto result = reviewService.findAll(userId, bookId, keyword, ReviewOrderBy.CREATED_AT, ReviewDirection.DESC, cursor, after, limit, userId);
+
+        // then
+        assertThat(result.content()).hasSize(1);
+        assertThat(result.hasNext()).isFalse();
+        assertThat(result.content().get(0).likeByMe()).isTrue();
+    }
+
+    @DisplayName("limit보다 많은 결과가 조회되면 hasNext는 true이고 커서가 설정된다.")
+    @Test
+    void findAll_hasNext_and_cursorSet() {
+        // given
+        int limit = 2;
+
+        // 튜플 3개 준비 (limit + 1)
+        Tuple t1 = mock(Tuple.class);
+        Tuple t2 = mock(Tuple.class);
+        Tuple t3 = mock(Tuple.class);
+
+        Review r1 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("c1")
+                .rating(3)
+                .build();
+        Review r2 = Review.builder()
+                .user(user)
+                .book(book)
+                .content("c2")
+                .rating(4)
+                .build();
+
+        ReflectionTestUtils.setField(r1, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(r2, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(r1, "createdAt", LocalDateTime.now().minusMinutes(10));
+        ReflectionTestUtils.setField(r2, "createdAt", LocalDateTime.now().minusMinutes(5));
+
+        given(t1.get(QReview.review)).willReturn(r1);
+        given(t1.get(QLike.like)).willReturn(like);
+        given(t2.get(QReview.review)).willReturn(r2);
+        given(t2.get(QLike.like)).willReturn(null);
+
+        given(reviewRepository.findAll(
+                any(), any(), any(), any(), any(),
+                any(), any(), anyInt(), any()
+        )).willReturn(List.of(t1, t2, t3)); // limit + 1개
+
+        // when
+        CursorPageResponseReviewDto result = reviewService.findAll(
+                null, null, null,
+                ReviewOrderBy.CREATED_AT, ReviewDirection.DESC,
+                null, null, limit, userId
+        );
+
+        // then
+        assertThat(result.hasNext()).isTrue();
+        assertThat(result.content()).hasSize(limit);
+        assertThat(result.nextCursor()).isEqualTo(result.content().get(limit - 1).id().toString());
     }
 }
