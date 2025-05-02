@@ -172,10 +172,13 @@ public class ReviewService {
                 });
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public CursorPageResponseReviewDto findAll(UUID userId, UUID bookId, String keyword, ReviewOrderBy orderBy,
                                                ReviewDirection direction, String cursor, LocalDateTime after,
                                                int limit, UUID requestUserId) {
+
+        log.debug("리뷰 목록 조회 시작: userId={}, bookId={}, keyword={}, orderBy={}, direction={}, cursor={}, after={}, limit={}, requestUserId={}",
+                userId, bookId, keyword, orderBy, direction, cursor, after, limit, requestUserId);
 
         //like 위해서 다 같이 바로 가져옴
         List<Tuple> results = reviewRepository.findAll(userId, bookId, keyword, orderBy, direction, cursor, after, limit + 1, requestUserId);
@@ -194,6 +197,8 @@ public class ReviewService {
 
         String nextCursor = hasNext ? dtoList.get(dtoList.size() - 1).id().toString() : null;
         LocalDateTime nextAfter = hasNext ? dtoList.get(dtoList.size() - 1).createdAt() : null;
+
+        log.debug("리뷰 목록 조회 완료: 변환된 dto.size={}, hasNext={}, nextCursor={}", dtoList.size(), hasNext, nextCursor);
 
         return new CursorPageResponseReviewDto(dtoList, nextCursor, nextAfter, dtoList.size(), dtoList.size(), hasNext);
     }

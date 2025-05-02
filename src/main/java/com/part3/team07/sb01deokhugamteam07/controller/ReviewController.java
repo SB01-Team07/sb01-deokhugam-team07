@@ -123,11 +123,18 @@ public class ReviewController {
             @RequestParam(defaultValue = "20") int limit,
             @RequestHeader("Deokhugam-Request-User-ID") UUID requestUserId
     ) {
+        log.info("리뷰 목록 조회 요청: userId={}, bookId={}, keyword={}, orderBy={}, direction={}, cursor={}, after={}, limit={}, requestUserId={}",
+                userId, bookId, keyword, orderBy, direction, cursor, after, limit, requestUserId);
+
         ReviewOrderBy order = ReviewOrderBy.from(orderBy);
         ReviewDirection dir = ReviewDirection.from(direction);
-        return ResponseEntity.ok(
-                reviewService.findAll(userId, bookId, keyword, order, dir, cursor, after, limit, requestUserId)
-        );
+
+        CursorPageResponseReviewDto response = reviewService.findAll(userId, bookId, keyword, order, dir, cursor, after, limit, requestUserId);
+
+        log.info("리뷰 목록 조회 응답: content.size={}, hasNext={}, nextCursor={}", response.content().size(), response.hasNext(), response.nextCursor());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
 }
