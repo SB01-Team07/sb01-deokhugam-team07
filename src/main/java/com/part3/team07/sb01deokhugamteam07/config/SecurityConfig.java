@@ -55,7 +55,8 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/api/books/popular",
                 "/api/users/power",
-                "/api/reviews/popular"
+                "/api/reviews/popular",
+                "/actuator/**"
             ).permitAll() // 위의 엔드포인트 허용
             .requestMatchers("/api/**").authenticated() // 나머지 엔드포인트 막음
         )
