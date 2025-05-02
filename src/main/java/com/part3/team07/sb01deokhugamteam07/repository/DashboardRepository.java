@@ -20,7 +20,7 @@ public interface DashboardRepository extends JpaRepository<Dashboard, UUID> {
       "FROM dashboards " +
       "WHERE key_type = 'USER' " +
       "AND value_type IN ('REVIEW_SCORE_SUM', 'LIKE_COUNT', 'COMMENT_COUNT') " +
-      "AND period = :period " +
+      "AND period = CAST(:period AS VARCHAR) " +
       "GROUP BY \"key\"", nativeQuery = true)
   List<UserMetricsDTO> getUserMetrics(@Param("period") Period period);
 

@@ -2,6 +2,7 @@ package com.part3.team07.sb01deokhugamteam07.repository;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.QBook;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -129,24 +130,14 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
   private void applySorting(JPAQuery<Book> query, QBook book, String orderBy, String direction) {
     boolean isAsc = "asc".equalsIgnoreCase(direction);
 
-    switch (orderBy) {
-      case "title":
-        query.orderBy(isAsc ? book.title.asc() : book.title.desc());
-        break;
-      case "publishedDate":
-        query.orderBy(isAsc ? book.publishDate.asc() : book.publishDate.desc());
-        break;
-      case "rating":
-        query.orderBy(isAsc ? book.rating.asc() : book.rating.desc());
-        break;
-      case "reviewCount":
-        query.orderBy(isAsc ? book.reviewCount.asc() : book.reviewCount.desc());
-        break;
-      default:
-        query.orderBy(book.title.desc());
-        break;
-    }
+    OrderSpecifier<?> primary = switch (orderBy) {
+      case "title" -> isAsc ? book.title.asc() : book.title.desc();
+      case "publishedDate" -> isAsc ? book.publishDate.asc() : book.publishDate.desc();
+      case "rating" -> isAsc ? book.rating.asc() : book.rating.desc();
+      case "reviewCount" -> isAsc ? book.reviewCount.asc() : book.reviewCount.desc();
+      default -> book.title.desc();
+    };
 
-    query.orderBy(book.createdAt.desc());
+    query.orderBy(primary, book.createdAt.desc());
   }
 }

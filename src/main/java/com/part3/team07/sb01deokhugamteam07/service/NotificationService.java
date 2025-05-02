@@ -140,6 +140,7 @@ public class NotificationService {
         .nextCursor(nextAfter)
         .nextAfter(nextAfter)
         .size(content.size())
+        .totalElements((int)totalElement)
         .hasNext(hasNext)
         .build();
   }
