@@ -182,13 +182,15 @@ public class CommentService {
       nextAfter = last.getCreatedAt();
     }
 
-    log.info("find comment list: size = {}", content.size());
+    long totalElements = commentRepository.countByReview(review);
+
+    log.info("find comment list: size = {}", totalElements);
     return new CursorPageResponseCommentDto(
         content,
         nextCursor,
         nextAfter,
         limit,
-        content.size(),
+        totalElements,
         hasNext
     );
   }
