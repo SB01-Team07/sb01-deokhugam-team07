@@ -523,10 +523,13 @@ class ReviewServiceTest {
                 .rating(4)
                 .build();
 
+        LocalDateTime created1 = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime created2 = LocalDateTime.now().minusMinutes(5);
+
         ReflectionTestUtils.setField(r1, "id", UUID.randomUUID());
         ReflectionTestUtils.setField(r2, "id", UUID.randomUUID());
-        ReflectionTestUtils.setField(r1, "createdAt", LocalDateTime.now().minusMinutes(10));
-        ReflectionTestUtils.setField(r2, "createdAt", LocalDateTime.now().minusMinutes(5));
+        ReflectionTestUtils.setField(r1, "createdAt", created1);
+        ReflectionTestUtils.setField(r2, "createdAt", created2);
 
         given(t1.get(QReview.review)).willReturn(r1);
         given(t1.get(QLike.like)).willReturn(like);
@@ -548,6 +551,6 @@ class ReviewServiceTest {
         // then
         assertThat(result.hasNext()).isTrue();
         assertThat(result.content()).hasSize(limit);
-        assertThat(result.nextCursor()).isEqualTo(result.content().get(limit - 1).id().toString());
+        assertThat(result.nextCursor()).isEqualTo(created2.toString());
     }
 }
