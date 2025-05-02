@@ -1,6 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -57,7 +59,14 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
           MethodArgumentNotValidException ex) {
     log.error("요청 유효성 검사 실패: {}", ex.getMessage());
-    ErrorResponse errorResponse = new ErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
+    ErrorResponse errorResponse = new ErrorResponse(
+        LocalDateTime.now(),
+        "VALIDATION_FAILED",
+        ErrorCode.VALIDATION_FAILED.getMessage(),
+        Map.of(),
+        "MethodArgumentNotValidException",
+        HttpStatus.BAD_REQUEST.value()
+    );
 
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
@@ -100,10 +109,12 @@ public class GlobalExceptionHandler {
   private HttpStatus determineHttpStatus(DeokhugamException exception) {
     ErrorCode errorCode = exception.getErrorCode();
     return switch (errorCode) {
-      case BOOK_NOT_FOUND, REVIEW_NOT_FOUND -> HttpStatus.NOT_FOUND;
+      case BOOK_NOT_FOUND, REVIEW_NOT_FOUND, COMMENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
       case DUPLICATE_BOOK, DUPLICATE_REVIEW -> HttpStatus.CONFLICT;
-      case REVIEW_UNAUTHORIZED -> HttpStatus.FORBIDDEN;
-      case INVALID_REVIEW_REQUEST -> HttpStatus.BAD_REQUEST;
+      case REVIEW_UNAUTHORIZED, COMMENT_UNAUTHORIZED -> HttpStatus.FORBIDDEN;
+      case INVALID_REVIEW_REQUEST, INVALID_COMMENT_CURSOR, INVALID_COMMENT_DIRECTION
+          ,INVALID_COMMENT_SORT_BY -> HttpStatus.BAD_REQUEST;
+
       // 에러 코드 추가 시 업데이트
 //      case  -> HttpStatus.UNAUTHORIZED;
 //      case  -> HttpStatus.INTERNAL_SERVER_ERROR;

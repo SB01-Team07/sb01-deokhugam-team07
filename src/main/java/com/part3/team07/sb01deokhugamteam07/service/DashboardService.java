@@ -72,6 +72,19 @@ public class DashboardService {
         limit + 1,
         KeyType.USER); // + 1 다음 페이지 존재 여부 확인
 
+    // 없을시 조기 반환
+    if(dashboards.isEmpty()){
+      long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.USER, period);
+      return new CursorPageResponsePowerUserDto(
+          List.of(),
+          null,
+          null,
+          0,
+          totalElement,
+          false
+      );
+    }
+
     // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
     boolean hasNext = dashboards.size() > limit;
     if (hasNext) {
@@ -82,7 +95,6 @@ public class DashboardService {
     List<UUID> userIds = dashboards.stream()
         .map(Dashboard::getKey)
         .toList();
-    // TODO User 쪽 "없을 때"관련 커스텀 예외가 있다면 추후에 적용
     List<User> users = userRepository.findAllById(userIds);
 
     // 4. 사용자 ID -> User 객체 매핑 (빠른 접근을 위해 Map 으로 변환)
@@ -175,6 +187,19 @@ public class DashboardService {
         limit + 1,
         KeyType.REVIEW); // + 1 다음 페이지 존재 여부 확인
 
+    // 없을시 조기 반환
+    if(dashboards.isEmpty()){
+      long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.REVIEW, period);
+      return new CursorPageResponsePopularReviewDto(
+          List.of(),
+          null,
+          null,
+          0,
+          totalElement,
+          false
+      );
+    }
+
     // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
     boolean hasNext = dashboards.size() > limit;
     if (hasNext) {
@@ -185,7 +210,6 @@ public class DashboardService {
     List<UUID> reviewIds = dashboards.stream()
         .map(Dashboard::getKey)
         .toList();
-    // TODO reveiws 쪽 "없을 때"관련 커스텀 예외가 있다면 추후에 적용
     List<Review> reviews = reviewRepository.findAllById(reviewIds);
 
     // 4. 리뷰 ID -> Reviews 객체 매핑 (빠른 접근을 위해 Map 으로 변환)
@@ -270,6 +294,20 @@ public class DashboardService {
         limit + 1,
         KeyType.BOOK
     );
+
+    // 없을시 조기 반환
+    if(dashboards.isEmpty()){
+      long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.BOOK, period);
+      return new CursorPageResponsePopularBookDto(
+          List.of(),
+          null,
+          null,
+          0,
+          totalElement,
+          false
+      );
+    }
+
 
     // 2. 다음 페이지 존재 여부 판단 및 실제 리스트 잘라내기
     boolean hasNext = dashboards.size() > limit;

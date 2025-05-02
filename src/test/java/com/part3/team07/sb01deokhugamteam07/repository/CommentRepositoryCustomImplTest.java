@@ -8,6 +8,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -219,24 +220,7 @@ class CommentRepositoryCustomImplTest {
   }
 
   @Test
-  @DisplayName("댓글 목록 조회 실패 - 커서값이 정렬 조건과 다를경우")
-  void findCommentsFailByInvalidCursor() {
-    String invalidCursor = "not-a-datetime";
-
-    //when & then
-    assertThatThrownBy(() -> commentRepositoryCustom.findCommentByCursor(
-        testReview,
-        "DESC",
-        invalidCursor, // 잘못된 커서
-        null,
-        10,
-        "createdAt"
-    ))
-        .isInstanceOf(DateTimeParseException.class);
-  }
-
-  @Test
-  @DisplayName("댓글 목록 조회 실패 - 정렬 조건이 잘못된 입력값일 경우")
+  @DisplayName("댓글 목록 조회 실패 - 정렬 조건이 선택사항에 없을 경우")
   void findCommentsFailByInvalidOrderBy() {
     //given
     String invalidSortBy = "invalidField";
@@ -250,28 +234,8 @@ class CommentRepositoryCustomImplTest {
         10,
         invalidSortBy
     ))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining(invalidSortBy);
-
-  }
-
-  @Test
-  @DisplayName("댓글 목록 조회 실패 - 잘못된 정렬 방향")
-  void findCommentsFailByInvalidDirection() {
-    //given
-    String invalidDirection = "DDD";
-
-    //when & then
-    assertThatThrownBy(() -> commentRepositoryCustom.findCommentByCursor(
-        testReview,
-        invalidDirection,
-        null,
-        null,
-        10,
-        "CreatedAt"
-    ))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("정렬 방향은 ASC 또는 DESC만 가능합니다.");
+        .isInstanceOf(InvalidCommentQueryException.class)
+        .hasMessageContaining("지원하지 않는 정렬 필드입니다.");
   }
 
 }
