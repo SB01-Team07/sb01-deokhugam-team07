@@ -17,13 +17,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.part3.team07.sb01deokhugamteam07.entity.QBook.*;
+import static com.part3.team07.sb01deokhugamteam07.entity.QLike.*;
+import static com.part3.team07.sb01deokhugamteam07.entity.QReview.*;
+import static com.part3.team07.sb01deokhugamteam07.entity.QUser.*;
+
 @RequiredArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private final QReview review = QReview.review;
-    private final QUser user = QUser.user;
-    private final QBook book = QBook.book;
-    private final QLike like = QLike.like;
 
     @Override
     public List<Tuple> findAll(UUID userId, UUID bookId, String keyword, ReviewOrderBy orderBy, ReviewDirection direction,
