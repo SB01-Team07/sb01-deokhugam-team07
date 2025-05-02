@@ -7,10 +7,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
-import com.part3.team07.sb01deokhugamteam07.entity.Book;
-import com.part3.team07.sb01deokhugamteam07.entity.Like;
-import com.part3.team07.sb01deokhugamteam07.entity.Review;
-import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponseReviewDto;
+import com.part3.team07.sb01deokhugamteam07.entity.*;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
@@ -21,11 +19,15 @@ import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
+import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -170,6 +172,37 @@ public class ReviewService {
                 });
     }
 
+    @Transactional(readOnly = true)
+    public CursorPageResponseReviewDto findAll(UUID userId, UUID bookId, String keyword, ReviewOrderBy orderBy,
+                                               ReviewDirection direction, String cursor, LocalDateTime after,
+                                               int limit, UUID requestUserId) {
+
+        log.debug("리뷰 목록 조회 시작: userId={}, bookId={}, keyword={}, orderBy={}, direction={}, cursor={}, after={}, limit={}, requestUserId={}",
+                userId, bookId, keyword, orderBy, direction, cursor, after, limit, requestUserId);
+
+        //like 위해서 다 같이 바로 가져옴
+        List<Tuple> results = reviewRepository.findAll(userId, bookId, keyword, orderBy, direction, cursor, after, limit + 1, requestUserId);
+
+        boolean hasNext = results.size() > limit;
+        List<Tuple> pageContent = hasNext ? results.subList(0, limit) : results;
+
+        List<ReviewDto> dtoList = pageContent.stream()
+                .map(tuple -> {
+                    Review review = tuple.get(QReview.review);
+                    Like like = tuple.get(QLike.like);
+                    boolean likedByMe = like != null;
+                    return ReviewMapper.toDto(review, likedByMe);
+                })
+                .toList();
+
+        String nextCursor = hasNext ? dtoList.get(dtoList.size() - 1).id().toString() : null;
+        LocalDateTime nextAfter = hasNext ? dtoList.get(dtoList.size() - 1).createdAt() : null;
+
+        log.debug("리뷰 목록 조회 완료: 변환된 dto.size={}, hasNext={}, nextCursor={}", dtoList.size(), hasNext, nextCursor);
+
+        return new CursorPageResponseReviewDto(dtoList, nextCursor, nextAfter, dtoList.size(), dtoList.size(), hasNext);
+    }
+
     private ReviewLikeDto addLike(UUID userId, UUID reviewId){
         log.debug("좋아요 추가 시작. userId={}, reviewId={}", userId, reviewId);
         Like like = Like.builder()
@@ -196,4 +229,5 @@ public class ReviewService {
         likes.forEach(Like::softDelete);
         log.info("리뷰 연관 좋아요 논리 삭제 완료. reviewId={}, 총 {}건", review.getId(), likes.size());
     }
+
 }

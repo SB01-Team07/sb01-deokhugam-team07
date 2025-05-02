@@ -7,6 +7,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.math.BigDecimal;
@@ -22,6 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,6 +53,9 @@ public class ReviewIntegrationTest {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
 /*    @Autowired
     private CustomUserDetailsService customUserDetailsService;*/
@@ -319,5 +326,55 @@ public class ReviewIntegrationTest {
                 .andExpect(jsonPath("$.reviewId").value(review.getId().toString()))
                 .andExpect(jsonPath("$.userId").value(user.getId().toString()))
                 .andExpect(jsonPath("$.liked").value(true));
+    }
+
+    @DisplayName("리뷰 목록 조회 - 커서 기반 페이징이 제대로 작동 확인")
+    @Test
+    void getReviews_Paging_WorksCorrectly() throws Exception {
+        // given
+        User user = userRepository.save(User.builder()
+                .nickname("user")
+                .email("user@abc.com")
+                .password("user1234")
+                .build());
+
+        List<Book> books = IntStream.range(1, 41)
+                .mapToObj(i -> Book.builder()
+                        .title("Book " + i)
+                        .author("Author " + i)
+                        .description("Description " + i)
+                        .publisher("Publisher " + i)
+                        .publishDate(LocalDate.of(2024, 4, i % 28 + 1))
+                        .isbn(UUID.randomUUID().toString())
+                        .thumbnailUrl("url")
+                        .reviewCount(0)
+                        .rating(BigDecimal.ZERO)
+                        .build())
+                .map(bookRepository::save)
+                .toList();
+
+        for (Book book : books) {
+            Review review = Review.builder()
+                    .user(user)
+                    .book(book)
+                    .content("리뷰 내용 - " + book.getTitle())
+                    .rating(5)
+                    .likeCount(0)
+                    .commentCount(0)
+                    .build();
+            reviewRepository.save(review);
+        }
+
+        UUID requestUserId = user.getId();
+
+        // when & then (첫 페이지 요청 - limit 10)
+        mockMvc.perform(get("/api/reviews")
+                        .param("limit", "10")
+                        .header("Deokhugam-Request-User-ID", requestUserId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(10))
+                .andExpect(jsonPath("$.hasNext").value(true))
+                .andExpect(jsonPath("$.nextCursor").exists())
+                .andExpect(jsonPath("$.nextAfter").exists());
     }
 }
