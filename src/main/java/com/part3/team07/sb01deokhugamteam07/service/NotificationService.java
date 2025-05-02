@@ -188,6 +188,6 @@ public class NotificationService {
 
   @Transactional
   public void delete(){
-    notificationRepository.deleteAllByConfirmedTrueAndCreatedAtBefore(LocalDateTime.now().minusWeeks(1));
+    notificationRepository.deleteAllByConfirmedTrueAndCreatedAtBefore(LocalDateTime.now().minusHours(1));
   }
 }
