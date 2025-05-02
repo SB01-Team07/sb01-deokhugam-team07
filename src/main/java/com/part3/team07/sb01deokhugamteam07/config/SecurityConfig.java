@@ -52,7 +52,8 @@ public class SecurityConfig {
                 "/error",
                 "/api/users",
                 "/swagger-ui/**",
-                "/v3/api-docs/**"
+                "/v3/api-docs/**",
+                "/api/books/popular"
             ).permitAll() // 위의 엔드포인트 허용
             .requestMatchers("/api/**").authenticated() // 나머지 엔드포인트 막음
         )
