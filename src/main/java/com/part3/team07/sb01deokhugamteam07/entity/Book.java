@@ -72,6 +72,11 @@ public class Book extends BaseSoftDeletableEntity {
     this.thumbnailUrl = newThumbnailUrl;
   }
 
+  public void updateReviewStats(int reviewCount, BigDecimal rating) {
+    this.reviewCount = reviewCount;
+    this.rating = rating;
+  }
+
   public void softDelete() {
     super.delete();
   }

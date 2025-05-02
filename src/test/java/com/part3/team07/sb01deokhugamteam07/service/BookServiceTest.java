@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,13 +19,16 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.FileType;
+import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookAlreadyExistsException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.book.InvalidSortFieldException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -57,6 +61,9 @@ class BookServiceTest {
 
   @Mock
   private ReviewService reviewService;
+
+  @Mock
+  private ReviewRepository reviewRepository;
 
   @Mock
   private NaverBookClient naverBookClient;
@@ -592,10 +599,34 @@ class BookServiceTest {
       int size = 10;
 
       // when & then
-      // TODO: 커스텀 예외 지정
       assertThatThrownBy(() ->
           bookService.findAll(keyword, sort, order, cursor, after, size)
       ).isInstanceOf(InvalidSortFieldException.class);
     }
+  }
+
+  @Test
+  @DisplayName("updateReviewStats 성공")
+  void updateReviewStats_success() {
+    // given
+    Book book = mock(Book.class);
+
+    Review review1 = mock(Review.class);
+    Review review2 = mock(Review.class);
+    Review review3 = mock(Review.class);
+
+    given(review1.getRating()).willReturn(4);
+    given(review2.getRating()).willReturn(5);
+    given(review3.getRating()).willReturn(3);
+
+    given(bookRepository.findAll()).willReturn(List.of(book));
+    given(reviewRepository.findAllByBook(book)).willReturn(List.of(review1, review2, review3));
+
+    // when
+    bookService.updateReviewStats();
+
+    // then
+    BigDecimal expectedAverage = BigDecimal.valueOf((4 + 5 + 3) / 3.0).setScale(1, RoundingMode.HALF_UP);
+    verify(book).updateReviewStats(3, expectedAverage);
   }
 }
