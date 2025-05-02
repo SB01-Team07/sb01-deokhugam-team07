@@ -15,4 +15,6 @@ public interface CommentRepositoryCustom {
       int limit,
       String sortBy
   );
+
+  long countByReview(Review review);
 }

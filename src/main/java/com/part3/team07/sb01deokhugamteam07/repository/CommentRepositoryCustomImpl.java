@@ -94,4 +94,21 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 
     return null;
   }
+
+  @Override
+  public long countByReview(Review review) {
+    QComment comment = QComment.comment;
+
+    Long count = queryFactory
+        .select(comment.count())
+        .from(comment)
+        .where(
+            comment.review.eq(review),
+            comment.isDeleted.isFalse()
+        )
+        .fetchOne();
+
+    return count != null ? count : 0L;
+  }
+
 }

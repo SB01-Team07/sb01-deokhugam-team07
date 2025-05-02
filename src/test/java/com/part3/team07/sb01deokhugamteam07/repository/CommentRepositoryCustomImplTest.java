@@ -238,4 +238,27 @@ class CommentRepositoryCustomImplTest {
         .hasMessageContaining("지원하지 않는 정렬 필드입니다.");
   }
 
+  @Test
+  @DisplayName("리뷰에 달린 댓글 총 개수 계산 성공 - 댓글 존재O")
+  void countByReview_WithComments() {
+    // when
+    long count = commentRepositoryCustom.countByReview(testReview);
+
+    // then
+    assertThat(count).isEqualTo(3);
+  }
+  @Test
+  @DisplayName("리뷰에 달린 댓글 총 개수 계산 성공 - 댓글 존재X")
+  void countByReview_WithoutComments() {
+    // given
+    Review newReview = new Review(testUser, testBook, "newReview", 0, 2, 1);
+    reviewRepository.save(newReview);
+
+    // when
+    long count = commentRepositoryCustom.countByReview(newReview);
+
+    // then
+    assertThat(count).isEqualTo(0);
+  }
+
 }
