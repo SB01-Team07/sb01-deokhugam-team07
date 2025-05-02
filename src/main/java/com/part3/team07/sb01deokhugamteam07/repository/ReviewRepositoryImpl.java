@@ -44,8 +44,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         userIdEq(userId),
                         bookIdEq(bookId),
                         keywordContains(keyword),
-                        cursorLt(cursor),
-                        afterLt(after)
+                        cursorCondition(cursor, after, orderBy)
                 ))
                 .orderBy(primarySort(orderBy, direction), review.createdAt.desc())
                 .limit(limit + 1)
@@ -67,19 +66,21 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .or(review.content.containsIgnoreCase(keyword));
     }
 
-    private BooleanExpression cursorLt(String cursor) {
-        return cursor != null ? review.id.lt(UUID.fromString(cursor)) : null;
-    }
-
-    private BooleanExpression afterLt(LocalDateTime after) {
-        return after != null ? review.createdAt.lt(after) : null;
+    private BooleanExpression cursorCondition(String cursor, LocalDateTime after, ReviewOrderBy orderBy) {
+        if (orderBy == ReviewOrderBy.RATING && cursor != null && after != null) {
+            Integer rating = Integer.parseInt(cursor);
+            return review.rating.lt(rating)
+                    .or(review.rating.eq(rating).and(review.createdAt.lt(after)));
+        } else if (orderBy == ReviewOrderBy.CREATED_AT && after != null) {
+            return review.createdAt.lt(after);
+        }
+        return null;
     }
 
     private OrderSpecifier<?> primarySort(ReviewOrderBy orderBy, ReviewDirection direction) {
-        if (orderBy == ReviewOrderBy.RATING) {
-            return direction == ReviewDirection.DESC ? review.rating.desc() : review.rating.asc();
-        } else {
-            return direction == ReviewDirection.DESC ? review.createdAt.desc() : review.createdAt.asc();
-        }
+        return switch (orderBy) {
+            case RATING -> direction == ReviewDirection.DESC ? review.rating.desc() : review.rating.asc();
+            case CREATED_AT -> direction == ReviewDirection.DESC ? review.createdAt.desc() : review.createdAt.asc();
+        };
     }
 }
