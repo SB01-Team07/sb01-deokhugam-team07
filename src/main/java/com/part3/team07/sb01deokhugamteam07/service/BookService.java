@@ -31,6 +31,7 @@ public class BookService {
   private final BookMapper bookMapper;
 
   private final StorageService storageService;
+  private final ReviewService reviewService;
 
   @Transactional
   public BookDto create(BookCreateRequest request,
@@ -80,7 +81,7 @@ public class BookService {
         .orElseThrow(() -> BookNotFoundException.withId(id));
 
     book.softDelete();
-    // TODO: 관련 엔티티 논리 삭제
+    reviewService.softDeleteAllByBook(book);
   }
 
   @Transactional
