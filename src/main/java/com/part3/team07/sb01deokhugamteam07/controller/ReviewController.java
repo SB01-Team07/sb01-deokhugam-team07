@@ -6,19 +6,24 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponsePopularReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponseReviewDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.ReviewService;
+import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
+import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -104,6 +109,25 @@ public class ReviewController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(dashboardService.getPopularReviews(period, direction, cursor, after, limit));
+    }
+
+    @GetMapping
+    public ResponseEntity<CursorPageResponseReviewDto> findAll(
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) UUID bookId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            @RequestParam(defaultValue = "DESC") String direction,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestHeader("Deokhugam-Request-User-ID") UUID requestUserId
+    ) {
+        ReviewOrderBy order = ReviewOrderBy.from(orderBy);
+        ReviewDirection dir = ReviewDirection.from(direction);
+        return ResponseEntity.ok(
+                reviewService.findAll(userId, bookId, keyword, order, dir, cursor, after, limit, requestUserId)
+        );
     }
 
 }
