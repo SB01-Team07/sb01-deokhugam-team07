@@ -6,6 +6,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewLikeDto;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponsePopularReviewDto;
+import com.part3.team07.sb01deokhugamteam07.dto.review.response.CursorPageResponseReviewDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExistsException;
@@ -24,6 +25,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -556,5 +558,111 @@ class ReviewControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.hasNext" ).value(false));
+    }
+
+    @DisplayName("리뷰 목록 조회 성공 - 200 OK")
+    @Test
+    void findAll() throws Exception {
+        UUID requestUserId = UUID.randomUUID();
+        UUID bookId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID reviewId = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+
+        ReviewDto dto = new ReviewDto(
+                reviewId,
+                bookId,
+                "테스트책",
+                "thumb-url",
+                userId,
+                "테스트유저",
+                "리뷰내용",
+                4,
+                10,
+                2,
+                true,
+                now,
+                now
+        );
+
+        CursorPageResponseReviewDto response = new CursorPageResponseReviewDto(
+                List.of(dto),
+                null,
+                null,
+                1,
+                1,
+                false
+        );
+
+        given(reviewService.findAll(any(), any(), any(), any(), any(), any(), any(), anyInt(), eq(requestUserId)))
+                .willReturn(response);
+
+        mockMvc.perform(get("/api/reviews")
+                        .param("orderBy", "createdAt")
+                        .param("direction", "DESC")
+                        .header("Deokhugam-Request-User-ID", requestUserId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(reviewId.toString()))
+                .andExpect(jsonPath("$.content[0].likeByMe").value(true));
+    }
+
+    @DisplayName("리뷰 목록 조회 실패 - 잘못된 정렬 기준")
+    @Test
+    void findAll_Fail_InvalidOrderBy() throws Exception {
+        //given
+        UUID requestUserId = UUID.randomUUID();
+
+        //when then
+        mockMvc.perform(get("/api/reviews")
+                        .param("orderBy", "invalid") //유효하지 않은 값
+                        .param("direction", "DESC")
+                        .header("Deokhugam-Request-User-ID", requestUserId.toString()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REVIEW_REQUEST"))
+                .andExpect(jsonPath("$.exceptionType").value("InvalidReviewOrderException"));
+    }
+
+    @DisplayName("리뷰 목록 조회 실패 - 잘못된 정렬 방향")
+    @Test
+    void findAll_Fail_InvalidDirection() throws Exception {
+        //given
+        UUID requestUserId = UUID.randomUUID();
+
+        //when then
+        mockMvc.perform(get("/api/reviews")
+                        .param("orderBy", "createdAt")
+                        .param("direction", "INVALID") // 존재하지 않는 방향
+                        .header("Deokhugam-Request-User-ID", requestUserId.toString()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REVIEW_REQUEST"))
+                .andExpect(jsonPath("$.exceptionType").value("InvalidReviewOrderException"));
+    }
+
+    @DisplayName("리뷰 목록 조회 실패 - 필수 헤더 누락")
+    @Test
+    void findAll_MissingRequiredHeader() throws Exception {
+
+        //when then
+        mockMvc.perform(get("/api/reviews")
+                        .param("orderBy", "createdAt")  // 필수 파라미터 아님
+                        .param("direction", "DESC"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("MISSING_HEADER"))
+                .andExpect(jsonPath("$.exceptionType").value("MissingRequestHeaderException"));
+    }
+
+    @DisplayName("리뷰 목록 조회 실패 - UUID 파라미터 타입 불일치")
+    @Test
+    void findAll_Fail_TypeMismatch_UUID() throws Exception {
+
+        //when then
+        mockMvc.perform(get("/api/reviews")
+                        .param("userId", "invalid-uuid") // UUID 타입 파라미터에 잘못된 값
+                        .param("direction", "DESC")
+                        .param("orderBy", "createdAt")
+                        .header("Deokhugam-Request-User-ID", UUID.randomUUID().toString()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("TYPE_MISMATCH"))
+                .andExpect(jsonPath("$.exceptionType").value("MethodArgumentTypeMismatchException"));
     }
 }
