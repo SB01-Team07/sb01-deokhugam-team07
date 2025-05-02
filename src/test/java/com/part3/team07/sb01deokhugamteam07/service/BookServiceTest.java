@@ -571,7 +571,7 @@ class BookServiceTest {
       LocalDateTime after = null;
       int size = 10;
 
-      given(bookRepository.findBooksWithCursor(keyword, "publishedDate", "desc", cursor, after, size + 1))
+      given(bookRepository.findBooksWithCursor(keyword, "title", "desc", cursor, after, size + 1))
           .willReturn(Arrays.asList(book1, book2, book3));
       given(bookRepository.countByKeyword(keyword)).willReturn(3L);
 

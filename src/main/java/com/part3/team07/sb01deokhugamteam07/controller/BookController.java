@@ -92,11 +92,11 @@ public class BookController {
   @GetMapping
   public ResponseEntity<CursorPageResponseBookDto> findAll(
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = false, defaultValue = "title") String orderBy,
-      @RequestParam(required = false, defaultValue = "desc") String direction,
+      @RequestParam(defaultValue = "title") String orderBy,
+      @RequestParam(defaultValue = "desc") String direction,
       @RequestParam(required = false) String cursor,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
-      @RequestParam(required = false, defaultValue = "50") int size) {
+      @RequestParam(defaultValue = "50") int size) {
     CursorPageResponseBookDto bookDto = bookService.findAll(keyword, orderBy, direction, cursor,
         after, size);
 

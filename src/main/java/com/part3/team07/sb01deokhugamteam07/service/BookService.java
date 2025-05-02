@@ -119,7 +119,7 @@ public class BookService {
   @Transactional(readOnly = true)
   public CursorPageResponseBookDto findAll(String keyword, String orderBy, String direction,
       String cursor, LocalDateTime after, int size) {
-    orderBy = orderBy != null ? orderBy : "publishedDate";
+    orderBy = orderBy != null ? orderBy : "title";
     direction = direction != null ? direction : "desc";
     size = size > 0 ? size : 50;
 
