@@ -28,4 +28,4 @@ COPY --from=builder /app/build/libs/sb01-deokhugam-team07-0.0.1-SNAPSHOT.jar app
 RUN chmod 755 app.jar
 
 EXPOSE 80
-ENTRYPOINT ["sh", "-c", "exec java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} $JVM_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "exec java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -Duser.timezone=Asia/Seoul $JVM_OPTS -jar app.jar"]
