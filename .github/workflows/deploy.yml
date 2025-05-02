@@ -90,6 +90,7 @@ jobs:
         with:
           context: .
           push: true
+          registry: public.ecr.aws
           tags: |
             ${{ env.ECR_REPOSITORY_URI }}:latest
             ${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}
@@ -136,4 +137,5 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+          force-new-deployment: true
           desired-count: 1
