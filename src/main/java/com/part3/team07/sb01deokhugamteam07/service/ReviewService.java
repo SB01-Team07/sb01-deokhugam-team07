@@ -185,6 +185,8 @@ public class ReviewService {
 
         boolean hasNext = results.size() > limit;
         List<Tuple> pageContent = hasNext ? results.subList(0, limit) : results;
+        long countResult = reviewRepository.count(userId, bookId, keyword);
+        int totalCount = Math.toIntExact(countResult);
 
         List<ReviewDto> dtoList = pageContent.stream()
                 .map(tuple -> {
@@ -200,7 +202,7 @@ public class ReviewService {
 
         log.debug("리뷰 목록 조회 완료: 변환된 dto.size={}, hasNext={}, nextCursor={}", dtoList.size(), hasNext, nextCursor);
 
-        return new CursorPageResponseReviewDto(dtoList, nextCursor, nextAfter, dtoList.size(), dtoList.size(), hasNext);
+        return new CursorPageResponseReviewDto(dtoList, nextCursor, nextAfter, dtoList.size(), totalCount, hasNext);
     }
 
     private String getCursorValue(ReviewDto dto, ReviewOrderBy orderBy) {
