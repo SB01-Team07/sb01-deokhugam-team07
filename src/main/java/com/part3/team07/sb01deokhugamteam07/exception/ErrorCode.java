@@ -23,6 +23,9 @@ public enum ErrorCode {
   //Comment
   COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다"),
   COMMENT_UNAUTHORIZED("권한이 없습니다"),
+  INVALID_COMMENT_CURSOR("잘못된 커서 포맷입니다."),
+  INVALID_COMMENT_DIRECTION("정렬 방향은 ASC 또는 DESC만 가능합니다."),
+  INVALID_COMMENT_SORT_BY("지원하지 않는 정렬 필드입니다."),
 
   // User
   NOT_FOUND_USER("존재하지 않는 유저입니다"),

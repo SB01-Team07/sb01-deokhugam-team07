@@ -19,6 +19,8 @@ import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
@@ -28,7 +30,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -173,7 +174,7 @@ class CommentServiceTest {
 
     //when & then
     assertThatThrownBy(() -> commentService.create(createRequest))
-        .isInstanceOf(NoSuchElementException.class); // 예외 추가 시 변경 예정
+        .isInstanceOf(ReviewNotFoundException.class);
 
   }
 
@@ -415,7 +416,7 @@ class CommentServiceTest {
 
 
   @Test
-  @DisplayName("리뷰에 달린 댓글 목록 조회 성공 - hasNext: true")
+  @DisplayName("댓글 목록 조회 성공 - hasNext: true")
   void findCommentsByReviewId_hasNextTrue() {
     //given
     LocalDateTime time = LocalDateTime.of(2025, 4, 25, 12, 0);
@@ -484,7 +485,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @DisplayName("리뷰에 달린 댓글 목록 조회 성공 - hasNext: False")
+  @DisplayName("댓글 목록 조회 성공 - hasNext: False")
   void findCommentsByReviewId_hasNextFalse() {
     //given
     LocalDateTime time = LocalDateTime.of(2025, 4, 25, 12, 0);
@@ -549,8 +550,33 @@ class CommentServiceTest {
   }
 
   @Test
-  @DisplayName("리뷰에 달린 댓글 목록 조회 실패 - 리뷰 존재X")
-  void findCommentsByReviewId_fail_reviewNotFound() {
+  @DisplayName("댓글 목록 조회 성공 - 정렬방향, 커서 정상값일때")
+  void findCommentsByReviewId_validDirectionAndCursor() {
+    //given
+    String direction = "ASC";
+    String cursor = LocalDateTime.of(2025, 4, 29, 12, 0, 0).toString();
+
+    given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.of(testReview));
+    given(commentRepository.findCommentByCursor(
+        any(), eq("ASC"), any(), any(), anyInt(), any())
+    ).willReturn(List.of());
+
+    //when
+    CursorPageResponseCommentDto result = commentService.findCommentsByReviewId(
+        reviewId,
+        direction,
+        cursor,
+        null,
+        10
+    );
+
+    //then
+    assertThat(result.content()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 리뷰 존재X")
+  void findCommentsByReviewIdFailReviewNotFound() {
     //given
     given(reviewRepository.findById(eq(reviewId))).willReturn(Optional.empty());
     //when & then
@@ -560,6 +586,43 @@ class CommentServiceTest {
         null,
         null,
         3
-    )).isInstanceOf(NoSuchElementException.class);
+    )).isInstanceOf(ReviewNotFoundException.class);
   }
+
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 커서값이 정렬 조건과 다를경우")
+  void findCommentsFailByInvalidCursor() {
+    //given
+    String invalidCursor = "not-a-datetime";
+
+    //when & then
+    assertThatThrownBy(() -> commentService.findCommentsByReviewId(
+        reviewId,
+        "DESC",
+        invalidCursor,
+        null,
+        10
+    ))
+        .isInstanceOf(InvalidCommentQueryException.class)
+        .hasMessageContaining("잘못된 커서 포맷입니다.");
+  }
+
+  @Test
+  @DisplayName("댓글 목록 조회 실패 - 잘못된 정렬 방향")
+  void findCommentsFailByInvalidDirection() {
+    //given
+    String invalidDirection = "DDD";
+
+    //when & then
+    assertThatThrownBy(() -> commentService.findCommentsByReviewId(
+        reviewId,
+        invalidDirection,
+        null,
+        null,
+        10
+    ))
+        .isInstanceOf(InvalidCommentQueryException.class)
+        .hasMessageContaining("정렬 방향은 ASC 또는 DESC만 가능합니다.");
+  }
+
 }

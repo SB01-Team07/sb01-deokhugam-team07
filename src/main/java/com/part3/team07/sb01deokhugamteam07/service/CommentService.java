@@ -9,6 +9,8 @@ import com.part3.team07.sb01deokhugamteam07.dto.comment.response.CursorPageRespo
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQueryException;
+import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.comment.CommentUnauthorizedException;
@@ -16,12 +18,15 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,6 +132,18 @@ public class CommentService {
       int limit
   ) {
     log.debug("find comment list: reviewId = {}", reviewId);
+    //커서, 정렬방향 검증
+    if (!"ASC".equalsIgnoreCase(direction) && !"DESC".equalsIgnoreCase(direction)) {
+      throw InvalidCommentQueryException.direction();
+    }
+    if (cursor != null && !cursor.isBlank()) {
+      try {
+        LocalDateTime.parse(cursor);
+      } catch (DateTimeParseException e) {
+        throw InvalidCommentQueryException.cursor();
+      }
+    }
+
     //리뷰 존재 여부 확인
     Review review = findReview(reviewId);
 
@@ -184,7 +201,7 @@ public class CommentService {
 
   private Comment findComment(UUID commentId) {
     return commentRepository.findById(commentId)
-        .orElseThrow(() -> new CommentNotFoundException());
+        .orElseThrow(CommentNotFoundException::new);
   }
 
   private User findUser(UUID userId) {
@@ -194,8 +211,7 @@ public class CommentService {
 
   private Review findReview(UUID reviewId) {
     return reviewRepository.findById(reviewId)
-        .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다."));
-    //todo 예외 추가 시 변경 예정
+        .orElseThrow(ReviewNotFoundException::new);
   }
 
   private void validateCommentAuthor(Comment comment, User user) {
@@ -223,5 +239,4 @@ public class CommentService {
     log.debug("댓글 생성으로 리뷰 commentCount 증가: reviewId={}", reviewId);
     reviewRepository.incrementCommentCount(reviewId);
   }
-
 }
