@@ -1,10 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
 import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
-import com.part3.team07.sb01deokhugamteam07.entity.Book;
-import com.part3.team07.sb01deokhugamteam07.entity.Like;
-import com.part3.team07.sb01deokhugamteam07.entity.Review;
-import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.entity.*;
+
 import java.math.BigDecimal;
 
 import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
@@ -291,6 +289,42 @@ class ReviewRepositoryTest {
 
         // then
         assertThat(result).hasSize(5);
+    }
+
+    @DisplayName("리뷰 목록 조회 - 좋아요 포함 결과 반환")
+    @Test
+    void findAll_withLike_success() {
+        // given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("테스트 도서"));
+        Review review = reviewRepository.save(createTestReview(user, book));
+
+        // 요청자 ID 기준 좋아요 데이터 저장
+        likeRepository.save(new Like(user.getId(), review.getId()));
+        em.flush();
+        em.clear();
+
+        // when
+        List<Tuple> results = reviewRepository.findAll(
+                user.getId(),
+                book.getId(),
+                null,
+                ReviewOrderBy.CREATED_AT,
+                ReviewDirection.DESC,
+                null,
+                null,
+                10,
+                user.getId()
+        );
+
+        // then
+        assertThat(results).hasSize(1);
+        Tuple tuple = results.get(0);
+        Review fetchedReview = tuple.get(QReview.review);
+        Like fetchedLike = tuple.get(QLike.like);
+
+        assertThat(fetchedReview.getId()).isEqualTo(review.getId());
+        assertThat(fetchedLike).isNotNull(); // 좋아요 포함 확인
     }
 
     private User createTestUser(String nickname, String email) {
