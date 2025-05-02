@@ -1,6 +1,8 @@
 package com.part3.team07.sb01deokhugamteam07.service;
 
+import com.part3.team07.sb01deokhugamteam07.client.NaverBookClient;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
+import com.part3.team07.sb01deokhugamteam07.dto.book.NaverBookDto;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.request.BookUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponseBookDto;
@@ -11,6 +13,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException
 import com.part3.team07.sb01deokhugamteam07.exception.book.InvalidSortFieldException;
 import com.part3.team07.sb01deokhugamteam07.mapper.BookMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,8 @@ public class BookService {
 
   private final StorageService storageService;
   private final ReviewService reviewService;
+
+  private final NaverBookClient naverBookClient;
 
   @Transactional
   public BookDto create(BookCreateRequest request,
@@ -55,6 +60,11 @@ public class BookService {
     Book savedBook = bookRepository.save(book);
 
     return bookMapper.toDto(savedBook);
+  }
+
+  public NaverBookDto getInfo(String isbn) {
+
+    return naverBookClient.searchByIsbn(isbn);
   }
 
   @Transactional
