@@ -2,9 +2,14 @@ package com.part3.team07.sb01deokhugamteam07.repository;
 
 import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.entity.Like;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
 import java.math.BigDecimal;
+
+import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
+import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
+import com.querydsl.core.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,9 @@ class ReviewRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     @Autowired
     private TestEntityManager em;
@@ -256,6 +264,35 @@ class ReviewRepositoryTest {
     }
 
 
+    @DisplayName("리뷰 목록 조회 - 필터, 정렬, 페이징 조건을 모두 만족하는 결과 반환")
+    @Test
+    void findAll_withFiltersAndPaging() {
+        // given
+        User user = userRepository.save(createTestUser("tester", "tester@example.com"));
+        Book book = bookRepository.save(createTestBook("Querydsl Testing"));
+        for (int i = 0; i < 5; i++) {
+            Review review = createTestReview(user, book);
+            reviewRepository.save(review);
+        }
+        em.flush();
+        em.clear();
+
+        // when
+        List<Tuple> result = reviewRepository.findAll(
+                user.getId(),
+                book.getId(),
+                "Testing",
+                ReviewOrderBy.CREATED_AT,
+                ReviewDirection.DESC,
+                null, null,
+                10,
+                user.getId()
+        );
+
+        // then
+        assertThat(result).hasSize(5);
+    }
+
     private User createTestUser(String nickname, String email) {
         return User.builder()
                 .nickname(nickname)
@@ -288,5 +325,4 @@ class ReviewRepositoryTest {
                 .commentCount(0)
                 .build();
     }
-
 }
