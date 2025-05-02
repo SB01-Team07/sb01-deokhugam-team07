@@ -1,5 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.type;
 
+import com.part3.team07.sb01deokhugamteam07.exception.review.InvalidReviewOrderException;
+
 import java.util.Arrays;
 
 public enum ReviewOrderBy {
@@ -18,8 +20,8 @@ public enum ReviewOrderBy {
 
     public static ReviewOrderBy from(String value) {
         return Arrays.stream(values())
-                .filter(v -> v.value.equalsIgnoreCase(value))
+                .filter(orderBy -> orderBy.value.equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid orderBy: " + value));
+                .orElseThrow(() -> new InvalidReviewOrderException(value));
     }
 }
