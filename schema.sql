@@ -1,7 +1,3 @@
-CREATE TYPE period AS ENUM ('DAILY', 'WEEKLY', 'MONTHLY', 'ALL_TIME');
-CREATE TYPE value_type AS ENUM ('SCORE', 'REVIEW_SCORE_SUM', 'LIKE_COUNT', 'COMMENT_COUNT');
-CREATE TYPE key_type AS ENUM ('USER', 'BOOK', 'REVIEW');
-
 CREATE TABLE users
 (
     id         UUID PRIMARY KEY,
@@ -91,10 +87,10 @@ CREATE TABLE dashboards
     created_at TIMESTAMP     NOT NULL,
     updated_at TIMESTAMP,
     "key"      UUID          NOT NULL,
-    key_type   key_type      NOT NULL,
-    period     period        NOT NULL,
+    key_type   VARCHAR(255)      NOT NULL,
+    period     VARCHAR(255)        NOT NULL,
     "value"    DECIMAL(5, 2) NOT NULL,
-    value_type value_type    NOT NULL,
+    value_type VARCHAR(255)    NOT NULL,
     rank       INTEGER
 );
 

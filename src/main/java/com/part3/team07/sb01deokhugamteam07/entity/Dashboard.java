@@ -26,7 +26,7 @@ public class Dashboard extends BaseEntity {
   @Column(name = "\"key\"", nullable = false)
   private UUID key;
 
-  @Enumerated(EnumType.STRING) //추가함 (옵션 빠져있음)
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private KeyType keyType;
 
