@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,4 +53,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRep
   boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 
   Optional<Review> findByIdAndIsDeletedFalse(UUID reviewId);
+
+  @Override
+  @EntityGraph(attributePaths = {"book", "user"})
+  List<Review> findAllById(Iterable<UUID> ids);
 }

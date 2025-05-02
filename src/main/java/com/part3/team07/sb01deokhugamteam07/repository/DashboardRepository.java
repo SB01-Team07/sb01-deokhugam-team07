@@ -25,4 +25,5 @@ public interface DashboardRepository extends JpaRepository<Dashboard, UUID> {
   List<UserMetricsDTO> getUserMetrics(@Param("period") Period period);
 
   long countByKeyTypeAndPeriod(KeyType keyType, Period period);
+
 }
