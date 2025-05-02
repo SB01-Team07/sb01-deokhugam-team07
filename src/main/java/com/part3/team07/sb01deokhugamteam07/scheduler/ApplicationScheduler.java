@@ -19,7 +19,7 @@ public class ApplicationScheduler {
   private final PopularReviewDashboardBatchService popularReviewDashboardBatchService;
   private final NotificationService notificationService;
 
-  @Scheduled(cron = "0 0 3 * * *")
+  @Scheduled(cron = "0 45 15 * * *")
   public void calculateAllDashboardData(){
     log.info("오전 3시 : 대시보드 데이터 일괄 계산 시작");
     // 순차 실행
@@ -71,7 +71,7 @@ public class ApplicationScheduler {
 
   }
 
-  @Scheduled(cron = "0 0 4 * * *")
+  @Scheduled(cron = "0 46 15 * * *")
   public void deleteAllOldNotification(){
     log.info("오전 4시 : 확인된 알림 중 일주일 경과된 알림을 전체 삭제합니다.");
     notificationService.delete();
