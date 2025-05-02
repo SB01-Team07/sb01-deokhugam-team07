@@ -20,12 +20,10 @@ public class StorageService {
   public String save(MultipartFile thumbnailImage, FileType fileType) {
     String fileName = generateFileName(thumbnailImage);
     try {
-      storage.put(fileType, fileName, thumbnailImage.getBytes());
+      return storage.put(fileType, fileName, thumbnailImage.getBytes());
     } catch (IOException e) {
       throw StorageSaveFailedException.withFileName(fileName);
     }
-
-    return fileName;
   }
 
   private String generateFileName(MultipartFile file) {
