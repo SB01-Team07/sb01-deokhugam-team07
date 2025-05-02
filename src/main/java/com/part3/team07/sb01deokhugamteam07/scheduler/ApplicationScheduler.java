@@ -19,7 +19,7 @@ public class ApplicationScheduler {
   private final PopularReviewDashboardBatchService popularReviewDashboardBatchService;
   private final NotificationService notificationService;
 
-  @Scheduled(cron = "0 17 17 * * *")
+  @Scheduled(cron = "0 25 17 * * *")
   public void calculateAllDashboardData(){
     log.info("오전 3시 : 대시보드 데이터 일괄 계산 시작");
     // 순차 실행
