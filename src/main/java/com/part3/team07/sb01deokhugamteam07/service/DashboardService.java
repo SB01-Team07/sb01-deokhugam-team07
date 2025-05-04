@@ -14,6 +14,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
+import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
@@ -146,7 +147,7 @@ public class DashboardService {
     LocalDateTime nextAfter = hasNext ? dashboards.get(dashboards.size() - 1).getCreatedAt() : null;
 
     // 8. 전체 User 수 (기간 + USER 키타입 조건)
-    long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.USER, period); // TODO 단일 key 를 통해 계산. 이 두 가지 조건만 거니까 모든 record 의 합이 나온다.
+    long totalElement = dashboardRepository.countByKeyTypeAndPeriodAndValueType(KeyType.USER, period, ValueType.SCORE);
 
     log.info("Power User 조회 완료: 총 {}명 중 {}명 반환, 다음 페이지: {}",
         totalElement, content.size(), hasNext);
