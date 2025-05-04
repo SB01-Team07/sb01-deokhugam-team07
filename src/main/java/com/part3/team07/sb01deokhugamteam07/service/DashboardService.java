@@ -357,7 +357,7 @@ public class DashboardService {
 
     // 6. 다음 페이지 커서 및 after 값 설정
     String nextCursor =
-        hasNext ? String.valueOf(dashboards.get(dashboards.get(dashboards.size() - 1).getRank()))
+        hasNext ? String.valueOf(dashboards.get(dashboards.size() - 1).getRank())
             : null;
     LocalDateTime nextAfter = hasNext ? dashboards.get(dashboards.size() - 1).getCreatedAt() : null;
 
