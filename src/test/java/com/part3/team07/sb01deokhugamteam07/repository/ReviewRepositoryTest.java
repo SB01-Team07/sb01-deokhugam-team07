@@ -327,6 +327,27 @@ class ReviewRepositoryTest {
         assertThat(fetchedLike).isNotNull(); // 좋아요 포함 확인
     }
 
+    @Test
+    @DisplayName("리뷰 조건 검색 카운트 - keyword 포함된 리뷰만 카운트된다")
+    void countReviewByConditions() {
+        // given
+        User user = userRepository.save(createTestUser("우디", "woody@example.com"));
+        Book book = bookRepository.save(createTestBook("Go in Action"));
+
+        reviewRepository.save(createTestReview(user, book));
+        reviewRepository.save(createTestReview(user, book));
+        reviewRepository.save(createTestReview(user, book));
+
+        em.flush();
+        em.clear();
+
+        // when
+        long count = reviewRepository.count(user.getId(), book.getId(), "좋은");
+
+        // then
+        assertThat(count).isEqualTo(3);
+    }
+
     private User createTestUser(String nickname, String email) {
         return User.builder()
                 .nickname(nickname)
@@ -359,4 +380,5 @@ class ReviewRepositoryTest {
                 .commentCount(0)
                 .build();
     }
+
 }
