@@ -1,3 +1,4 @@
+
 package com.part3.team07.sb01deokhugamteam07.batch.poweruser;
 
 import com.part3.team07.sb01deokhugamteam07.batch.AssignRankUtil;
@@ -73,10 +74,17 @@ public class PowerUserDashboardBatchService {
         List<Review> userReviews = reviewRepository.findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
             userId, startDateTime, endDateTime);
 
+        userReviews.forEach(review -> {
+          log.info("리뷰 점수의 재료 왜 안될까요? >>>> 리뷰 id = {}, like = {}, comment = {}",
+              review.getId(), review.getLikeCount(), review.getCommentCount());
+        });
+
         // 2-2. 리뷰 점수 (리뷰당 like*0.3 + comment*0.7) 합계 구하기
         double reviewScoreSum = userReviews.stream()
             .mapToDouble(review -> (review.getLikeCount() * 0.3) + (review.getCommentCount() * 0.7))
             .sum();
+
+        log.info("리뷰 점수... 왜 안될까요? >>>> reviewScoreSum = {}", reviewScoreSum);
 
         BigDecimal reviewScoreSumBigDecimal = BigDecimal.valueOf(reviewScoreSum);
 
@@ -84,14 +92,20 @@ public class PowerUserDashboardBatchService {
         long likeCount = likeRepository.countByUserIdAndCreatedAtBetween(userId, startDateTime,
             endDateTime);
 
+        log.info("likeCount... 왜 안될까요? >>>> likeCount = {}", likeCount);
+
+
         BigDecimal likeCountBigDecimal = BigDecimal.valueOf(likeCount);
+        log.info("likeCountBigDecimal... 왜 안될까요? >>>> likeCountBigDecimal = {}", likeCountBigDecimal);
+
 
         // 2-4. 해당 기간 동안 댓글 단 수
         long commentCount = commentRepository.countByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
             userId, startDateTime,
             endDateTime);
-
+        log.info("commentCount... 왜 안될까요? >>>> commentCount = {}", commentCount);
         BigDecimal commentCountBigDecimal = BigDecimal.valueOf(commentCount);
+        log.info("commentCountBigDecimal... 왜 안될까요? >>>> commentCount = {}", commentCountBigDecimal);
 
         // 3. 활동 점수 계산
         double score = calculateScore(reviewScoreSum, likeCount, commentCount);

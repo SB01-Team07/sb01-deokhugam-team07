@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.batch.popularbook.PopularBookDashboa
 import com.part3.team07.sb01deokhugamteam07.batch.popularreview.PopularReviewDashboardBatchService;
 import com.part3.team07.sb01deokhugamteam07.batch.poweruser.PowerUserDashboardBatchService;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
+import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
 import com.part3.team07.sb01deokhugamteam07.service.NotificationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class ApplicationScheduler {
   private final PopularReviewDashboardBatchService popularReviewDashboardBatchService;
   private final NotificationService notificationService;
 
-  @Scheduled(cron = "0 25 17 * * *")
+  @Scheduled(cron = "0 36 17 * * *")
   public void calculateAllDashboardData(){
     log.info("오전 3시 : 대시보드 데이터 일괄 계산 시작");
     // 순차 실행

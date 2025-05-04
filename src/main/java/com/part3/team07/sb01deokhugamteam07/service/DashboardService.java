@@ -102,7 +102,8 @@ public class DashboardService {
         .collect(Collectors.toMap(User::getId, user -> user));
 
     // 5. 사용자별 추가 지표 정보 (리뷰점수합, 좋아요수, 댓글수) 조회
-    List<UserMetricsDTO> userMetrics = dashboardRepository.getUserMetrics(period);
+    List<UserMetricsDTO> userMetrics = dashboardRepository.getUserMetrics(period.name());
+
     Map<UUID, UserMetricsDTO> metricsDTOMap = userMetrics.stream()
         .collect(Collectors.toMap(UserMetricsDTO::userId, Function.identity()));
 
@@ -111,8 +112,10 @@ public class DashboardService {
     for (Dashboard d : dashboards) {
       UUID userId = d.getKey();
       User user = userMap.get(userId);
+
       // 유저 지표 정보
       UserMetricsDTO metrics = metricsDTOMap.get(userId);
+
       BigDecimal reviewScoreSum =
           metrics != null && metrics.reviewScoreSum() != null ? metrics.reviewScoreSum() : BigDecimal.ZERO;
       int likeCount =
@@ -143,7 +146,7 @@ public class DashboardService {
     LocalDateTime nextAfter = hasNext ? dashboards.get(dashboards.size() - 1).getCreatedAt() : null;
 
     // 8. 전체 User 수 (기간 + USER 키타입 조건)
-    long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.USER, period);
+    long totalElement = dashboardRepository.countByKeyTypeAndPeriod(KeyType.USER, period); // TODO 단일 key 를 통해 계산. 이 두 가지 조건만 거니까 모든 record 의 합이 나온다.
 
     log.info("Power User 조회 완료: 총 {}명 중 {}명 반환, 다음 페이지: {}",
         totalElement, content.size(), hasNext);
