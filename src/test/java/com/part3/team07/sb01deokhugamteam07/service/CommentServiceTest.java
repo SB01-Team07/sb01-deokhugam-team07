@@ -137,8 +137,6 @@ class CommentServiceTest {
             savedComment.getUser().equals(testUser) &&
             savedComment.getReview().equals(testReview)
     ));
-    verify(reviewRepository).incrementCommentCount(comment.getReview().getId()); //댓글 증가 메서드 호출 확인
-
   }
 
   @Test
@@ -284,7 +282,7 @@ class CommentServiceTest {
 
     //then
     assertThat(comment.isDeleted()).isTrue();
-    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
+    //verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
@@ -345,7 +343,6 @@ class CommentServiceTest {
 
     //then
     verify(commentRepository).delete(comment);
-    verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test

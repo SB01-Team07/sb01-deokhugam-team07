@@ -14,7 +14,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationU
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
+import com.part3.team07.sb01deokhugamteam07.repository.querydsl.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import jakarta.transaction.Transactional;

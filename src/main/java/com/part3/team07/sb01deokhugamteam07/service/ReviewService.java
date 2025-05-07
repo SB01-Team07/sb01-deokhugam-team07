@@ -15,10 +15,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundExcep
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.ReviewMapper;
-import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.*;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -39,6 +37,7 @@ public class ReviewService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     private final CommentService commentService;
     private final NotificationService notificationService;
@@ -146,18 +145,18 @@ public class ReviewService {
     @Transactional
     public ReviewLikeDto toggleLike(UUID reviewId, UUID userId){
         log.debug("좋아요 토글 요청. reviewId={}, userId={}", reviewId, userId);
-        reviewRepository.findByIdAndIsDeletedFalse(reviewId)
+        Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
                 .orElseThrow(() -> ReviewNotFoundException.withId(reviewId));
 
         return likeRepository.findByReviewIdAndUserId(reviewId, userId)
                 .map(like -> {
                     log.debug("기존 좋아요 존재. 좋아요 취소 시도 - reviewId={}, userId={}", reviewId, userId);
-                    return cancelLike(like, reviewId, userId);
+                    return cancelLike(like, review, userId);
                 })
                 .orElseGet(() -> {
                     log.debug("기존 좋아요 없음. 좋아요 추가 시도 - reviewId={}, userId={}", reviewId, userId);
 
-                    ReviewLikeDto result = addLike(userId, reviewId);
+                    ReviewLikeDto result = addLike(userId, review);
 
                     // 알림 생성
                     NotificationCreateRequest notificationRequest = NotificationCreateRequest.builder()
@@ -195,6 +194,67 @@ public class ReviewService {
         return new CursorPageResponseReviewDto(pageContent, nextCursor, nextAfter, pageContent.size(), totalCount, hasNext);
     }
 
+    @Transactional
+    public void syncReviewCounts() {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusMinutes(30);
+        log.info("리뷰 카운트 동기화. 기준 시각: {}", oneHourAgo);
+
+        List<Review> reviews = reviewRepository.findChangedSince(oneHourAgo);
+        if (reviews.isEmpty()) {
+            log.info("동기화 대상 리뷰 없음. 작업 종료.");
+            return;
+        }
+
+        log.info("동기화 대상 리뷰 수: {}", reviews.size());
+        List<UUID> reviewIds = reviews.stream()
+                .map(Review::getId)
+                .toList();
+
+        Map<UUID, Long> likeCountMap = likeRepository.countLikesByReviewIds(reviewIds);
+        Map<UUID, Long> commentCountMap = commentRepository.countCommentsByReviewIds(reviewIds);
+
+        log.info("좋아요 count Map size: {}, 댓글 count Map size: {}", likeCountMap.size(), commentCountMap.size());
+
+        for (Review review : reviews) {
+            review.updateCounts(
+                    likeCountMap.getOrDefault(review.getId(), 0L).intValue(),
+                    commentCountMap.getOrDefault(review.getId(), 0L).intValue()
+            );
+        }
+        log.info("리뷰 카운트 동기화 완료");
+    }
+
+    @Transactional
+    public void syncAllReviewsCountsInBatch(int batchSize) {
+        int offset = 0;
+        while (true) {
+            List<Review> reviews = reviewRepository.findAllPaged(offset, batchSize);
+
+            if (reviews.isEmpty()) {
+                log.info("모든 리뷰 동기화 완료");
+                break;
+            }
+
+            List<UUID> reviewIds = reviews.stream()
+                    .map(Review::getId)
+                    .toList();
+
+            Map<UUID, Long> likeCountMap = likeRepository.countLikesByReviewIds(reviewIds);
+            Map<UUID, Long> commentCountMap = commentRepository.countCommentsByReviewIds(reviewIds);
+
+            for (Review review : reviews) {
+                review.updateCounts(
+                        likeCountMap.getOrDefault(review.getId(), 0L).intValue(),
+                        commentCountMap.getOrDefault(review.getId(), 0L).intValue()
+                );
+            }
+
+            log.info("리뷰 동기화 배치 처리 완료: {} ~ {}", offset + 1, offset + reviews.size());
+            offset += reviews.size(); // 현재 페이징 수만큼 증가
+        }
+    }
+
+
     private String getCursorValue(ReviewDto dto, ReviewOrderBy orderBy) {
         return switch (orderBy) {
             case RATING -> String.valueOf(dto.rating());
@@ -202,24 +262,26 @@ public class ReviewService {
         };
     }
 
-    private ReviewLikeDto addLike(UUID userId, UUID reviewId){
-        log.debug("좋아요 추가 시작. userId={}, reviewId={}", userId, reviewId);
+    private ReviewLikeDto addLike(UUID userId, Review review){
+        log.debug("좋아요 추가 시작. userId={}, reviewId={}", userId, review.getId());
         Like like = Like.builder()
                 .userId(userId)
-                .reviewId(reviewId)
+                .reviewId(review.getId())
                 .build();
         likeRepository.save(like);
-        reviewRepository.incrementLikeCount(reviewId);
-        log.info("좋아요 추가 완료. userId={}, reviewId={}", userId, reviewId);
-        return new ReviewLikeDto(reviewId, userId, true);
+        review.increaseLikeCount();
+        //reviewRepository.incrementLikeCount(review.getId());
+        log.info("좋아요 추가 완료. userId={}, reviewId={}", userId, review.getId());
+        return new ReviewLikeDto(review.getId(), userId, true);
     }
 
-    private ReviewLikeDto cancelLike(Like like, UUID reviewId, UUID userId){
-        log.debug("좋아요 취소 시작. userId={}, reviewId={}", userId, reviewId);
+    private ReviewLikeDto cancelLike(Like like, Review review, UUID userId){
+        log.debug("좋아요 취소 시작. userId={}, reviewId={}", userId, review.getId());
         likeRepository.delete(like);
-        reviewRepository.decrementLikeCount(reviewId);
-        log.info("좋아요 취소 완료. userId={}, reviewId={}", userId, reviewId);
-        return new ReviewLikeDto(reviewId, userId, false);
+        review.decreaseLikeCount();
+        //reviewRepository.decrementLikeCount(review.getId());
+        log.info("좋아요 취소 완료. userId={}, reviewId={}", userId, review.getId());
+        return new ReviewLikeDto(review.getId(), userId, false);
     }
 
     private void softDeleteAllLikesByReview(Review review) {

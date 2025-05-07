@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
+import com.part3.team07.sb01deokhugamteam07.repository.querydsl.DashboardRepositoryCustomImpl;
 import com.part3.team07.sb01deokhugamteam07.util.TitleNormalizer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

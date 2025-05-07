@@ -22,16 +22,16 @@ import com.part3.team07.sb01deokhugamteam07.entity.User;
 import com.part3.team07.sb01deokhugamteam07.exception.notification.NotificationNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.NotificationRepositoryCustom;
+import com.part3.team07.sb01deokhugamteam07.repository.querydsl.NotificationRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import javax.swing.text.html.Option;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

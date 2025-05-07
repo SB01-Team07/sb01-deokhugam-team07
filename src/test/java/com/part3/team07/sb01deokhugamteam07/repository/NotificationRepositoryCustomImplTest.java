@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
 import com.part3.team07.sb01deokhugamteam07.entity.Notification;
+import com.part3.team07.sb01deokhugamteam07.repository.querydsl.NotificationRepositoryCustomImpl;
 import com.part3.team07.sb01deokhugamteam07.util.TitleNormalizer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

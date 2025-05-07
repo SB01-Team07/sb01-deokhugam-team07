@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -120,5 +121,24 @@ class LikeRepositoryTest {
 
         // then
         assertThat(exists).isTrue();
+    }
+
+    @DisplayName("countLikesByReviewIds - 리뷰 아이디를 받아 좋아요 수를 Map으로 리턴한다.")
+    @Test
+    void countLikesByReviewIds() {
+        UUID reviewId1 = UUID.randomUUID();
+        UUID reviewId2 = UUID.randomUUID();
+
+        likeRepository.save(new Like(UUID.randomUUID(), reviewId1));
+        likeRepository.save(new Like(UUID.randomUUID(), reviewId1));
+        likeRepository.save(new Like(UUID.randomUUID(), reviewId2));
+
+        em.flush();
+        em.clear();
+
+        Map<UUID, Long> result = likeRepository.countLikesByReviewIds(List.of(reviewId1, reviewId2));
+
+        assertThat(result.get(reviewId1)).isEqualTo(2L);
+        assertThat(result.get(reviewId2)).isEqualTo(1L);
     }
 }

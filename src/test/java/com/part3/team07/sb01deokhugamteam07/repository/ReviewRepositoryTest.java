@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
 import com.querydsl.core.Tuple;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +20,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,7 +50,7 @@ class ReviewRepositoryTest {
     private LikeRepository likeRepository;
 
     @Autowired
-    private TestEntityManager em;
+    private EntityManager em;
 
 
     @DisplayName("유저 ID와 책 ID로 리뷰 존재하면 ture를 반환한다.")
@@ -348,6 +352,74 @@ class ReviewRepositoryTest {
 
         // then
         assertThat(count).isEqualTo(3);
+    }
+
+    // auditing 이 있는 경우 리플랙션으로 작성시간, 수정시간 바꿔도 db에 반영이 안되서 테스트 불가능.. 직접 쿼리를 날려본다.
+    @DisplayName("findChangedSince - 1시간 내 생성되거나 수정된 리뷰만 조회된다")
+    @Test
+    void findChangedReviewsWithinOneHour() {
+        // given
+        User user = userRepository.save(createTestUser("우디", "woody@example.com"));
+        Book book = bookRepository.save(createTestBook("Go in Action"));
+
+        Review oldReview = createTestReview(user, book);
+        Review recentReview = createTestReview(user, book);
+
+        em.persist(oldReview);
+        em.persist(recentReview);
+        em.flush();
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime twoHoursAgo = now.minusHours(2);
+        LocalDateTime thirtyMinutesAgo = now.minusMinutes(30);
+
+        em.createQuery("UPDATE Review r SET r.createdAt = :time, r.updatedAt = :time WHERE r.id = :id")
+                .setParameter("time", twoHoursAgo)
+                .setParameter("id", oldReview.getId())
+                .executeUpdate();
+
+        em.createQuery("UPDATE Review r SET r.createdAt = :time, r.updatedAt = :time WHERE r.id = :id")
+                .setParameter("time", thirtyMinutesAgo)
+                .setParameter("id", recentReview.getId())
+                .executeUpdate();
+
+        em.clear();
+
+        //when
+        LocalDateTime oneHourAgo = now.minusHours(1);
+        List<Review> changed = reviewRepository.findChangedSince(oneHourAgo);
+
+        //then
+        assertThat(changed).hasSize(1);
+        assertThat(changed.get(0).getId()).isEqualTo(recentReview.getId());
+    }
+
+    @DisplayName("findAllPaged - 삭제되지 않은 리뷰를 offset, limit 기준으로 페이징 조회한다")
+    @Test
+    void findAllPaged_returnsPagedReviews() {
+        //given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("Go in Action"));
+
+        //리뷰 5개 저장 (3개는 삭제되지 않음, 2개는 삭제됨)
+        for (int i = 0; i < 3; i++) {
+            reviewRepository.save(createTestReview(user, book));
+        }
+        for (int i = 0; i < 2; i++) {
+            Review deletedReview = createTestReview(user, book);
+            deletedReview.softDelete(); // isDeleted = true
+            reviewRepository.save(deletedReview);
+        }
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Review> result = reviewRepository.findAllPaged(0, 2); // 3개 중 앞 2개
+
+        //then
+        assertThat(result).hasSize(2);
+        assertThat(result).allMatch(review -> !review.isDeleted());
     }
 
     private User createTestUser(String nickname, String email) {
