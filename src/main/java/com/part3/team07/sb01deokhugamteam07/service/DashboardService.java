@@ -18,7 +18,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.ValueType;
 import com.part3.team07.sb01deokhugamteam07.exception.book.BookNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.DashboardRepositoryCustom;
+import com.part3.team07.sb01deokhugamteam07.repository.querydsl.DashboardRepositoryCustom;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
 import java.math.BigDecimal;

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.part3.team07.sb01deokhugamteam07.config.QuerydslConfig;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
+import com.part3.team07.sb01deokhugamteam07.repository.querydsl.BookRepositoryCustomImpl;
 import com.part3.team07.sb01deokhugamteam07.util.TitleNormalizer;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

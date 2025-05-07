@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.repository;
+package com.part3.team07.sb01deokhugamteam07.repository.querydsl;
 
 import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.QComment;
@@ -7,9 +7,8 @@ import com.part3.team07.sb01deokhugamteam07.exception.comment.InvalidCommentQuer
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.DateTimeException;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

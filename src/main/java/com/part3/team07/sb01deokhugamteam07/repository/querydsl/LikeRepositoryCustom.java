@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.repository;
+package com.part3.team07.sb01deokhugamteam07.repository.querydsl;
 
 import java.util.List;
 import java.util.Map;
