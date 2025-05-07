@@ -321,7 +321,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.of(book));
       given(storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE)).willReturn(newThumbnailUrl);
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
@@ -357,7 +357,7 @@ class BookServiceTest {
         newPublishedDate
     );
 
-    given(bookRepository.findById(nonExistentId)).willReturn(Optional.empty());
+    given(bookRepository.findByIdAndIsDeletedFalse(nonExistentId)).willReturn(Optional.empty());
 
     // when & then
     assertThrows(BookNotFoundException.class,
@@ -373,7 +373,7 @@ class BookServiceTest {
     void softDelete_success() {
       // given
       Book spyBook = spy(book);
-      given(bookRepository.findById(id)).willReturn(Optional.of(spyBook));
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.of(spyBook));
 
       // when
       bookService.softDelete(id);
@@ -388,7 +388,7 @@ class BookServiceTest {
     @DisplayName("도서 논리 삭제 실패 - 없는 id")
     void softDelete_fail_idNotFound() {
       // given
-      given(bookRepository.findById(id)).willReturn(Optional.empty());
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.empty());
 
       // when & then
       assertThrows(BookNotFoundException.class,
@@ -448,7 +448,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.of(book));
       given(bookMapper.toDto(any(Book.class))).willReturn(bookDto);
 
       // when
@@ -463,7 +463,7 @@ class BookServiceTest {
     @DisplayName("도서 상세 정보 조회 실패 - 없는 id")
     void find_fail_idNotFound() {
       // given
-      given(bookRepository.findById(id)).willReturn(Optional.empty());
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.empty());
 
       // when & then
       assertThrows(BookNotFoundException.class,
@@ -619,8 +619,8 @@ class BookServiceTest {
     given(review2.getRating()).willReturn(5);
     given(review3.getRating()).willReturn(3);
 
-    given(bookRepository.findAll()).willReturn(List.of(book));
-    given(reviewRepository.findAllByBook(book)).willReturn(List.of(review1, review2, review3));
+    given(bookRepository.findAllByIsDeletedFalse()).willReturn(List.of(book));
+    given(reviewRepository.findAllByBookAndIsDeletedFalse(book)).willReturn(List.of(review1, review2, review3));
 
     // when
     bookService.updateReviewStats();

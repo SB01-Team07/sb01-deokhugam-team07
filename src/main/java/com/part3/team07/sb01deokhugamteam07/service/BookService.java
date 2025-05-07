@@ -81,9 +81,9 @@ public class BookService {
   public BookDto update(UUID id, BookUpdateRequest request, MultipartFile thumbnailImage) {
     log.info("도서 업데이트 요청 시작. ID: {}", id);
 
-    Book book = bookRepository.findById(id)
+    Book book = bookRepository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(() -> {
-          log.error("도서 업데이트 실패: 존재하지 않는 ID {}", id);
+          log.error("도서 업데이트 실패: 존재하지 않거나 삭제된 ID {}", id);
           return BookNotFoundException.withId(id);
         });
     String thumbnailUrl = Optional.ofNullable(thumbnailImage)
@@ -105,9 +105,9 @@ public class BookService {
   public void softDelete(UUID id) {
     log.info("도서 논리 삭제 요청 시작. ID: {}", id);
 
-    Book book = bookRepository.findById(id)
+    Book book = bookRepository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(() -> {
-          log.error("도서 논리 삭제 실패: 존재하지 않는 ID {}", id);
+          log.error("도서 논리 삭제 실패: 존재하지 않거나 삭제된 ID {}", id);
           return BookNotFoundException.withId(id);
         });
 
@@ -135,9 +135,9 @@ public class BookService {
   public BookDto find(UUID id) {
     log.info("도서 조회 요청 시작. ID: {}", id);
 
-    Book book = bookRepository.findById(id)
+    Book book = bookRepository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(() -> {
-          log.error("도서 조회 실패: 존재하지 않는 ID {}", id);
+          log.error("도서 조회 실패: 존재하지 않거나 삭제된 ID {}", id);
           return BookNotFoundException.withId(id);
         });
 
@@ -195,10 +195,10 @@ public class BookService {
   public void updateReviewStats() {
     log.info("도서 리뷰 통계 업데이트 시작.");
 
-    List<Book> books = bookRepository.findAll();
+    List<Book> books = bookRepository.findAllByIsDeletedFalse();
 
     for (Book book : books) {
-      List<Review> reviews = reviewRepository.findAllByBook(book);
+      List<Review> reviews = reviewRepository.findAllByBookAndIsDeletedFalse(book);
 
       if (reviews.isEmpty())
         continue;

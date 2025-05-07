@@ -57,6 +57,7 @@ public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRep
   @EntityGraph(attributePaths = {"book", "user"})
   List<Review> findAllById(Iterable<UUID> ids);
 
+
   @Query(value =
       "SELECT DISTINCT r.* FROM reviews r " +
        "LEFT JOIN comments c on r.id = c.review_id AND c.is_deleted = false AND c.created_at BETWEEN :startDateTime AND :endDateTime " +
@@ -69,4 +70,7 @@ public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRep
       @Param("startDateTime") LocalDateTime startDateTime,
       @Param("endDateTime") LocalDateTime endDateTime
   );
+
+  List<Review> findAllByBookAndIsDeletedFalse(Book book);
+
 }
