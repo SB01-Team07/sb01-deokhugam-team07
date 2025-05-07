@@ -42,24 +42,24 @@ public class PopularBookDashboardBatchService {
     try {
       log.info("savePopularBookDashboardData 호출: period={}", period);
 
-      // 1. 전체 도서 조회 (is_deleted = false)
-      List<Book> books = bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
-      if (books.isEmpty()) {
-        log.info("처리할 도서가 없습니다. period={}", period);
-        return;
-      }
-
       // 날짜 범위 계산
-      LocalDateTime[] dateTimeRange  = dateRangeUtil.getDateRange(period);
+      LocalDateTime[] dateTimeRange = dateRangeUtil.getDateRange(period);
       LocalDateTime startDateTime = dateTimeRange[0];
       LocalDateTime endDateTime = dateTimeRange[1];
+
+      List<Book> booksWithReviews = bookRepository.findByBookWithReviewsInPeriod(startDateTime,
+          endDateTime);
+      if(booksWithReviews.isEmpty()){
+        log.info("해당 기간에 리뷰가 있는 도서가 없습니다. period={}", period);
+        return;
+      }
 
       // 결과 저장용 대시보드 리스트
       List<Dashboard> dashboards = new ArrayList<>();
       Map<UUID, Double> bookScoreMap = new LinkedHashMap<>();
 
       // 2. 각 도서의 정보 가져오기
-      for (Book book : books) {
+      for (Book book : booksWithReviews) {
         UUID bookId = book.getId();
 
         List<Review> reviews = reviewRepository.findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(
