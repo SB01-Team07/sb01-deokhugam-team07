@@ -16,6 +16,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -260,6 +263,23 @@ class CommentRepositoryCustomImplTest {
 
     // then
     assertThat(count).isEqualTo(0);
+  }
+
+  @Test
+  @DisplayName("countCommentsByReviewIds - 리뷰 ID별로 삭제되지 않은 댓글 수를 정확히 집계한다")
+  void countCommentsByReviewIds() {
+    // given
+    comment3.softDelete();
+    commentRepository.save(comment3);
+
+    em.flush();
+    em.clear();
+
+    // when
+    Map<UUID, Long> result = commentRepository.countCommentsByReviewIds(List.of(testReview.getId()));
+
+    // then
+    assertThat(result.get(testReview.getId())).isEqualTo(2L); // 삭제된 댓글 제외
   }
 
 }
