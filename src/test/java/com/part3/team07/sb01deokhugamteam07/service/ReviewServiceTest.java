@@ -419,17 +419,19 @@ class ReviewServiceTest {
     }
 
     @Test
-    @DisplayName("좋아요가 존재하면 삭제한다")
-    void toggleLike_shouldCancelLikeWhenExists() {
-        // given
+    @DisplayName("좋아요가 존재하면 삭제하고 카운트를 감소시킨다")
+    void toggleLike_shouldCancelLikeAndDecreaseCount() {
+        //given
+        review.increaseLikeCount();
         given(reviewRepository.findByIdAndIsDeletedFalse(reviewId)).willReturn(Optional.of(review));
         given(likeRepository.findByReviewIdAndUserId(reviewId, userId)).willReturn(Optional.of(like));
 
-        // when
+        //when
         ReviewLikeDto result = reviewService.toggleLike(reviewId, userId);
 
-        // then
+        //then
         assertThat(result.liked()).isFalse();
+        assertThat(review.getLikeCount()).isZero();
     }
 
     @Test
@@ -580,6 +582,46 @@ class ReviewServiceTest {
         assertThat(result.nextAfter()).isEqualTo(created2);
     }
 
+    @DisplayName("정렬 기준이 RATING인 경우 커서 값이 평점으로 반환된다")
+    @Test
+    void findAll_whenOrderByRating_shouldUseRatingAsCursor() {
+        //given
+        int limit = 2;
+        ReviewDto dto1 = new ReviewDto(
+                UUID.randomUUID(), bookId, "책1", "thumb1", userId, "닉네임", "내용1",
+                4, 10, 2, false,
+                LocalDateTime.now().minusHours(1),
+                LocalDateTime.now().minusHours(1)
+        );
+        ReviewDto dto2 = new ReviewDto(
+                UUID.randomUUID(), bookId, "책2", "thumb2", userId, "닉네임", "내용2",
+                3, 8, 1, true,
+                LocalDateTime.now().minusMinutes(30),
+                LocalDateTime.now().minusMinutes(30)
+        );
+        ReviewDto dto3 = new ReviewDto(
+                UUID.randomUUID(), bookId, "책3", "thumb3", userId, "닉네임", "내용3",
+                2, 5, 0, false,
+                LocalDateTime.now().minusMinutes(10),
+                LocalDateTime.now().minusMinutes(10)
+        );
+
+        given(reviewRepository.findAll(any(), any(), any(), any(), any(), any(), any(), anyInt(), any()))
+                .willReturn(List.of(dto1, dto2, dto3)); // limit + 1
+
+        given(reviewRepository.count(any(), any(), any())).willReturn(3L);
+
+        //when
+        CursorPageResponseReviewDto result = reviewService.findAll(null, null, null,
+                ReviewOrderBy.RATING, ReviewDirection.DESC, null, null, limit, userId
+        );
+
+        //then
+        assertThat(result.hasNext()).isTrue();
+        assertThat(result.content()).hasSize(limit);
+        assertThat(result.nextCursor()).isEqualTo(String.valueOf(dto2.rating()));
+    }
+
     @DisplayName("syncReviewCounts - 리뷰 카운트 동기화가 정상적으로 수행된다")
     @Test
     void syncReviewCounts_shouldUpdateReviewCounts() {
@@ -612,5 +654,28 @@ class ReviewServiceTest {
         //then
         verify(likeRepository, never()).countLikesByReviewIds(any());
         verify(commentRepository, never()).countCommentsByReviewIds(any());
+    }
+
+    @DisplayName("syncAllReviewsCountsInBatch - 리뷰들의 좋아요 수, 댓글 수를 일괄 동기화한다")
+    @Test
+    void syncAllReviewsCountsInBatch_success() {
+        //given
+        int batchSize = 10;
+
+        // 리뷰 1건 페이징 방식으로 반환
+        given(reviewRepository.findAllPaged(anyInt(), eq(batchSize)))
+                .willReturn(List.of(review))  //첫 호출
+                .willReturn(List.of());   //다음 호출은 종료 조건
+
+        // 좋아요 및 댓글 수 Map 반환
+        given(likeRepository.countLikesByReviewIds(anyList())).willReturn(Map.of(reviewId, 3L));
+        given(commentRepository.countCommentsByReviewIds(anyList())).willReturn(Map.of(reviewId, 5L));
+
+        //when
+        reviewService.syncAllReviewsCountsInBatch(batchSize);
+
+        //then
+        assertThat(review.getLikeCount()).isEqualTo(3);
+        assertThat(review.getCommentCount()).isEqualTo(5);
     }
 }
