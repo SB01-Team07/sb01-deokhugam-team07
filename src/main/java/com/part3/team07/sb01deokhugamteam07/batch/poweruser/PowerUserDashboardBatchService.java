@@ -48,24 +48,24 @@ public class PowerUserDashboardBatchService {
     try {
       log.info("savePowerUserDashboardData 호출: period={}", period);
 
-      // 1. 전체 유저 조회 (is_deleted = false)
-      List<User> users = userRepository.findByIsDeletedFalse();
-      if (users.isEmpty()) {
-        log.info("처리할 유저가 없습니다. period={}", period);
-        return;
-      }
-
       // 날짜 범위 계산
       LocalDateTime[] dateTimeRange  = dateRangeUtil.getDateRange(period);
       LocalDateTime startDateTime = dateTimeRange[0];
       LocalDateTime endDateTime = dateTimeRange[1];
+
+      // 1. 유저 조회
+      List<User> powerUsers = userRepository.findPowerUserInPeriod(startDateTime, endDateTime);
+      if(powerUsers.isEmpty()) {
+        log.info("해당 기간에 댓글, 좋아요, 리뷰 활동을 한 유저가 없습니다. period={}", period);
+        return;
+      }
 
       // 결과 저장용 대시보드 리스트, 유저 점수 맵
       List<Dashboard> dashboards = new ArrayList<>();
       Map<UUID, Double> userScoreMap = new LinkedHashMap<>();
 
       // 2. 각 유저의 활동 정보 가져오기
-      for (User user : users) {
+      for (User user : powerUsers) {
         UUID userId = user.getId();
 
         // 2-1. 해당 기간(Period) 동안 작성한 리뷰 목록 가져오기
