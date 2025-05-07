@@ -59,4 +59,8 @@ public class Review extends BaseSoftDeletableEntity {
     delete();
   }
 
+  public void updateCounts(int likeCount, int commentCount) {
+    this.likeCount = likeCount;
+    this.commentCount = commentCount;
+  }
 }
