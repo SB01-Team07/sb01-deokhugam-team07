@@ -11,10 +11,8 @@ import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewAlreadyExists
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
-import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.*;
+
 import java.math.BigDecimal;
 
 import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
@@ -32,6 +30,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,8 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -57,6 +55,9 @@ class ReviewServiceTest {
 
     @Mock
     private LikeRepository likeRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
 
     @Mock
     private CommentService commentService;
@@ -579,5 +580,39 @@ class ReviewServiceTest {
         assertThat(result.content()).hasSize(limit);
         assertThat(result.nextCursor()).isEqualTo(created2.toString());
         assertThat(result.nextAfter()).isEqualTo(created2);
+    }
+
+    @DisplayName("syncReviewCounts - 리뷰 카운트 동기화가 정상적으로 수행된다")
+    @Test
+    void syncReviewCounts_shouldUpdateReviewCounts() {
+        //given
+        List<Review> changedReviews = List.of(review);
+        Map<UUID, Long> likeCounts = Map.of(reviewId, 3L);
+        Map<UUID, Long> commentCounts = Map.of(reviewId, 5L);
+
+        given(reviewRepository.findChangedSince(any())).willReturn(changedReviews);
+        given(likeRepository.countLikesByReviewIds(any())).willReturn(likeCounts);
+        given(commentRepository.countCommentsByReviewIds(any())).willReturn(commentCounts);
+
+        //when
+        reviewService.syncReviewCounts();
+
+        //then
+        assertThat(review.getLikeCount()).isEqualTo(3);
+        assertThat(review.getCommentCount()).isEqualTo(5);
+    }
+
+    @DisplayName("syncReviewCounts - 변경된 리뷰가 없으면 아무 작업도 하지 않는다")
+    @Test
+    void syncReviewCounts_shouldDoNothingIfNoChangedReviews() {
+        //given
+        given(reviewRepository.findChangedSince(any())).willReturn(List.of());
+
+        //when
+        reviewService.syncReviewCounts();
+
+        //then
+        verify(likeRepository, never()).countLikesByReviewIds(any());
+        verify(commentRepository, never()).countCommentsByReviewIds(any());
     }
 }
