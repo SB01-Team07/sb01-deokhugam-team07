@@ -11,6 +11,10 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -109,6 +113,27 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         .fetchOne();
 
     return count != null ? count : 0L;
+  }
+
+
+  @Override
+  public Map<UUID, Long> countCommentsByReviewIds(List<UUID> reviewIds) {
+    QComment comment = QComment.comment;
+
+    return queryFactory
+            .select(comment.review.id, comment.count())
+            .from(comment)
+            .where(
+                    comment.isDeleted.isFalse(),
+                    comment.review.id.in(reviewIds)
+            )
+            .groupBy(comment.review.id)
+            .fetch()
+            .stream()
+            .collect(Collectors.toMap(
+                    tuple -> tuple.get(comment.review.id),
+                    tuple -> tuple.get(comment.count())
+            ));
   }
 
 }
