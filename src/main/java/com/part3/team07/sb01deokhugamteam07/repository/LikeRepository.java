@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LikeRepository extends JpaRepository<Like, UUID> {
+public interface LikeRepository extends JpaRepository<Like, UUID>, LikeRepositoryCustom {
 
   // 파워 유저에서 이용되는 메서드, 특정 리뷰에 박힌 좋아요 날짜 범위내에서 조회하여 개수 반환
   long countByUserIdAndCreatedAtBetween(
