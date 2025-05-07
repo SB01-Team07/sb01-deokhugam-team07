@@ -84,7 +84,6 @@ public class CommentService {
   public CommentDto find(UUID commentId) {
     log.debug("find comment: commentId = {}", commentId);
     Comment comment = findComment(commentId);
-    isSoftDeleted(comment);
     log.info("find comment complete: commentId = {}", comment.getId());
     return commentMapper.toDto(comment);
   }
@@ -93,7 +92,6 @@ public class CommentService {
   public void softDelete(UUID commentId, UUID userId) {
     log.debug("softDelete comment: commentId = {}", commentId);
     Comment comment = findComment(commentId);
-    isSoftDeleted(comment);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     comment.softDelete();
@@ -105,7 +103,7 @@ public class CommentService {
   @Transactional
   public void softDeleteAllByReview(Review review) {
     log.debug("softDelete all comments by review: review = {}", review);
-    List<Comment> comments = commentRepository.findAllByReview(review);
+    List<Comment> comments = commentRepository.findAllByReviewAndIsDeletedFalse(review);
     for (Comment comment : comments) {
       comment.softDelete();
     }
@@ -114,8 +112,9 @@ public class CommentService {
 
   @Transactional
   public void hardDelete(UUID commentId, UUID userId) {
-    log.debug("hardDelete comment: commentId = {}, userId = {}",commentId, userId);
-    Comment comment = findComment(commentId);
+    log.debug("hardDelete comment: commentId = {}, userId = {}", commentId, userId);
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(CommentNotFoundException::new);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     decreaseCommentCountOnHardDelete(comment); //review commentCount 감소
@@ -195,14 +194,8 @@ public class CommentService {
     );
   }
 
-  private void isSoftDeleted(Comment comment) {
-    if (comment.isDeleted()) {
-      throw new CommentNotFoundException();
-    }
-  }
-
   private Comment findComment(UUID commentId) {
-    return commentRepository.findById(commentId)
+    return commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(CommentNotFoundException::new);
   }
 
@@ -224,14 +217,16 @@ public class CommentService {
 
   //commentCount 감소 - 논리삭제
   private void decreaseCommentCountOnSoftDelete(Comment comment) {
-    log.debug("댓글 논리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+    log.debug("댓글 논리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(),
+        comment.getId());
     reviewRepository.decrementCommentCount(comment.getReview().getId());
   }
 
   //commentCount 감소 - 물리삭제
   private void decreaseCommentCountOnHardDelete(Comment comment) {
     if (!comment.isDeleted()) {
-      log.debug("댓글 물리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(), comment.getId());
+      log.debug("댓글 물리 삭제로 commentCount 감소: reviewId={}, commentId={}", comment.getReview().getId(),
+          comment.getId());
       reviewRepository.decrementCommentCount(comment.getReview().getId());
     }
   }
