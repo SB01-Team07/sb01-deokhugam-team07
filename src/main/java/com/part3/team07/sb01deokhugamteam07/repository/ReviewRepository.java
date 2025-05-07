@@ -57,4 +57,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRep
   @Override
   @EntityGraph(attributePaths = {"book", "user"})
   List<Review> findAllById(Iterable<UUID> ids);
+
+  List<Review> findAllByBookAndIsDeletedFalse(Book book);
 }
