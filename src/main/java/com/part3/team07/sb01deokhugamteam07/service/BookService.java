@@ -48,7 +48,7 @@ public class BookService {
       MultipartFile thumbnailImage) {
     log.info("도서 생성 요청 시작. ISBN: {}", request.isbn());
 
-    if (bookRepository.existsByIsbnAndIsDeletedFalse(request.isbn())) {
+    if (bookRepository.existsByIsbn(request.isbn())) {
       log.error("도서 생성 실패: 이미 존재하는 ISBN {}.", request.isbn());
       throw BookAlreadyExistsException.withIsbn(request.isbn());
     }
