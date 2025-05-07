@@ -394,6 +394,33 @@ class ReviewRepositoryTest {
         assertThat(changed.get(0).getId()).isEqualTo(recentReview.getId());
     }
 
+    @DisplayName("findAllPaged - 삭제되지 않은 리뷰를 offset, limit 기준으로 페이징 조회한다")
+    @Test
+    void findAllPaged_returnsPagedReviews() {
+        //given
+        User user = userRepository.save(createTestUser("user", "user@abc.com"));
+        Book book = bookRepository.save(createTestBook("Go in Action"));
+
+        //리뷰 5개 저장 (3개는 삭제되지 않음, 2개는 삭제됨)
+        for (int i = 0; i < 3; i++) {
+            reviewRepository.save(createTestReview(user, book));
+        }
+        for (int i = 0; i < 2; i++) {
+            Review deletedReview = createTestReview(user, book);
+            deletedReview.softDelete(); // isDeleted = true
+            reviewRepository.save(deletedReview);
+        }
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Review> result = reviewRepository.findAllPaged(0, 2); // 3개 중 앞 2개
+
+        //then
+        assertThat(result).hasSize(2);
+        assertThat(result).allMatch(review -> !review.isDeleted());
+    }
 
     private User createTestUser(String nickname, String email) {
         return User.builder()
