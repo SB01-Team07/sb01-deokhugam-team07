@@ -15,10 +15,7 @@ import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewNotFoundExcep
 import com.part3.team07.sb01deokhugamteam07.exception.review.ReviewUnauthorizedException;
 import com.part3.team07.sb01deokhugamteam07.exception.user.UserNotFoundException;
 import com.part3.team07.sb01deokhugamteam07.mapper.ReviewMapper;
-import com.part3.team07.sb01deokhugamteam07.repository.BookRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
-import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
+import com.part3.team07.sb01deokhugamteam07.repository.*;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -39,6 +37,7 @@ public class ReviewService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     private final CommentService commentService;
     private final NotificationService notificationService;
@@ -194,6 +193,37 @@ public class ReviewService {
 
         return new CursorPageResponseReviewDto(pageContent, nextCursor, nextAfter, pageContent.size(), totalCount, hasNext);
     }
+
+    @Transactional
+    public void syncReviewCounts() {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusMinutes(30);
+        log.info("리뷰 카운트 동기화. 기준 시각: {}", oneHourAgo);
+
+        List<Review> reviews = reviewRepository.findChangedSince(oneHourAgo);
+        if (reviews.isEmpty()) {
+            log.info("동기화 대상 리뷰 없음. 작업 종료.");
+            return;
+        }
+
+        log.info("동기화 대상 리뷰 수: {}", reviews.size());
+        List<UUID> reviewIds = reviews.stream()
+                .map(Review::getId)
+                .toList();
+
+        Map<UUID, Long> likeCountMap = likeRepository.countLikesByReviewIds(reviewIds);
+        Map<UUID, Long> commentCountMap = commentRepository.countCommentsByReviewIds(reviewIds);
+
+        log.info("좋아요 count Map size: {}, 댓글 count Map size: {}", likeCountMap.size(), commentCountMap.size());
+
+        for (Review review : reviews) {
+            review.updateCounts(
+                    likeCountMap.getOrDefault(review.getId(), 0L).intValue(),
+                    commentCountMap.getOrDefault(review.getId(), 0L).intValue()
+            );
+        }
+        log.info("리뷰 카운트 동기화 완료");
+    }
+
 
     private String getCursorValue(ReviewDto dto, ReviewOrderBy orderBy) {
         return switch (orderBy) {
