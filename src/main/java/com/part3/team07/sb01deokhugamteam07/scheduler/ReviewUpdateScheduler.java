@@ -19,4 +19,11 @@ public class ReviewUpdateScheduler {
         reviewService.syncReviewCounts();
         log.info("리뷰 카운트 동기화 완료");
     }
+
+    @Scheduled(cron = "0 0 5 * * *")
+    public void runFullSync() {
+        log.info("전체 리뷰 카운트 배치 동기화 시작");
+        reviewService.syncAllReviewsCountsInBatch(100); // 100개씩 처리
+        log.info("전체 리뷰 카운트 배치 동기화 완료");
+    }
 }
