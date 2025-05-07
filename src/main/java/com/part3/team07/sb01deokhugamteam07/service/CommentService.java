@@ -113,7 +113,8 @@ public class CommentService {
   @Transactional
   public void hardDelete(UUID commentId, UUID userId) {
     log.debug("hardDelete comment: commentId = {}, userId = {}", commentId, userId);
-    Comment comment = findComment(commentId);
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(CommentNotFoundException::new);
     User user = findUser(userId);
     validateCommentAuthor(comment, user);
     decreaseCommentCountOnHardDelete(comment); //review commentCount 감소
