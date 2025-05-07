@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRepositoryCustom {
+
   // 파워 유저에서 이용되는 메서드, 특정 사용자가 사용한 리뷰를 날짜 범위내에서 조회
   List<Review> findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
       UUID userId,
@@ -48,8 +49,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRep
       LocalDateTime startDateTime,
       LocalDateTime endDateTime);
 
-  List<Review> findByIsDeletedFalseOrderByCreatedAtAsc();
-
   boolean existsByUserIdAndBookId(UUID userId, UUID bookId);
 
   Optional<Review> findByIdAndIsDeletedFalse(UUID reviewId);
@@ -58,5 +57,20 @@ public interface ReviewRepository extends JpaRepository<Review, UUID>, ReviewRep
   @EntityGraph(attributePaths = {"book", "user"})
   List<Review> findAllById(Iterable<UUID> ids);
 
+
+  @Query(value =
+      "SELECT DISTINCT r.* FROM reviews r " +
+       "LEFT JOIN comments c on r.id = c.review_id AND c.is_deleted = false AND c.created_at BETWEEN :startDateTime AND :endDateTime " +
+       "LEFT JOIN likes l ON r.id = l.review_id AND l.is_deleted = false AND l.created_at BETWEEN :startDateTime AND :endDateTime " +
+       "WHERE r.is_deleted = false " +
+       "AND (c.id IS NOT NULL OR l.id IS NOT NULL)"+
+       "ORDER BY r.created_at ASC",
+      nativeQuery = true)
+  List<Review> findPopularReviewsInPeriod(
+      @Param("startDateTime") LocalDateTime startDateTime,
+      @Param("endDateTime") LocalDateTime endDateTime
+  );
+
   List<Review> findAllByBookAndIsDeletedFalse(Book book);
+
 }

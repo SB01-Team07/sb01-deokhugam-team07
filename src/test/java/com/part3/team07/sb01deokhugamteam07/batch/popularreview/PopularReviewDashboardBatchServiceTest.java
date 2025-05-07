@@ -11,7 +11,6 @@ import com.part3.team07.sb01deokhugamteam07.batch.DateRangeUtil;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
 import com.part3.team07.sb01deokhugamteam07.entity.Dashboard;
 import com.part3.team07.sb01deokhugamteam07.entity.KeyType;
-import com.part3.team07.sb01deokhugamteam07.entity.Notification;
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.entity.User;
@@ -22,7 +21,6 @@ import com.part3.team07.sb01deokhugamteam07.repository.LikeRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.service.NotificationService;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +127,7 @@ class PopularReviewDashboardBatchServiceTest {
             .build()
     );
 
-    when(reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(reviews);
+    when(reviewRepository.findPopularReviewsInPeriod(dateRange[0], dateRange[1])).thenReturn(reviews);
     when(dataRangeUtil.getDateRange(period)).thenReturn(dateRange);
     when(likeRepository.countByReviewIdAndCreatedAtBetween(eq(reviewId1), any(LocalDateTime.class),
         any(LocalDateTime.class))).thenReturn(5L);
@@ -145,13 +143,11 @@ class PopularReviewDashboardBatchServiceTest {
     // when
     popularReviewDashboardBatchService.savePopularReviewDashboardData(period);
 
-    verify(reviewRepository).findByIsDeletedFalseOrderByCreatedAtAsc();
+    verify(reviewRepository).findPopularReviewsInPeriod(dateRange[0], dateRange[1]);
     verify(dashboardRepository).saveAll(any());
     verify(likeRepository, times(2)).countByReviewIdAndCreatedAtBetween(any(), any(), any());
     verify(commentRepository, times(2)).countByReviewIdAndCreatedAtBetweenAndIsDeletedFalse(any(),
         any(), any());
     verify(dashboardRepository).saveAll(any());
   }
-
-
 }
