@@ -4,6 +4,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Comment;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,5 +22,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID>, Comment
       LocalDateTime startDateTime,
       LocalDateTime endDateTime);
 
-  List<Comment> findAllByReview(Review review);
+  List<Comment> findAllByReviewAndIsDeletedFalse(Review review);
+
+  Optional<Comment> findByIdAndIsDeletedFalse(UUID id);
 }
