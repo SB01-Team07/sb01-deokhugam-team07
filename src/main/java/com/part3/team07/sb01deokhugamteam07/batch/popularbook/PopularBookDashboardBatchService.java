@@ -47,6 +47,7 @@ public class PopularBookDashboardBatchService {
       LocalDateTime startDateTime = dateTimeRange[0];
       LocalDateTime endDateTime = dateTimeRange[1];
 
+      // 1. 도서 조회
       List<Book> booksWithReviews = bookRepository.findByBookWithReviewsInPeriod(startDateTime,
           endDateTime);
       if(booksWithReviews.isEmpty()){
