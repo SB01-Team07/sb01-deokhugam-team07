@@ -133,7 +133,7 @@ class PopularBookDashboardBatchServiceTest {
             .build()
     );
 
-    when(bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(books);
+    when(bookRepository.findByBookWithReviewsInPeriod(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(books);
     when(dataRangeUtil.getDateRange(period)).thenReturn(dateRange);
     when(reviewRepository.findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(eq(bookId1),
         any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(reviews1);
@@ -145,7 +145,7 @@ class PopularBookDashboardBatchServiceTest {
     // when
     popularBookDashboardBatchService.savePopularBookDashboardData(period);
 
-    verify(bookRepository).findByIsDeletedFalseOrderByCreatedAtAsc();
+    verify(bookRepository).findByBookWithReviewsInPeriod(any(LocalDateTime.class), any(LocalDateTime.class));
     verify(reviewRepository, times(2)).findByBookIdAndCreatedAtBetweenAndIsDeletedFalse(any(),
         any(), any());
     verify(dashboardRepository).saveAll(any());
@@ -153,7 +153,13 @@ class PopularBookDashboardBatchServiceTest {
 
   @Test
   public void when_No_Books_Exist() {
-    when(bookRepository.findByIsDeletedFalseOrderByCreatedAtAsc()).thenReturn(List.of());
+    // Period 설정
+    LocalDateTime[] dateRange = new LocalDateTime[]{
+        LocalDateTime.of(2025, 4, 15, 0, 0),
+        LocalDateTime.of(2025, 4, 21, 0, 0),
+    };
+    when(dataRangeUtil.getDateRange(Period.DAILY)).thenReturn(dateRange);
+    when(bookRepository.findByBookWithReviewsInPeriod(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(List.of());
     popularBookDashboardBatchService.savePopularBookDashboardData(Period.DAILY);
     verify(dashboardRepository, never()).saveAll(anyList());
   }

@@ -181,7 +181,7 @@ class CommentServiceTest {
   void updateComment() {
     //given
     String newContent = "updated content";
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.of(comment));
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
     given(commentMapper.toDto(any(Comment.class))).willReturn(
         new CommentDto(
@@ -214,7 +214,7 @@ class CommentServiceTest {
     //given
     UUID otherUserId = UUID.randomUUID();
     String newContent = "updated content";
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.of(comment));
     given(userRepository.findById(eq(otherUserId)))
         .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
 
@@ -233,7 +233,7 @@ class CommentServiceTest {
   void updateCommentFailCommentNotFound() {
     //given
     String newContent = "updated content";
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.empty());
 
     CommentUpdateRequest updateRequest = new CommentUpdateRequest(
         newContent
@@ -249,7 +249,7 @@ class CommentServiceTest {
   @DisplayName("댓글 상세 정보 조회 성공")
   void findComment() {
     //given
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.of(comment));
     given(commentMapper.toDto(any(Comment.class))).willReturn(commentDto);
 
     //when
@@ -260,22 +260,10 @@ class CommentServiceTest {
   }
 
   @Test
-  @DisplayName("댓글 상세 정보 조회 실패 - 댓글 존재X")
+  @DisplayName("댓글 상세 정보 조회 실패 - 댓글 존재X or 논리 삭제 상태")
   void findCommentFailCommentNotFound() {
     //given
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
-
-    //when & then
-    assertThatThrownBy(() -> commentService.find(commentId))
-        .isInstanceOf(CommentNotFoundException.class);
-  }
-
-  @Test
-  @DisplayName("댓글 상세 정보 조회 실패 - 논리 삭제 상태")
-  void findCommentFailCommentIsSoftDeleted() {
-    //given
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
-    comment.softDelete();
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.empty());
 
     //when & then
     assertThatThrownBy(() -> commentService.find(commentId))
@@ -286,34 +274,22 @@ class CommentServiceTest {
   @DisplayName("댓글 논리 삭제 성공")
   void softDeleteComment() {
     //given
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.of(comment));
     given(userRepository.findById(eq(userId))).willReturn(Optional.of(testUser));
 
     //when
     commentService.softDelete(commentId, userId);
 
     //then
-    assertThatThrownBy(() -> commentService.find(commentId))
-        .isInstanceOf(CommentNotFoundException.class);
+    assertThat(comment.isDeleted()).isTrue();
+    //verify(reviewRepository).decrementCommentCount(comment.getReview().getId()); //댓글 감소 메서드 호출 확인
   }
 
   @Test
-  @DisplayName("댓글 논리 삭제 실패 - 댓글 존재X")
+  @DisplayName("댓글 논리 삭제 실패 - 댓글 존재X or 논리 삭제 상태")
   void softDeleteCommentFailCommentNotFound() {
     //given
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.empty());
-
-    //when & then
-    assertThatThrownBy(() -> commentService.softDelete(commentId, userId))
-        .isInstanceOf(CommentNotFoundException.class);
-  }
-
-  @Test
-  @DisplayName("댓글 논리 삭제 실패 - 논리 삭제 상태")
-  void softDeleteCommentFailCommentIsSoftDeleted() {
-    //given
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
-    comment.softDelete();
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.empty());
 
     //when & then
     assertThatThrownBy(() -> commentService.softDelete(commentId, userId))
@@ -325,7 +301,7 @@ class CommentServiceTest {
   void softDeleteCommentFailByUnauthorizedUser() {
     //given
     UUID otherUserId = UUID.randomUUID();
-    given(commentRepository.findById(eq(commentId))).willReturn(Optional.of(comment));
+    given(commentRepository.findByIdAndIsDeletedFalse(eq(commentId))).willReturn(Optional.of(comment));
     given(userRepository.findById(eq(otherUserId)))
         .willReturn(Optional.of(new User("otherUser", "1234", "other@test.com")));
 
@@ -343,14 +319,14 @@ class CommentServiceTest {
     Comment comment1 = spy(c1);
     Comment comment2 = spy(c2);
 
-    given(commentRepository.findAllByReview(eq(testReview)))
+    given(commentRepository.findAllByReviewAndIsDeletedFalse(eq(testReview)))
         .willReturn(List.of(comment1, comment2));
 
     //when
     commentService.softDeleteAllByReview(testReview);
 
     //then
-    verify(commentRepository).findAllByReview(testReview);
+    verify(commentRepository).findAllByReviewAndIsDeletedFalse(testReview);
     verify(comment1).softDelete();
     verify(comment2).softDelete();
   }

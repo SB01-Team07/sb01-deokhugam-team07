@@ -142,7 +142,7 @@ class PowerUserDashboardBatchServiceTest {
     );
 
     when(dateRangeUtil.getDateRange(period)).thenReturn(dateRange);
-    when(userRepository.findByIsDeletedFalse()).thenReturn(users);
+    when(userRepository.findPowerUserInPeriod(dateRange[0], dateRange[1])).thenReturn(users);
     when(reviewRepository.findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
         eq(userId1), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(user1Reviews);
     when(reviewRepository.findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(
@@ -162,7 +162,7 @@ class PowerUserDashboardBatchServiceTest {
     // when
     powerUserDashboardBatchService.savePowerUserDashboardData(period);
 
-    verify(userRepository).findByIsDeletedFalse();
+    verify(userRepository).findPowerUserInPeriod(dateRange[0], dateRange[1]);
     verify(reviewRepository, times(2)).findByUserIdAndCreatedAtBetweenAndIsDeletedFalse(any(),
         any(), any());
     verify(likeRepository, times(2)).countByUserIdAndCreatedAtBetween(any(), any(), any());
