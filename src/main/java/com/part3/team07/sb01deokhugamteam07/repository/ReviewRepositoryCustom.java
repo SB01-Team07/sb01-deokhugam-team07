@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.repository;
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
+import com.part3.team07.sb01deokhugamteam07.entity.Review;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewDirection;
 import com.part3.team07.sb01deokhugamteam07.type.ReviewOrderBy;
 import com.querydsl.core.Tuple;
@@ -14,4 +15,6 @@ public interface ReviewRepositoryCustom {
                              String cursor, LocalDateTime after, int limit, UUID requestUserId);
 
     long count(UUID userId, UUID bookId, String keyword);
+
+    List<Review> findChangedSince(LocalDateTime cutoff);
 }
