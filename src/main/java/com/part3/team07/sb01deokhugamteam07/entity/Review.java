@@ -63,4 +63,24 @@ public class Review extends BaseSoftDeletableEntity {
     this.likeCount = likeCount;
     this.commentCount = commentCount;
   }
+
+  public void increaseLikeCount() {
+    this.likeCount += 1;
+  }
+
+  public void decreaseLikeCount() {
+    if (this.likeCount > 0) {
+      this.likeCount -= 1;
+    }
+  }
+
+  public void increaseCommentCount() {
+    this.commentCount += 1;
+  }
+
+  public void decreaseCommentCount() {
+    if (this.commentCount > 0) {
+      this.commentCount -= 1;
+    }
+  }
 }
