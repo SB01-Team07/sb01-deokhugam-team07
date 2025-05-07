@@ -46,23 +46,25 @@ public class PopularReviewDashboardBatchService {
   public void savePopularReviewDashboardData(Period period) {
     try {
       log.info("savePopularReviewDashboardData 호출: period={}", period);
-      // 1. 전체 리뷰 조회 (is_deleted = false)
-      List<Review> reviews = reviewRepository.findByIsDeletedFalseOrderByCreatedAtAsc();
-      if (reviews.isEmpty()) {
-        log.info("처리할 리뷰가 없습니다. period={}", period);
-        return;
-      }
+
       // 날짜 범위 계산
       LocalDateTime[] dateTimeRange  = dateRangeUtil.getDateRange(period);
       LocalDateTime startDateTime = dateTimeRange[0];
       LocalDateTime endDateTime = dateTimeRange[1];
+
+      // 1. 리뷰 조회
+      List<Review> popularReviews = reviewRepository.findPopularReviewsInPeriod(startDateTime, endDateTime);
+      if(popularReviews.isEmpty()){
+        log.info("해당 기간에 댓글, 좋아요가 달린 리뷰가 없습니다. period={}", period);
+        return;
+      }
 
       // 결과 저장용 대시보드 리스트
       List<Dashboard> dashboards = new ArrayList<>();
       Map<UUID, Double> reviewScoreMap = new LinkedHashMap<>();
 
       // 2. 각 리뷰의 정보 가져오기
-      for (Review review : reviews) {
+      for (Review review : popularReviews) {
         UUID reviewId = review.getId();
 
         // 2-1. 해당 기간 동안 받은 댓글 수
