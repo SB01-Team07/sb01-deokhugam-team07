@@ -217,7 +217,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.existsByIsbn(request.isbn())).willReturn(false);
+      given(bookRepository.existsByIsbnAndIsDeletedFalse(request.isbn())).willReturn(false);
       given(bookRepository.save(any(Book.class))).will(invocation -> {
         Book book = invocation.getArgument(0);
         ReflectionTestUtils.setField(book, "id", id);
@@ -246,7 +246,7 @@ class BookServiceTest {
           ""
       );
 
-      given(bookRepository.existsByIsbn(request.isbn())).willReturn(true);
+      given(bookRepository.existsByIsbnAndIsDeletedFalse(request.isbn())).willReturn(true);
 
       // when & then
       assertThrows(BookAlreadyExistsException.class,

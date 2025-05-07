@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookRepository extends JpaRepository<Book, UUID>, BookRepositoryCustom {
 
-  boolean existsByIsbn(String isbn);
+  boolean existsByIsbnAndIsDeletedFalse(String isbn);
 
   List<Book> findByIsDeletedFalseOrderByCreatedAtAsc();
 
