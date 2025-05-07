@@ -105,9 +105,9 @@ public class BookService {
   public void softDelete(UUID id) {
     log.info("도서 논리 삭제 요청 시작. ID: {}", id);
 
-    Book book = bookRepository.findById(id)
+    Book book = bookRepository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(() -> {
-          log.error("도서 논리 삭제 실패: 존재하지 않는 ID {}", id);
+          log.error("도서 논리 삭제 실패: 존재하지 않거나 삭제된 ID {}", id);
           return BookNotFoundException.withId(id);
         });
 

@@ -373,7 +373,7 @@ class BookServiceTest {
     void softDelete_success() {
       // given
       Book spyBook = spy(book);
-      given(bookRepository.findById(id)).willReturn(Optional.of(spyBook));
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.of(spyBook));
 
       // when
       bookService.softDelete(id);
@@ -388,7 +388,7 @@ class BookServiceTest {
     @DisplayName("도서 논리 삭제 실패 - 없는 id")
     void softDelete_fail_idNotFound() {
       // given
-      given(bookRepository.findById(id)).willReturn(Optional.empty());
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.empty());
 
       // when & then
       assertThrows(BookNotFoundException.class,
