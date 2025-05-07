@@ -321,7 +321,7 @@ class BookServiceTest {
           LocalDateTime.now()
       );
 
-      given(bookRepository.findById(id)).willReturn(Optional.of(book));
+      given(bookRepository.findByIdAndIsDeletedFalse(id)).willReturn(Optional.of(book));
       given(storageService.save(thumbnailImage, FileType.THUMBNAIL_IMAGE)).willReturn(newThumbnailUrl);
       given(bookMapper.toDto(any(Book.class))).willReturn(newBookDto);
 
@@ -357,7 +357,7 @@ class BookServiceTest {
         newPublishedDate
     );
 
-    given(bookRepository.findById(nonExistentId)).willReturn(Optional.empty());
+    given(bookRepository.findByIdAndIsDeletedFalse(nonExistentId)).willReturn(Optional.empty());
 
     // when & then
     assertThrows(BookNotFoundException.class,

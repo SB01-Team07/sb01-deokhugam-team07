@@ -81,9 +81,9 @@ public class BookService {
   public BookDto update(UUID id, BookUpdateRequest request, MultipartFile thumbnailImage) {
     log.info("도서 업데이트 요청 시작. ID: {}", id);
 
-    Book book = bookRepository.findById(id)
+    Book book = bookRepository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(() -> {
-          log.error("도서 업데이트 실패: 존재하지 않는 ID {}", id);
+          log.error("도서 업데이트 실패: 존재하지 않거나 삭제된 ID {}", id);
           return BookNotFoundException.withId(id);
         });
     String thumbnailUrl = Optional.ofNullable(thumbnailImage)
