@@ -1,4 +1,4 @@
-package com.part3.team07.sb01deokhugamteam07.repository;
+package com.part3.team07.sb01deokhugamteam07.repository.querydsl;
 
 import com.part3.team07.sb01deokhugamteam07.dto.review.ReviewDto;
 import com.part3.team07.sb01deokhugamteam07.entity.Review;
@@ -144,6 +144,17 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         review.isDeleted.isFalse(),
                         review.createdAt.goe(cutoff).or(review.updatedAt.goe(cutoff))
                 )
+                .fetch();
+    }
+
+    @Override
+    public List<Review> findAllPaged(int offset, int limit) {
+        return queryFactory
+                .selectFrom(review)
+                .where(review.isDeleted.isFalse())
+                .orderBy(review.id.asc())
+                .offset(offset)
+                .limit(limit)
                 .fetch();
     }
 }
