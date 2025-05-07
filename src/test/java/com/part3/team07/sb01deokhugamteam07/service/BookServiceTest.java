@@ -619,8 +619,8 @@ class BookServiceTest {
     given(review2.getRating()).willReturn(5);
     given(review3.getRating()).willReturn(3);
 
-    given(bookRepository.findAll()).willReturn(List.of(book));
-    given(reviewRepository.findAllByBook(book)).willReturn(List.of(review1, review2, review3));
+    given(bookRepository.findAllByIsDeletedFalse()).willReturn(List.of(book));
+    given(reviewRepository.findAllByBookAndIsDeletedFalse(book)).willReturn(List.of(review1, review2, review3));
 
     // when
     bookService.updateReviewStats();

@@ -195,10 +195,10 @@ public class BookService {
   public void updateReviewStats() {
     log.info("도서 리뷰 통계 업데이트 시작.");
 
-    List<Book> books = bookRepository.findAll();
+    List<Book> books = bookRepository.findAllByIsDeletedFalse();
 
     for (Book book : books) {
-      List<Review> reviews = reviewRepository.findAllByBook(book);
+      List<Review> reviews = reviewRepository.findAllByBookAndIsDeletedFalse(book);
 
       if (reviews.isEmpty())
         continue;
