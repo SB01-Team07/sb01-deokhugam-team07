@@ -1,6 +1,7 @@
 package com.part3.team07.sb01deokhugamteam07.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.part3.team07.sb01deokhugamteam07.config.TestConfig;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewCreateRequest;
 import com.part3.team07.sb01deokhugamteam07.dto.review.request.ReviewUpdateRequest;
 import com.part3.team07.sb01deokhugamteam07.entity.Book;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@Import(TestConfig.class)
 public class ReviewIntegrationTest {
 
     @Autowired
