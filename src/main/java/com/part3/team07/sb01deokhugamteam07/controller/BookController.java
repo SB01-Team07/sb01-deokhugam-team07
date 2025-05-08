@@ -9,6 +9,7 @@ import com.part3.team07.sb01deokhugamteam07.dto.book.response.CursorPageResponse
 import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
 import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
+import com.part3.team07.sb01deokhugamteam07.service.OcrService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
@@ -39,6 +40,7 @@ public class BookController {
 
   private final BookService bookService;
   private final DashboardService dashboardService;
+  private final OcrService ocrService;
 
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ResponseEntity<BookDto> create(
@@ -146,5 +148,15 @@ public class BookController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(naverBookDto);
+  }
+
+  @PostMapping(value = "/isbn/ocr", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  public ResponseEntity<String> ocr(@RequestPart("image") MultipartFile image) {
+    try {
+      String isbn = ocrService.extractIsbn13(image);
+      return ResponseEntity.ok(isbn);
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().body("OCR 처리 중 오류 발생: " + e.getMessage());
+    }
   }
 }
