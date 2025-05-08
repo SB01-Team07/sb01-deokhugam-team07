@@ -9,13 +9,16 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.web.servlet.function.RequestPredicates.POST;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.part3.team07.sb01deokhugamteam07.dto.book.BookDto;
@@ -29,6 +32,7 @@ import com.part3.team07.sb01deokhugamteam07.entity.Period;
 import com.part3.team07.sb01deokhugamteam07.security.CustomUserDetailsService;
 import com.part3.team07.sb01deokhugamteam07.service.BookService;
 import com.part3.team07.sb01deokhugamteam07.service.DashboardService;
+import com.part3.team07.sb01deokhugamteam07.service.OcrService;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,7 +50,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
 @WithMockUser
@@ -68,6 +74,8 @@ public class BookControllerTest {
   @MockitoBean
   private DashboardService dashboardService;
 
+  @MockitoBean
+  OcrService ocrService;
 
   private UUID id;
   private String title;
@@ -510,5 +518,25 @@ public class BookControllerTest {
           .andExpect(jsonPath("$.author").value("남궁성"))
           .andExpect(jsonPath("$.isbn").value(isbn));
     }
+  }
+
+  @Test
+  void extractIsbnByOcr_success() throws Exception {
+    // given
+    String expectedIsbn = "9781234567890";
+    MockMultipartFile mockImage = new MockMultipartFile("image",
+        "test.jpg",
+        MediaType.IMAGE_JPEG_VALUE, "dummy image content".getBytes());
+
+    given(ocrService.extractIsbn13(mockImage)).willReturn(expectedIsbn);
+
+    // when & then
+    mockMvc.perform(MockMvcRequestBuilders
+            .multipart("/api/books/isbn/ocr")
+            .file(mockImage)
+            .with(csrf())
+            .contentType(MediaType.MULTIPART_FORM_DATA))
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string(expectedIsbn));
   }
 }

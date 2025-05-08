@@ -151,7 +151,7 @@ public class BookController {
   }
 
   @PostMapping(value = "/isbn/ocr", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  public ResponseEntity<String> ocr(@RequestPart("image") MultipartFile image) {
+  public ResponseEntity<String> extractIsbnByOcr(@RequestPart("image") MultipartFile image) {
     log.info("이미지 기반 ISBN 인식 요청");
     String isbn = ocrService.extractIsbn13(image);
     log.info("이미지 기반 ISBN 인식 응답: isbn={}", isbn);
