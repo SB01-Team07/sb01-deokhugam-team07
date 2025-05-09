@@ -63,9 +63,6 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.springframework.security:spring-security-test'
 
-    // 쿼리문 자세히 보기 위한 p6spy
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
-
     // queryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -78,11 +75,6 @@ dependencies {
     implementation("software.amazon.awssdk:s3-transfer-manager:2.31.14")
     implementation("software.amazon.awssdk.crt:aws-crt:0.34.1")
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
-
-    // jwt
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     // OCR
     implementation 'com.google.cloud:google-cloud-vision:3.3.0'
