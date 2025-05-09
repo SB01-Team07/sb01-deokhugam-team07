@@ -18,15 +18,12 @@ import com.part3.team07.sb01deokhugamteam07.mapper.CommentMapper;
 import com.part3.team07.sb01deokhugamteam07.repository.CommentRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.ReviewRepository;
 import com.part3.team07.sb01deokhugamteam07.repository.UserRepository;
-import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
