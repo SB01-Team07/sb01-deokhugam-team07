@@ -1,12 +1,12 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:024848446800:task-definition/deokhugam-task:2",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:024848446800:task-definition/deokhugam-task",
     "containerDefinitions": [
         {
             "name": "deokhugam",
             "image": "${IMAGE}",
             "cpu": 256,
-            "memory": 512,
-            "memoryReservation": 256,
+            "memory": 1024,
+            "memoryReservation": 512,
             "portMappings": [
                 {
                     "containerPort": 80,
@@ -30,7 +30,7 @@
                 },
                 {
                     "name": "JVM_OPTS",
-                    "value": "-Xmx384m -Xms256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"
+                    "value": "-Xmx512m -Xms256m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
                 },
                 {
                     "name": "SPRING_PROFILES_ACTIVE",
@@ -114,7 +114,7 @@
         "EC2"
     ],
     "cpu": "256",
-    "memory": "512",
+    "memory": "1024",
     "registeredAt": "2025-04-23T17:40:36.466000+09:00",
     "registeredBy": "arn:aws:iam::024848446800:user/team07-wongil",
     "enableFaultInjection": false
