@@ -159,6 +159,7 @@ public class ReviewService {
                     ReviewLikeDto result = addLike(userId, review);
 
                     // 알림 생성
+                    log.info("좋아요 알림 생성");
                     NotificationCreateRequest notificationRequest = NotificationCreateRequest.builder()
                         .type(NotificationType.REVIEW_LIKED)
                         .senderId(userId)
