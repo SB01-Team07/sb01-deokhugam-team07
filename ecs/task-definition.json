@@ -17,10 +17,15 @@
                 }
             ],
             "essential": true,
-            "environment": [
+            "environment": [],
+            "secrets": [
                 {
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
-                    "value": "/app/ocr-key.json"
+                    "valueFrom": {
+                        "secretsManager": {
+                            "secretId": "ocr-key-secre"
+                        }
+                    }
                 }
             ],
             "environmentFiles": [
@@ -29,12 +34,7 @@
                     "type": "s3"
                 }
             ],
-            "mountPoints": [
-                {
-                    "sourceVolume": "ocr-key-volume",
-                    "containerPath": "/app"
-                }
-            ],
+            "mountPoints": [],
             "volumesFrom": [],
             "ulimits": [],
             "logConfiguration": {
@@ -57,14 +57,7 @@
     "executionRoleArn": "arn:aws:iam::024848446800:role/ecsTaskExecutionRole",
     "networkMode": "bridge",
     "revision": 2,
-    "volumes": [
-        {
-            "name": "ocr-key-volume",
-            "host": {
-                "sourcePath": "/ecs/ocr"
-            }
-        }
-    ],
+    "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
         {
