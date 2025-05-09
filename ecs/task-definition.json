@@ -17,11 +17,16 @@
                 }
             ],
             "essential": true,
-            "environment": [],
             "secrets": [
                 {
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:024848446800:secret:ocr-key-secre-HwqCKq"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "GOOGLE_APPLICATION_CREDENTIALS",
+                    "value": "/tmp/ocr-key.json"
                 }
             ],
             "environmentFiles": [
