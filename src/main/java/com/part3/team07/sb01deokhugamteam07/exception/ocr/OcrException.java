@@ -8,8 +8,4 @@ public class OcrException extends DeokhugamException {
   public OcrException(ErrorCode errorCode) {
     super(errorCode);
   }
-
-  public OcrException(ErrorCode errorCode, Throwable cause) {
-    super(errorCode, cause);
-  }
 }
