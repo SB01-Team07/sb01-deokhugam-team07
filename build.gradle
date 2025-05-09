@@ -86,6 +86,7 @@ dependencies {
 
     // OCR
     implementation 'com.google.cloud:google-cloud-vision:3.3.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.18.0'
 
 }
 
