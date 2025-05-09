@@ -19,7 +19,7 @@
             "essential": true,
             "secrets": [
                 {
-                    "name": "GOOGLE_APPLICATION_CREDENTIALS",
+                    "name": "OCR_KEY_JSON",
                     "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:024848446800:secret:ocr-key-secre-HwqCKq"
                 }
             ],
@@ -28,6 +28,11 @@
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
                     "value": "/tmp/ocr-key.json"
                 }
+            ],
+            "entryPoint": [
+                "sh",
+                "-c",
+                "echo $OCR_KEY_JSON > /tmp/ocr-key.json && chmod 600 /tmp/ocr-key.json && exec java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -Duser.timezone=Asia/Seoul $JVM_OPTS -jar app.jar"
             ],
             "environmentFiles": [
                 {
