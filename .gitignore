@@ -11,6 +11,7 @@ HELP.md
 spy.log
 src/main/resources/static/storage/
 src/test/resources/static/storage/
+ocr-key.json
 
 ### STS ###
 .apt_generated

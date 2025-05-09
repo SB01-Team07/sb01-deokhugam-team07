@@ -8,15 +8,19 @@ public enum ErrorCode {
   // 공통
   VALIDATION_FAILED("유효하지 않은 입력입니다."),
 
-  // Book 관련 에러 코드
+  // Book
   DUPLICATE_BOOK("이미 존재하는 도서입니다."),
   BOOK_NOT_FOUND("도서를 찾을 수 없습니다."),
   INVALID_SORT_FIELD("잘못된 정렬 필드입니다."),
 
-  // Storage 관련 에러 코드
+  // Storage
   STORAGE_INIT("저장소 초기화 중 오류가 발생하였습니다."),
   DUPLICATE_STORAGE("이미 존재하는 리소스입니다."),
   STORAGE_SAVE_FAILED("리소스 저장 중 오류가 발생하였습니다."),
+
+  // Ocr
+  OCR_ISBN_NOT_FOUND("ISBN을 찾을 수 없습니다."),
+  OCR_PROCESSING_FAILED("OCR 처리 중 오류가 발생하였습니다."),
 
   //Comment
   COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다"),
