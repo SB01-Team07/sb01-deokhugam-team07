@@ -90,6 +90,7 @@ public class PopularReviewDashboardBatchService {
       dashboards = assignRank.assignRank(reviewScoreMap, period, KeyType.REVIEW, dashboards);
 
       // 알림 생성
+      log.info("리뷰 TOP 10 알림 생성");
       List<Dashboard> topTen = dashboards.stream()
           .limit(10)
           .toList();

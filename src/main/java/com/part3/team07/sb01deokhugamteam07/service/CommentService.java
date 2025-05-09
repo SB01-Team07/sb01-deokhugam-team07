@@ -52,6 +52,7 @@ public class CommentService {
         .build();
 
     // 알림 생성
+    log.info("댓글 알림 생성");
     NotificationCreateRequest notificationRequest = NotificationCreateRequest.builder()
         .type(NotificationType.REVIEW_COMMENTED)
         .senderId(createRequest.userId())
