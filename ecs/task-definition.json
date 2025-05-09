@@ -27,6 +27,14 @@
                 {
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
                     "value": "/tmp/ocr-key.json"
+                },
+                {
+                    "name": "JVM_OPTS",
+                    "value": "-Xmx384m -Xms256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"
+                },
+                {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "prod"
                 }
             ],
             "entryPoint": [
