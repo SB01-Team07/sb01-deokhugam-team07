@@ -30,6 +30,22 @@
     - ![알림](https://github.com/user-attachments/assets/3ba32942-a866-4602-8aed-c9985694c051)
     - 작성한 리뷰에 댓글 또는 좋아요 받을시, 리뷰 10위 진출시 알림 생성
 - 박서연
+  - 도서 등록
+    - Google Coud Vision API - OCR로 이미지에서 ISBN 13자리 추출
+    - Naver API를 활용해 ISBN으로 책 정보 자동으로 업로드
+      - ![ocr,isbn](https://github.com/user-attachments/assets/382612e5-6dba-4f68-8ff2-99cf91e4ff9b)
+  - 도서 조회
+    - 검색 및 상세 조회
+      - ![검색, 상세조회](https://github.com/user-attachments/assets/76cff918-92e9-4b11-8b03-857a646d47ea)
+    - 도서 제목으로 정렬 및 페이지네이션
+      - ![제목정렬, 페이지네이션](https://github.com/user-attachments/assets/4654df28-109d-4c1c-88c5-03bd3e7ced91)
+    - 도서 정렬 (출판일, 평점, 리뷰 수)
+      - ![정렬](https://github.com/user-attachments/assets/294bbf5b-6774-4da7-ad0b-0f8edcd9145e)
+  - 도서 수정
+    - ![수정](https://github.com/user-attachments/assets/83561b04-502b-4a5b-9f7f-0aa90b552637)
+  - 도서 삭제
+    - ![삭제](https://github.com/user-attachments/assets/1992eb56-0ebd-4837-b3cb-7e2d1cb54a71)
+
 - 이성근
 - 이원길
   - 유저 회원가입
