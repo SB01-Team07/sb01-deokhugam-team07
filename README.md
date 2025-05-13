@@ -31,6 +31,12 @@
     - 작성한 리뷰에 댓글 또는 좋아요 받을시, 리뷰 10위 진출시 알림 생성
 - 박서연
 - 이성근
+  - 댓글 생성, 수정, 삭제
+    - ![댓글 생성수정삭제 화면 맞춤](https://github.com/user-attachments/assets/24fc709a-ed03-4cba-a6aa-9bb86b954ae0)
+    - 댓글을 생성, 수정, 삭제를 할 수 있다.
+  - 댓글 페이지네이션
+    - ![댓글 페이지네이션 화면맞춤](https://github.com/user-attachments/assets/4421007a-94e6-4928-97f7-0162145439e2)
+    - 댓글 목록을 페이지 단위로 조회 할 수 있다.
 - 이원길
   - 유저 회원가입
     - ![회원가입](https://github.com/user-attachments/assets/561ec82f-c4fd-444a-bb1c-61ec0a4285bb)
