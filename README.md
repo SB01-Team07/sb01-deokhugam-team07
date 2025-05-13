@@ -47,6 +47,12 @@
     - ![삭제](https://github.com/user-attachments/assets/1992eb56-0ebd-4837-b3cb-7e2d1cb54a71)
 
 - 이성근
+  - 댓글 생성, 수정, 삭제
+    - ![댓글 생성수정삭제 (1)](https://github.com/user-attachments/assets/7589350e-5070-4d3b-b64f-6bbd48cece3b)
+    - 댓글을 생성, 수정, 삭제 할 수 있다.
+  - 댓글 페이지네이션
+    - ![댓글 페이지네이션 (1)](https://github.com/user-attachments/assets/2a5bd811-55a1-4107-96ce-a8a7fa839d94)
+    - 댓글 목록을 페이지 단위로 조회 할 수 있다.
 - 이원길
   - 유저 회원가입
     - ![회원가입](https://github.com/user-attachments/assets/561ec82f-c4fd-444a-bb1c-61ec0a4285bb)
