@@ -24,10 +24,10 @@
 
 - 김경린
   - 대시보드
-    - ![대시보드](https://github.com/user-attachments/assets/bda02126-f8bc-4c7b-b55b-598a846feb1f)
+    - ![대시보드](https://github.com/user-attachments/assets/b8711f01-1af2-41d9-a0d8-ab1d0268b4f2)
     - 기간별 인기 도서, 인기 리뷰, 파워 유저
   - 알림
-    - ![알림](https://github.com/user-attachments/assets/3bb1a2a0-6412-4d49-beb3-0d63114c1d56)
+    - ![알림](https://github.com/user-attachments/assets/3ba32942-a866-4602-8aed-c9985694c051)
     - 작성한 리뷰에 댓글 또는 좋아요 받을시, 리뷰 10위 진출시 알림 생성
 - 박서연
 - 이성근
