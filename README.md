@@ -32,6 +32,18 @@
 - 박서연
 - 이성근
 - 이원길
+  - 유저 회원가입
+    - ![회원가입](https://github.com/user-attachments/assets/561ec82f-c4fd-444a-bb1c-61ec0a4285bb)
+    - 새로운 유저를 가입할 수 있다.
+  - 로그인
+    - ![로그인](https://github.com/user-attachments/assets/a16404c8-eb72-4558-9e64-4ac6f0cc85ec)
+    - 가입한 유저의 정보로 로그인을 할 수 있다.
+  - 닉네임 변경
+    - ![닉네임 수정](https://github.com/user-attachments/assets/39ad1299-f361-47d9-9488-cb669b3852c8)
+    - 유저의 닉네임을 변경할 수 있다.
+
+
+
 - 이용구
 
 
